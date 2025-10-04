@@ -1,4 +1,4 @@
-# app.py
+
 import streamlit as st
 
 # --- CONFIGURACIÓN DE PÁGINA ---
@@ -32,17 +32,16 @@ opcion = st.sidebar.radio("Navegación", ["Inicio", "Pantalla 1", "Pantalla 2"])
 # --- FUNCIONES DE CONTENIDO ---
 def mostrar_inicio():
     st.title("Bienvenido a AstroCycle 🌌")
-    st.write("Explora el universo desde tu pantalla.")
-    st.image("https://upload.wikimedia.org/wikipedia/commons/c/c3/NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg", use_container_width=True)
+    #st.write("Explora el universo desde tu pantalla.")
+    #st.image("ASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg", use_container_width=True)
 
 def mostrar1():
     st.header("Pantalla 1")
-    st.write("🪐 Aquí va el contenido de la pantalla 1 (planetas, datos, o visualizaciones).")
-    st.write("Podrías agregar gráficos, tablas, o incluso imágenes del espacio.")
+    st.write("🪐 Aquí va el contenido de la pantalla 1 ")
 
 def mostrar2():
     st.header("Pantalla 2")
-    st.write("✨ Aquí va el contenido de la pantalla 2 (constelaciones, simulaciones, etc.)")
+    st.write("✨ Aquí va el contenido de la pantalla 2")
 
 # --- MOSTRAR CONTENIDO SEGÚN LA OPCIÓN ---
 if opcion == "Inicio":
