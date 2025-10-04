@@ -18,6 +18,12 @@ section[data-testid="stSidebar"] {
     padding: 20px;
     position: relative;
     height: 100vh;
+    overflow: visible !important; /* Evita scroll interno */
+}
+
+/* Ocultar el botón de colapso/expandir */
+button[title="Collapse"] {
+    display: none;
 }
 
 /* Título lateral */
@@ -55,7 +61,7 @@ section[data-testid="stSidebar"] {
 /* Botones abajo con espacio extra */
 .sidebar-footer {
     position: absolute;
-    bottom: 120px;  /* ajusta este valor para mover más abajo o arriba */
+    bottom: 50px;  /* Ajusta la distancia desde el fondo */
     left: 20px;
     right: 20px;
 }
