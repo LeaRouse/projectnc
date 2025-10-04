@@ -18,7 +18,7 @@ section[data-testid="stSidebar"] {
     padding: 20px;
     position: relative;
     height: 100vh;
-    overflow: visible !important; /* Evita scroll interno */
+    overflow: visible !important;
 }
 
 /* Ocultar el botón de colapso/expandir */
@@ -35,35 +35,38 @@ button[title="Collapse"] {
     margin-bottom: 25px;
 }
 
-/* Botones del menú: mismo estilo para todos */
+/* Botones del menú: todos iguales */
 .stButton > button {
     display: block;
     width: 100%;
-    margin-bottom: 15px;  /* distancia uniforme entre todos */
-    padding: 12px;
+    margin-bottom: 15px;      /* distancia uniforme entre todos */
+    padding: 12px;             /* altura uniforme */
     border-radius: 12px;
     border: none;
     font-weight: bold;
     color: #d0e7ff;
-    background-color: #1a1a3f;
+    background-color: #1a1a3f; /* color base */
     transition: 0.2s;
     text-align: left;
     cursor: pointer;
 }
 
-/* Hover */
+/* Hover: cambio de color uniforme, sin contraste extremo */
 .stButton > button:hover {
-    background-color: #2a2a55;
+    background-color: #2a2a55; 
     color: #ffffff;
     transform: scale(1.02);
 }
 
-/* Botones de abajo (footer) */
+/* Botones de abajo */
 .sidebar-footer {
     position: absolute;
-    bottom: 50px;  /* ajusta para mover más abajo si quieres */
+    bottom: 50px;   /* ajusta para mover más abajo si quieres */
     left: 20px;
     right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;       /* distancia uniforme también para botones de abajo */
 }
 
 /* Títulos y textos principales */
