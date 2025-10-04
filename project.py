@@ -10,7 +10,7 @@ st.set_page_config(
 )
 
 # --- ESTILOS PERSONALIZADOS ---
-st.markdown("""
+st.markdown(
     <style>
     .main {
         background-color: #110a1a ;
@@ -23,7 +23,7 @@ st.markdown("""
         background-color: #111133;
     }
     </style>
-""", unsafe_allow_html=True)
+, unsafe_allow_html=True)
 
 # --- MENÚ LATERAL ---
 st.sidebar.title("🌠 AstroCycle")
@@ -50,5 +50,6 @@ elif opcion == "Pantalla 1":
     mostrar1()
 elif opcion == "Pantalla 2":
     mostrar2()
+
 
 
