@@ -30,17 +30,17 @@ button[title="Collapse"] {
 .sidebar-title {
     font-size: 24px;
     font-weight: bold;
-    color: #99ccff;
+    color: #d0e7ff;
     text-align: center;
     margin-bottom: 25px;
 }
 
-/* Botones del menú */
+/* Botones del menú: mismo estilo para todos */
 .stButton > button {
     display: block;
     width: 100%;
-    margin-bottom: 12px;
-    padding: 10px;
+    margin-bottom: 15px;  /* distancia uniforme entre todos */
+    padding: 12px;
     border-radius: 12px;
     border: none;
     font-weight: bold;
@@ -58,10 +58,10 @@ button[title="Collapse"] {
     transform: scale(1.02);
 }
 
-/* Botones abajo con espacio extra */
+/* Botones de abajo (footer) */
 .sidebar-footer {
     position: absolute;
-    bottom: 50px;  /* Ajusta la distancia desde el fondo */
+    bottom: 50px;  /* ajusta para mover más abajo si quieres */
     left: 20px;
     right: 20px;
 }
@@ -83,12 +83,12 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# --- Secciones principales arriba ---
+# --- Botones principales arriba ---
 st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 
-# --- Secciones de abajo ---
+# --- Botones abajo (footer) ---
 st.sidebar.markdown('<div class="sidebar-footer">', unsafe_allow_html=True)
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
 st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
