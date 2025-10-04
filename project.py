@@ -1,56 +1,53 @@
-import streamlit as tk
+# app.py
+import streamlit as st
 
-# Ventana principal
-root = tk.Tk()
-root.title("AstroCycle")
-root.geometry("800x500")
-root.config(bg="#0a0a1a") 
+# --- CONFIGURACIÓN DE PÁGINA ---
+st.set_page_config(
+    page_title="AstroCycle 🌌",
+    page_icon="🪐",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# --- FUNCIONES PARA CAMBIAR CONTENIDO ---
+# --- ESTILOS PERSONALIZADOS ---
+st.markdown("""
+    <style>
+    .main {
+        background-color: #0a0a1a;
+        color: #03dffc;
+    }
+    h1, h2, h3, h4, h5, h6, p {
+        color: #03dffc !important;
+    }
+    .sidebar .sidebar-content {
+        background-color: #111133;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# --- MENÚ LATERAL ---
+st.sidebar.title("🌠 AstroCycle")
+opcion = st.sidebar.radio("Navegación", ["Inicio", "Pantalla 1", "Pantalla 2"])
+
+# --- FUNCIONES DE CONTENIDO ---
 def mostrar_inicio():
-    limpiar_contenido()
-    tk.Label(frame_contenido, text="Bienvenido a AstroCycle", font=("Arial", 18, "bold"), bg="#0a0a1a", fg="#03dffc").pack(pady=30)
+    st.title("Bienvenido a AstroCycle 🌌")
+    st.write("Explora el universo desde tu pantalla.")
+    st.image("https://upload.wikimedia.org/wikipedia/commons/c/c3/NASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg", use_container_width=True)
 
 def mostrar1():
-    limpiar_contenido()
-    tk.Label(frame_contenido, text="aca va algo 1", font=("Arial", 18, "bold"), bg="#0a0a1a", fg="#03dffc").pack(pady=30)
+    st.header("Pantalla 1")
+    st.write("🪐 Aquí va el contenido de la pantalla 1 (planetas, datos, o visualizaciones).")
+    st.write("Podrías agregar gráficos, tablas, o incluso imágenes del espacio.")
 
 def mostrar2():
-    limpiar_contenido()
-    tk.Label(frame_contenido, text="aca va algo2", font=("Arial", 18, "bold"), bg="#0a0a1a", fg="#03dffc").pack(pady=30)
+    st.header("Pantalla 2")
+    st.write("✨ Aquí va el contenido de la pantalla 2 (constelaciones, simulaciones, etc.)")
 
-def limpiar_contenido():
-    for widget in frame_contenido.winfo_children():
-        widget.destroy()
-
-# --- ESTRUCTURA PRINCIPAL ---
-# Frame lateral (izquierda)
-frame_menu = tk.Frame(root, bg="#111133", width=200)
-frame_menu.pack(side="left", fill="y")
-
-# Frame de contenido (derecha)
-frame_contenido = tk.Frame(root, bg="#0a0a1a")
-frame_contenido.pack(side="right", expand=True, fill="both")
-
-# --- BOTONES DEL MENÚ ---
-botones = [
-    ("Inicio", mostrar_inicio),
-    ("Pantalla 1", mostrar1),
-    ("Pantalla 2", mostrar2),
-]
-
-for texto, comando in botones:
-    b = tk.Button(
-        frame_menu, text=texto, command=comando,
-        font=("Arial", 14, "bold"),
-        bg="#1a1a3d", fg="#03dffc",
-        activebackground="#03dffc", activeforeground="#0a0a1a",
-        relief="flat", width=16, pady=10
-    )
-    b.pack(pady=8)
-
-# Mostrar por defecto la primera pantalla
-mostrar_inicio()
-
-root.mainloop()
-
+# --- MOSTRAR CONTENIDO SEGÚN LA OPCIÓN ---
+if opcion == "Inicio":
+    mostrar_inicio()
+elif opcion == "Pantalla 1":
+    mostrar1()
+elif opcion == "Pantalla 2":
+    mostrar2()
