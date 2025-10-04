@@ -1,94 +1,69 @@
 import streamlit as st
 
-# --- CONFIGURACIÓN DE PÁGINA ---
-st.set_page_config(
-    page_title="AstroCycle 🌌",
-    page_icon="🪐",
-    layout="wide"
-)
+st.set_page_config(page_title="AstroCycle", layout="wide")
 
-# --- ESTILOS PERSONALIZADOS ---
+# --- CSS para barra lateral moderna ---
 st.markdown("""
-    <style>
-    /* Fondo principal */
-    .stApp {
-        background-color: #090a1a;
-        color: #e0f7ff;
-    }
-
-    /* Barra lateral */
-    section[data-testid="stSidebar"] {
-        background-color: #0e1233;
-        border-radius: 20px;
-        padding-top: 25px;
-        padding-left: 10px;
-        padding-right: 10px;
-        box-shadow: 0 0 15px rgba(0,0,0,0.4);
-    }
-
-    /* Título del menú */
-    .sidebar-title {
-        font-size: 24px;
-        font-weight: 700;
-        color: #00eaff;
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    /* Botones del menú */
-    div[data-testid="stSidebar"] button {
-        background-color: #1a1e4a !important;
-        color: #e0f7ff !important;
-        border: 1px solid #00eaff !important;
-        border-radius: 10px !important;
-        font-size: 16px !important;
-        font-weight: 600 !important;
-        margin-bottom: 10px !important;
-        width: 100% !important;
-        transition: all 0.3s ease-in-out;
-    }
-
-    /* Hover */
-    div[data-testid="stSidebar"] button:hover {
-        background-color: #00eaff !important;
-        color: #0a0a1a !important;
-        transform: scale(1.05);
-    }
-
-    /* Títulos principales */
-    h1, h2, h3, h4 {
-        color: #00eaff;
-    }
-
-    /* Texto general */
-    p, span {
-        color: #e0f7ff;
-    }
-    </style>
+<style>
+section[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #0e1233, #0a0a1a);
+    border-radius: 20px;
+    padding: 20px;
+}
+.sidebar-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00eaff;
+    text-align: center;
+    margin-bottom: 25px;
+    text-shadow: 0 0 8px #00eaff;
+}
+.custom-btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    font-weight: bold;
+    color: #e0f7ff;
+    background-color: #1a1e4a;
+    transition: 0.2s;
+    text-align: left;
+    cursor: pointer;
+}
+.custom-btn:hover {
+    background-color: #00eaff;
+    color: #0a0a1a;
+    transform: scale(1.03);
+}
+</style>
 """, unsafe_allow_html=True)
 
-# --- MENÚ LATERAL FIJO (usando radio) ---
+# --- Título ---
 st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
 
-pagina = st.sidebar.radio(
-    "Navegación",
-    ["🏠 Inicio", "🪐 Pantalla 1", "✨ Pantalla 2"],
-    label_visibility="collapsed"
-)
+# --- Lógica del menú con botones ---
+if 'pagina' not in st.session_state:
+    st.session_state.pagina = 'Inicio'
 
-# --- CONTENIDO SEGÚN LA PÁGINA ---
-if pagina == "🏠 Inicio":
+def cambiar_pagina(nombre):
+    st.session_state.pagina = nombre
+
+# Botones de menú
+st.sidebar.button("🏠 Inicio", key="btn_inicio", on_click=cambiar_pagina, args=("Inicio",))
+st.sidebar.button("🪐 Pantalla 1", key="btn_1", on_click=cambiar_pagina, args=("Pantalla 1",))
+st.sidebar.button("✨ Pantalla 2", key="btn_2", on_click=cambiar_pagina, args=("Pantalla 2",))
+
+# --- Contenido según la página ---
+if st.session_state.pagina == "Inicio":
     st.title("🌌 Bienvenido a AstroCycle")
-    st.write("Explora el universo desde tu pantalla con un diseño moderno y elegante.")
-    st.image(
-        "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
-        use_container_width=True
-    )
+    st.write("Explora el universo con estilo moderno y elegante.")
 
-elif pagina == "🪐 Pantalla 1":
-    st.header("🪐 Planetas y Órbitas")
-    st.write("Aquí puedes agregar contenido sobre planetas, órbitas o datos astronómicos.")
+elif st.session_state.pagina == "Pantalla 1":
+    st.header("🪐 Pantalla 1")
+    st.write("Contenido sobre planetas, órbitas o datos astronómicos.")
 
-elif pagina == "✨ Pantalla 2":
-    st.header("✨ Simulaciones y Datos Interactivos")
-    st.write("Espacio para animaciones o datos del cosmos.")
+elif st.session_state.pagina == "Pantalla 2":
+    st.header("✨ Pantalla 2")
+    st.write("Simulaciones o animaciones del cosmos.")
