@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit.components.v1 as components  # Para iframe del modelo 3D
+import streamlit.components.v1 as components
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
@@ -16,6 +16,10 @@ section[data-testid="stSidebar"] {
     background-color: #11112b;
     border-radius: 20px;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Esto empuja los botones del footer abajo */
+    height: 100vh;
 }
 
 /* Título lateral */
@@ -67,14 +71,19 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# Botones del menú
+# --- Secciones principales arriba ---
 st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
+
+# --- Espaciador flexible para empujar botones abajo ---
+st.sidebar.markdown("<div style='flex-grow:1'></div>", unsafe_allow_html=True)
+
+# --- Secciones de abajo ---
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
 st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
 
-# --- CONTENIDO SEGÚN LA PÁGINA ---
+# --- CONTENIDO ---
 if st.session_state.pagina == "Home":
     st.title("🏠 Home")
     st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
@@ -94,7 +103,6 @@ elif st.session_state.pagina == "Materiales":
 elif st.session_state.pagina == "Especificaciones":
     st.header("⚙️ Especificaciones")
     st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
-    # Modelo 3D iframe
     viewer_url = "https://learouse.github.io/prototipo/"
     components.iframe(viewer_url, height=600, width="100%", scrolling=True)
 
