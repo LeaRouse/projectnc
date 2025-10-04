@@ -11,6 +11,11 @@ st.set_page_config(
 # --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
+/* Fondo principal */
+.stApp {
+    background-color: #0a0a1a; /* azul muy oscuro / negro espacial */
+}
+
 /* Barra lateral */
 section[data-testid="stSidebar"] {
     background-color: #1a1a2e; /* azul oscuro profesional */
