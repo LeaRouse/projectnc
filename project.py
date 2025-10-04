@@ -22,9 +22,7 @@ section[data-testid="stSidebar"] {
     background-color: #1c1c1c !important; /* gris oscuro */
     border-radius: 20px;
     padding: 20px;
-    position: relative;
     height: 100vh;
-    overflow: visible !important;
 }
 
 /* Ocultar botón de colapso */
@@ -36,7 +34,7 @@ button[title="Collapse"] {
 .sidebar-title {
     font-size: 24px;
     font-weight: bold;
-    color: #e0e0e0; /* gris claro */
+    color: #e0e0e0; 
     text-align: center;
     margin-bottom: 25px;
 }
@@ -51,7 +49,7 @@ button[title="Collapse"] {
     border: none;
     font-weight: bold;
     color: #d0d0d0;
-    background-color: #2a2a2a; /* gris medio oscuro */
+    background-color: #2a2a2a;
     transition: 0.2s;
     text-align: left;
     cursor: pointer;
@@ -59,14 +57,36 @@ button[title="Collapse"] {
 
 /* Hover */
 .stButton>button:hover {
-    background-color: #3a3a3a; /* un poco más claro al pasar el mouse */
+    background-color: #3a3a3a;
     color: #ffffff;
     transform: scale(1.02);
 }
 
 /* Textos principales */
 h1, h2, h3, h4, p, span {
-    color: #d0d0d0 !important; /* gris claro */
+    color: #d0d0d0 !important;
+}
+
+/* Encabezado premium */
+.encabezado {
+    background: linear-gradient(90deg, #222222, #3a3a3a); /* gradiente elegante */
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+    box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
+}
+
+.encabezado h1 {
+    font-size: 50px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.encabezado p {
+    font-size: 20px;
+    color: #aaaaaa; /* subtitulo suave */
+    margin-top: 0;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -81,16 +101,23 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# Botones del menú
+# Botones
 st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
 st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
 
+# --- Encabezado premium ---
+st.markdown("""
+<div class="encabezado">
+    <h1>AstroCycle 🌌</h1>
+    <p>Explora el universo desde tu escritorio de manera profesional y elegante</p>
+</div>
+""", unsafe_allow_html=True)
+
 # --- Contenido según página ---
 if st.session_state.pagina == "Home":
-    st.title("🏠 Home")
     st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
     st.image(
         "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
