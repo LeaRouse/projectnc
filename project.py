@@ -2,7 +2,7 @@ import streamlit as st
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
-    page_title="AstroCycle 🌠",
+    page_title="AstroCycle 🌌",
     page_icon="🪐",
     layout="wide"
 )
@@ -10,107 +10,85 @@ st.set_page_config(
 # --- ESTILOS PERSONALIZADOS ---
 st.markdown("""
     <style>
-    /* Fondo con degradado espacial */
+    /* Fondo principal */
     .stApp {
-        background: radial-gradient(circle at top left, #090b1a, #04030c 70%);
-        color: #dbe4ff;
-        font-family: 'Segoe UI', sans-serif;
+        background-color: #090a1a;
+        color: #e0f7ff;
     }
 
-    /* Sidebar moderna */
+    /* Barra lateral */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #12132b 0%, #0b0c1d 100%);
-        border-right: 2px solid #26284a;
-        border-radius: 0 20px 20px 0;
-        padding-top: 40px;
+        background-color: #0e1233;
+        border-radius: 20px;
+        padding-top: 25px;
+        padding-left: 10px;
+        padding-right: 10px;
         box-shadow: 0 0 15px rgba(0,0,0,0.4);
     }
 
     /* Título del menú */
     .sidebar-title {
-        font-size: 25px;
-        font-weight: bold;
-        color: #8be9fd;
+        font-size: 24px;
+        font-weight: 700;
+        color: #00eaff;
         text-align: center;
-        margin-bottom: 25px;
-        text-shadow: 0 0 8px #00fff2;
+        margin-bottom: 30px;
     }
 
-    /* Botones personalizados */
+    /* Botones del menú */
     div[data-testid="stSidebar"] button {
-        background: linear-gradient(90deg, #232651 0%, #1b1e3a 100%) !important;
-        color: #b8cfff !important;
-        border: 1px solid #30345c !important;
+        background-color: #1a1e4a !important;
+        color: #e0f7ff !important;
+        border: 1px solid #00eaff !important;
         border-radius: 10px !important;
-        font-size: 15px !important;
-        font-weight: bold !important;
-        margin: 5px 0 12px 0 !important;
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        margin-bottom: 10px !important;
         width: 100% !important;
-        transition: all 0.25s ease-in-out;
+        transition: all 0.3s ease-in-out;
     }
 
-    /* Hover con brillo */
+    /* Hover */
     div[data-testid="stSidebar"] button:hover {
-        background: linear-gradient(90deg, #3a46b0, #1b6dc1) !important;
-        color: white !important;
-        box-shadow: 0 0 12px #1b6dc1 !important;
-        transform: scale(1.04);
+        background-color: #00eaff !important;
+        color: #0a0a1a !important;
+        transform: scale(1.05);
     }
 
     /* Títulos principales */
-    h1, h2, h3, h4, h5, h6 {
-        color: #9fc9ff !important;
-        text-shadow: 0 0 10px rgba(31, 92, 255, 0.5);
+    h1, h2, h3, h4 {
+        color: #00eaff;
     }
 
-    p {
-        color: #d7e2ff !important;
-        font-size: 16px;
-    }
-
-    /* Imagen centrada con sombra */
-    .stImage > img {
-        border-radius: 15px;
-        box-shadow: 0 0 30px rgba(0, 153, 255, 0.25);
+    /* Texto general */
+    p, span {
+        color: #e0f7ff;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- MENÚ LATERAL ---
+# --- MENÚ LATERAL FIJO (usando radio) ---
 st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
 
-# --- Lógica de navegación ---
-pagina = None
-if st.sidebar.button("🏠 Inicio"):
-    pagina = "Inicio"
-elif st.sidebar.button("🪐 Sistema Solar"):
-    pagina = "Sistema Solar"
-elif st.sidebar.button("✨ Galaxias"):
-    pagina = "Galaxias"
-else:
-    pagina = "Inicio"
+pagina = st.sidebar.radio(
+    "Navegación",
+    ["🏠 Inicio", "🪐 Pantalla 1", "✨ Pantalla 2"],
+    label_visibility="collapsed"
+)
 
-# --- CONTENIDO ---
-if pagina == "Inicio":
+# --- CONTENIDO SEGÚN LA PÁGINA ---
+if pagina == "🏠 Inicio":
     st.title("🌌 Bienvenido a AstroCycle")
-    st.write("Explora el universo con una interfaz limpia, moderna y llena de energía cósmica 💫.")
+    st.write("Explora el universo desde tu pantalla con un diseño moderno y elegante.")
     st.image(
-        "https://cdn.spacetelescope.org/archives/images/wallpaper2/heic1509a.jpg",
+        "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
         use_container_width=True
     )
 
-elif pagina == "Sistema Solar":
-    st.header("🪐 El Sistema Solar")
-    st.write("Descubre los planetas, sus lunas y las maravillas que orbitan nuestra estrella más cercana.")
-    st.image(
-        "https://cdn.mos.cms.futurecdn.net/LWeQrhMqQ3eQrLKjL4UKhR-1200-80.jpg",
-        use_container_width=True
-    )
+elif pagina == "🪐 Pantalla 1":
+    st.header("🪐 Planetas y Órbitas")
+    st.write("Aquí puedes agregar contenido sobre planetas, órbitas o datos astronómicos.")
 
-elif pagina == "Galaxias":
-    st.header("✨ Galaxias y más allá")
-    st.write("Viaja más lejos: explora las nebulosas, cúmulos y las estructuras más colosales del universo.")
-    st.image(
-        "https://cdn.spacetelescope.org/archives/images/wallpaper2/potw2024a.jpg",
-        use_container_width=True
-    )
+elif pagina == "✨ Pantalla 2":
+    st.header("✨ Simulaciones y Datos Interactivos")
+    st.write("Espacio para animaciones o datos del cosmos.")
