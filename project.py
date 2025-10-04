@@ -22,7 +22,9 @@ section[data-testid="stSidebar"] {
     background-color: #1c1c1c !important; /* gris oscuro */
     border-radius: 20px;
     padding: 20px;
+    position: relative;
     height: 100vh;
+    overflow: visible !important;
 }
 
 /* Ocultar botón de colapso */
@@ -62,34 +64,35 @@ button[title="Collapse"] {
     transform: scale(1.02);
 }
 
+/* Encabezado tipo navbar */
+.encabezado-navbar {
+    width: 100%;
+    background-color: #1a1a1a; /* gris muy oscuro */
+    color: #d0d0d0;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 2px solid #2a2a2a;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+
+/* Ajustar contenido para no tapar el navbar */
+.main > div:first-child {
+    margin-top: 50px; /* espacio igual a la altura del navbar */
+}
+
 /* Textos principales */
 h1, h2, h3, h4, p, span {
     color: #d0d0d0 !important;
 }
-
-/* Encabezado premium */
-.encabezado {
-    background: linear-gradient(90deg, #222222, #3a3a3a); /* gradiente elegante */
-    padding: 30px;
-    border-radius: 20px;
-    text-align: center;
-    margin-bottom: 25px;
-    box-shadow: 0px 0px 15px rgba(0,0,0,0.5);
-}
-
-.encabezado h1 {
-    font-size: 50px;
-    font-weight: 800;
-    margin-bottom: 10px;
-}
-
-.encabezado p {
-    font-size: 20px;
-    color: #aaaaaa; /* subtitulo suave */
-    margin-top: 0;
-}
 </style>
 """, unsafe_allow_html=True)
+
+# --- Encabezado fijo tipo navbar ---
+st.markdown('<div class="encabezado-navbar">🌌 AstroCycle - Explora el universo profesionalmente</div>', unsafe_allow_html=True)
 
 # --- Menú lateral ---
 st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
@@ -108,16 +111,9 @@ st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales"
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
 st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
 
-# --- Encabezado premium ---
-st.markdown("""
-<div class="encabezado">
-    <h1>AstroCycle 🌌</h1>
-    <p>Explora el universo desde tu escritorio de manera profesional y elegante</p>
-</div>
-""", unsafe_allow_html=True)
-
 # --- Contenido según página ---
 if st.session_state.pagina == "Home":
+    st.title("🏠 Home")
     st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
     st.image(
         "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
