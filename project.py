@@ -16,7 +16,7 @@ section[data-testid="stSidebar"] {
     background-color: #11112b;
     border-radius: 20px;
     padding: 20px;
-    position: relative; /* Para poder colocar botones absolutos abajo */
+    position: relative;
     height: 100vh;
 }
 
@@ -52,10 +52,10 @@ section[data-testid="stSidebar"] {
     transform: scale(1.02);
 }
 
-/* Botones abajo */
+/* Botones abajo con espacio extra */
 .sidebar-footer {
     position: absolute;
-    bottom: 20px;
+    bottom: 120px;  /* ajusta este valor para mover más abajo o arriba */
     left: 20px;
     right: 20px;
 }
