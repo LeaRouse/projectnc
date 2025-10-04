@@ -58,17 +58,6 @@ button[title="Collapse"] {
     transform: scale(1.02);
 }
 
-/* Botones de abajo */
-.sidebar-footer {
-    position: absolute;
-    bottom: 50px;   /* ajusta para mover más abajo si quieres */
-    left: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;       /* distancia uniforme también para botones de abajo */
-}
-
 /* Títulos y textos principales */
 h1, h2, h3, h4, p, span {
     color: #d0e7ff;
@@ -86,16 +75,12 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# --- Botones principales arriba ---
+# --- Todos los botones alineados y con la misma distancia ---
 st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
-
-# --- Botones abajo (footer) ---
-st.sidebar.markdown('<div class="sidebar-footer">', unsafe_allow_html=True)
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
 st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
-st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 # --- CONTENIDO ---
 if st.session_state.pagina == "Home":
