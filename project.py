@@ -91,4 +91,4 @@ elif st.session_state.pagina == "Modelo 3D":
 
     # --- Inserta el modelo .glb usando iframe desde GitHub Pages ---
     viewer_url = "https://learouse.github.io/prototipo/"
-    components.iframe(viewer_url, height=600, width=100%, scrolling=True)
+    components.iframe(viewer_url, height=600, width="100%", scrolling=True)
