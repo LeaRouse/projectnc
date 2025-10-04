@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit.components.v1 as components  # Para iframe del modelo 3D
+import streamlit.components.v1 as components  # Para mostrar el modelo 3D
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
@@ -75,7 +75,7 @@ st.sidebar.button("✨ Modelo 3D", on_click=cambiar_pagina, args=("Modelo 3D",))
 # --- CONTENIDO SEGÚN LA PÁGINA ---
 if st.session_state.pagina == "Inicio":
     st.title("🌌 Bienvenido a AstroCycle")
-    #st.write("Explora el universo con estilo moderno y elegante.")
+    st.write("Explora el universo con estilo moderno y elegante.")
     st.image(
         "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
         use_container_width=True
@@ -83,17 +83,17 @@ if st.session_state.pagina == "Inicio":
 
 elif st.session_state.pagina == "Sistema Solar":
     st.header("🪐 Sistema Solar")
-    #st.write("Aquí puedes agregar contenido sobre planetas, órbitas o datos astronómicos.")
+    st.write("Aquí puedes agregar contenido sobre planetas, órbitas o datos astronómicos.")
 
 elif st.session_state.pagina == "Modelo 3D":
     st.header("✨ Rover Prototipo 3D")
-    #st.write("Puedes rotar, hacer zoom y explorar el modelo 3D.")
+    st.write("Puedes rotar, hacer zoom y explorar el modelo 3D interactivo.")
 
     # --- Inserta el modelo .glb usando iframe ---
-    # Opción 1: si subes el .glb a un sitio público (GitHub raw, Google Drive, etc.)
+    # Cambia <tu-usuario> y <tu-repo> por tu GitHub
     glb_url = "https://raw.githubusercontent.com/<tu-usuario>/<tu-repo>/main/Rover_prototipo1.glb"
 
-    # Usamos el visor oficial de glTF en línea
+    # Visor glTF oficial en línea
     viewer_url = f"https://gltf-viewer.donmccurdy.com/?model={glb_url}"
 
     components.iframe(viewer_url, height=500, scrolling=True)
