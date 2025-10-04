@@ -1,33 +1,29 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
     page_title="AstroCycle 🌌",
     page_icon="🪐",
     layout="wide"
 )
 
-# --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
 /* Fondo principal completo */
-.stApp, .main, .block-container, .css-1d391kg {
-    background-color: #0a0a1a !important; /* azul muy oscuro / negro espacial */
-    color: #a0c4ff;
+.stApp, .css-18e3th9, .css-1d391kg, .block-container {
+    background-color: #0a0a1a !important;
+    color: #a0c4ff !important;
 }
 
 /* Barra lateral */
 section[data-testid="stSidebar"] {
-    background-color: #1a1a2e; /* azul oscuro profesional */
+    background-color: #1a1a2e !important;
     border-radius: 20px;
     padding: 20px;
-    position: relative;
     height: 100vh;
-    overflow: visible !important;
 }
 
-/* Ocultar el botón de colapso/expandir */
+/* Ocultar botón de colapso */
 button[title="Collapse"] {
     display: none;
 }
@@ -36,13 +32,13 @@ button[title="Collapse"] {
 .sidebar-title {
     font-size: 24px;
     font-weight: bold;
-    color: #a0c4ff; /* azul claro para contraste suave */
+    color: #a0c4ff;
     text-align: center;
     margin-bottom: 25px;
 }
 
 /* Botones del menú: todos iguales */
-.stButton > button {
+.stButton>button {
     display: block;
     width: 100%;
     margin-bottom: 15px;
@@ -58,7 +54,7 @@ button[title="Collapse"] {
 }
 
 /* Hover */
-.stButton > button:hover {
+.stButton>button:hover {
     background-color: #3a3a5c;
     color: #ffffff;
     transform: scale(1.02);
@@ -71,24 +67,23 @@ h1, h2, h3, h4, p, span {
 </style>
 """, unsafe_allow_html=True)
 
-# --- TÍTULO DEL MENÚ ---
+# --- Menú lateral ---
 st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
 
-# --- NAVEGACIÓN ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = 'Home'
 
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# --- Botones ---
+# Botones
 st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
 st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
 
-# --- CONTENIDO ---
+# --- Contenido ---
 if st.session_state.pagina == "Home":
     st.title("🏠 Home")
     st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
