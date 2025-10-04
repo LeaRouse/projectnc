@@ -16,9 +16,7 @@ section[data-testid="stSidebar"] {
     background-color: #11112b;
     border-radius: 20px;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; /* Esto empuja los botones del footer abajo */
+    position: relative; /* Para poder colocar botones absolutos abajo */
     height: 100vh;
 }
 
@@ -54,6 +52,14 @@ section[data-testid="stSidebar"] {
     transform: scale(1.02);
 }
 
+/* Botones abajo */
+.sidebar-footer {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+}
+
 /* Títulos y textos principales */
 h1, h2, h3, h4, p, span {
     color: #d0e7ff;
@@ -76,12 +82,11 @@ st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 
-# --- Espaciador flexible para empujar botones abajo ---
-st.sidebar.markdown("<div style='flex-grow:1'></div>", unsafe_allow_html=True)
-
 # --- Secciones de abajo ---
+st.sidebar.markdown('<div class="sidebar-footer">', unsafe_allow_html=True)
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
 st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
+st.sidebar.markdown('</div>', unsafe_allow_html=True)
 
 # --- CONTENIDO ---
 if st.session_state.pagina == "Home":
