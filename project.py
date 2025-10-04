@@ -2,23 +2,27 @@ import streamlit as st
 
 st.set_page_config(page_title="AstroCycle", layout="wide")
 
-# --- CSS para barra lateral moderna ---
+# --- CSS personalizado ---
 st.markdown("""
 <style>
+/* Barra lateral */
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0e1233, #0a0a1a);
+    background-color: #11112b; /* barra lateral oscura */
     border-radius: 20px;
     padding: 20px;
 }
+
+/* Título del menú */
 .sidebar-title {
     font-size: 24px;
     font-weight: bold;
-    color: #00eaff;
+    color: #99ccff;
     text-align: center;
     margin-bottom: 25px;
-    text-shadow: 0 0 8px #00eaff;
 }
-.custom-btn {
+
+/* Botones del menú */
+.stButton > button {
     display: block;
     width: 100%;
     margin-bottom: 12px;
@@ -26,16 +30,18 @@ section[data-testid="stSidebar"] {
     border-radius: 12px;
     border: none;
     font-weight: bold;
-    color: #e0f7ff;
-    background-color: #1a1e4a;
+    color: #d0e7ff;
+    background-color: #1a1a3f; /* botón ligeramente más claro que barra */
     transition: 0.2s;
     text-align: left;
     cursor: pointer;
 }
-.custom-btn:hover {
-    background-color: #00eaff;
-    color: #0a0a1a;
-    transform: scale(1.03);
+
+/* Hover */
+.stButton > button:hover {
+    background-color: #2a2a55; /* sutil más claro al pasar cursor */
+    color: #ffffff;
+    transform: scale(1.02);
 }
 </style>
 """, unsafe_allow_html=True)
@@ -43,7 +49,7 @@ section[data-testid="stSidebar"] {
 # --- Título ---
 st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
 
-# --- Lógica del menú con botones ---
+# --- Lógica del menú con botones usando session_state ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = 'Inicio'
 
