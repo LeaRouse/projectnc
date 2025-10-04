@@ -4,69 +4,84 @@ import streamlit as st
 st.set_page_config(
     page_title="AstroCycle 🌌",
     page_icon="🪐",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 # --- ESTILOS PERSONALIZADOS ---
 st.markdown("""
     <style>
-    /* Fondo del cuerpo principal */
-    [data-testid="stAppViewContainer"] {
+    /* Fondo principal */
+    .stApp {
         background-color: #0a0a1a;
     }
 
-    /* Fondo de la barra lateral */
-    [data-testid="stSidebar"] {
+    /* Estilo de la barra lateral */
+    section[data-testid="stSidebar"] {
         background-color: #111133;
+        border-radius: 20px;
+        padding-top: 30px;
     }
 
-    /* Color de texto general */
-    html, body, [class*="st-"] {
-        color: #03dffc !important;
-        font-family: 'Arial', sans-serif;
-    }
-
-    /* Colores de títulos */
-    h1, h2, h3, h4, h5, h6 {
-        color: #03dffc !important;
+    /* Título del menú */
+    .sidebar-title {
+        font-size: 24px;
         font-weight: bold;
+        color: #03dffc;
+        text-align: center;
+        margin-bottom: 20px;
     }
 
-    /* Quita la barra blanca superior */
-    header {visibility: hidden;}
+    /* Botones personalizados */
+    div[data-testid="stSidebar"] button {
+        background-color: #1a1a3d !important;
+        color: #03dffc !important;
+        border: none !important;
+        border-radius: 12px !important;
+        font-size: 16px !important;
+        font-weight: bold !important;
+        margin-bottom: 10px !important;
+        width: 100% !important;
+        transition: 0.2s ease-in-out;
+    }
+
+    /* Efecto hover */
+    div[data-testid="stSidebar"] button:hover {
+        background-color: #03dffc !important;
+        color: #0a0a1a !important;
+        transform: scale(1.03);
+    }
+
+    /* Textos principales */
+    h1, h2, h3, h4, p {
+        color: #03dffc;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # --- MENÚ LATERAL ---
-st.sidebar.title("🌠 AstroCycle")
-opcion = st.sidebar.radio("Navegación", ["Inicio", "Pantalla 1", "Pantalla 2"])
+st.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
 
-# --- FUNCIONES DE CONTENIDO ---
-def mostrar_inicio():
-    st.title("Bienvenido a AstroCycle 🌌")
-    st.write("Explora el universo desde tu pantalla.")
-    # Si quieres una imagen de fondo espacial:
-    # st.image("ASA-HS201427a-HubbleUltraDeepField2014-20140603.jpg", use_container_width=True)
+# --- Lógica del menú (botones) ---
+pagina = None
+if st.sidebar.button("🏠 Inicio"):
+    pagina = "Inicio"
+elif st.sidebar.button("🪐 Pantalla 1"):
+    pagina = "Pantalla 1"
+elif st.sidebar.button("✨ Pantalla 2"):
+    pagina = "Pantalla 2"
+else:
+    pagina = "Inicio"
 
-def mostrar1():
-    st.header("Pantalla 1")
-    st.write("🪐 Aquí va el contenido de la pantalla 1")
+# --- CONTENIDO SEGÚN LA PÁGINA ---
+if pagina == "Inicio":
+    st.title("🌌 Bienvenido a AstroCycle")
+    st.write("Explora el universo desde tu pantalla con un diseño moderno y elegante.")
+    st.image("https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg", use_container_width=True)
 
-def mostrar2():
-    st.header("Pantalla 2")
-    st.write("✨ Aquí va el contenido de la pantalla 2")
+elif pagina == "Pantalla 1":
+    st.header("🪐 Pantalla 1")
+    st.write("Aquí puedes agregar contenido sobre planetas, órbitas o datos astronómicos.")
 
-# --- MOSTRAR CONTENIDO SEGÚN LA OPCIÓN ---
-if opcion == "Inicio":
-    mostrar_inicio()
-elif opcion == "Pantalla 1":
-    mostrar1()
-elif opcion == "Pantalla 2":
-    mostrar2()
-
-
-
-
-
-
+elif pagina == "Pantalla 2":
+    st.header("✨ Pantalla 2")
+    st.write("Espacio para simulaciones, animaciones o datos interactivos del cosmos.")
