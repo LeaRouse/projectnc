@@ -11,9 +11,10 @@ st.set_page_config(
 # --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
-/* Fondo principal */
-.stApp {
-    background-color: #0a0a1a; /* azul muy oscuro / negro espacial */
+/* Fondo principal completo */
+.stApp, .main, .block-container, .css-1d391kg {
+    background-color: #0a0a1a !important; /* azul muy oscuro / negro espacial */
+    color: #a0c4ff;
 }
 
 /* Barra lateral */
@@ -44,28 +45,28 @@ button[title="Collapse"] {
 .stButton > button {
     display: block;
     width: 100%;
-    margin-bottom: 15px;      /* distancia uniforme entre todos */
-    padding: 12px;             /* altura uniforme */
+    margin-bottom: 15px;
+    padding: 12px;
     border-radius: 12px;
     border: none;
     font-weight: bold;
-    color: #cfd9e0;            /* gris claro para texto */
-    background-color: #2b2b44; /* azul grisáceo oscuro */
+    color: #cfd9e0;
+    background-color: #2b2b44;
     transition: 0.2s;
     text-align: left;
     cursor: pointer;
 }
 
-/* Hover: cambio suave */
+/* Hover */
 .stButton > button:hover {
-    background-color: #3a3a5c; /* ligeramente más claro */
+    background-color: #3a3a5c;
     color: #ffffff;
     transform: scale(1.02);
 }
 
-/* Títulos y textos principales */
+/* Textos principales */
 h1, h2, h3, h4, p, span {
-    color: #a0c4ff; /* azul claro profesional */
+    color: #a0c4ff !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -80,7 +81,7 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# --- Todos los botones alineados y con la misma distancia ---
+# --- Botones ---
 st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
