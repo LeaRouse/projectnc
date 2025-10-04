@@ -13,7 +13,7 @@ st.set_page_config(
 st.markdown("""
     <style>
     .main {
-        background-color: #0a0a1a;
+        background-color: #110a1a ;
         #color: #03dffc;
     }
     h1, h2, h3, h4, h5, h6, p {
@@ -50,4 +50,5 @@ elif opcion == "Pantalla 1":
     mostrar1()
 elif opcion == "Pantalla 2":
     mostrar2()
+
 
