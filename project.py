@@ -1,18 +1,24 @@
 import streamlit as st
+from streamlit_3dviewer import st_3dviewer
 
-st.set_page_config(page_title="AstroCycle", layout="wide")
+# --- CONFIGURACIÓN DE PÁGINA ---
+st.set_page_config(
+    page_title="AstroCycle 🌌",
+    page_icon="🪐",
+    layout="wide"
+)
 
-# --- CSS personalizado ---
+# --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
 /* Barra lateral */
 section[data-testid="stSidebar"] {
-    background-color: #11112b; /* barra lateral oscura */
+    background-color: #11112b;
     border-radius: 20px;
     padding: 20px;
 }
 
-/* Título del menú */
+/* Título lateral */
 .sidebar-title {
     font-size: 24px;
     font-weight: bold;
@@ -31,7 +37,7 @@ section[data-testid="stSidebar"] {
     border: none;
     font-weight: bold;
     color: #d0e7ff;
-    background-color: #1a1a3f; /* botón ligeramente más claro que barra */
+    background-color: #1a1a3f;
     transition: 0.2s;
     text-align: left;
     cursor: pointer;
@@ -39,38 +45,52 @@ section[data-testid="stSidebar"] {
 
 /* Hover */
 .stButton > button:hover {
-    background-color: #2a2a55; /* sutil más claro al pasar cursor */
+    background-color: #2a2a55;
     color: #ffffff;
     transform: scale(1.02);
+}
+
+/* Títulos y textos principales */
+h1, h2, h3, h4, p, span {
+    color: #d0e7ff;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# --- Título ---
+# --- TÍTULO DEL MENÚ ---
 st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
 
-# --- Lógica del menú con botones usando session_state ---
+# --- NAVEGACIÓN ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = 'Inicio'
 
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# Botones de menú
-st.sidebar.button("🏠 Inicio", key="btn_inicio", on_click=cambiar_pagina, args=("Inicio",))
-st.sidebar.button("🪐 Pantalla 1", key="btn_1", on_click=cambiar_pagina, args=("Pantalla 1",))
-st.sidebar.button("✨ Pantalla 2", key="btn_2", on_click=cambiar_pagina, args=("Pantalla 2",))
+# Botones del menú
+st.sidebar.button("🏠 Inicio", on_click=cambiar_pagina, args=("Inicio",))
+st.sidebar.button("🪐 Sistema Solar", on_click=cambiar_pagina, args=("Sistema Solar",))
+st.sidebar.button("✨ Modelo 3D", on_click=cambiar_pagina, args=("Modelo 3D",))
 
-# --- Contenido según la página ---
+# --- CONTENIDO SEGÚN LA PÁGINA ---
 if st.session_state.pagina == "Inicio":
     st.title("🌌 Bienvenido a AstroCycle")
-    #st.write("Explora el universo con estilo moderno y elegante.")
+    st.write("Explora el universo con estilo moderno y elegante.")
+    st.image(
+        "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
+        use_container_width=True
+    )
 
-elif st.session_state.pagina == "Pantalla 1":
-    st.header("🪐 Pantalla 1")
-    #st.write("Contenido sobre planetas, órbitas o datos astronómicos.")
+elif st.session_state.pagina == "Sistema Solar":
+    st.header("🪐 Sistema Solar")
+    st.write("Aquí puedes agregar contenido sobre planetas, órbitas o datos astronómicos.")
 
-elif st.session_state.pagina == "Pantalla 2":
-    st.header("✨ Pantalla 2")
-    #st.write("Simulaciones o animaciones del cosmos.")
-
+elif st.session_state.pagina == "Modelo 3D":
+    st.header("✨ Rover Prototipo 3D")
+    st.write("Puedes rotar, hacer zoom y explorar el modelo 3D interactivo.")
+    st_3dviewer(
+        "Rover_prototipo1.glb", 
+        height=500, 
+        background_color="#0a0a1a", 
+        auto_rotate=True
+    )
