@@ -13,7 +13,7 @@ st.markdown("""
 <style>
 /* Barra lateral */
 section[data-testid="stSidebar"] {
-    background-color: #11112b;
+    background-color: #1a1a2e; /* azul oscuro profesional */
     border-radius: 20px;
     padding: 20px;
     position: relative;
@@ -30,7 +30,7 @@ button[title="Collapse"] {
 .sidebar-title {
     font-size: 24px;
     font-weight: bold;
-    color: #d0e7ff;
+    color: #a0c4ff; /* azul claro para contraste suave */
     text-align: center;
     margin-bottom: 25px;
 }
@@ -44,23 +44,23 @@ button[title="Collapse"] {
     border-radius: 12px;
     border: none;
     font-weight: bold;
-    color: #d0e7ff;
-    background-color: #1a1a3f; /* color base */
+    color: #cfd9e0;            /* gris claro para texto */
+    background-color: #2b2b44; /* azul grisáceo oscuro */
     transition: 0.2s;
     text-align: left;
     cursor: pointer;
 }
 
-/* Hover: cambio de color uniforme, sin contraste extremo */
+/* Hover: cambio suave */
 .stButton > button:hover {
-    background-color: #2a2a55; 
+    background-color: #3a3a5c; /* ligeramente más claro */
     color: #ffffff;
     transform: scale(1.02);
 }
 
 /* Títulos y textos principales */
 h1, h2, h3, h4, p, span {
-    color: #d0e7ff;
+    color: #a0c4ff; /* azul claro profesional */
 }
 </style>
 """, unsafe_allow_html=True)
