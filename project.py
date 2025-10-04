@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit.components.v1 as components  # Para mostrar el modelo 3D
+import streamlit.components.v1 as components  # Para iframe del modelo 3D
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
@@ -89,11 +89,6 @@ elif st.session_state.pagina == "Modelo 3D":
     st.header("✨ Rover Prototipo 3D")
     st.write("Puedes rotar, hacer zoom y explorar el modelo 3D interactivo.")
 
-    # --- Inserta el modelo .glb usando iframe ---
-    # Cambia <tu-usuario> y <tu-repo> por tu GitHub
-    glb_url = "https://raw.githubusercontent.com/<tu-usuario>/<tu-repo>/main/Rover_prototipo1.glb"
-
-    # Visor glTF oficial en línea
-    viewer_url = f"https://gltf-viewer.donmccurdy.com/?model={glb_url}"
-
-    components.iframe(viewer_url, height=500, scrolling=True)
+    # --- Inserta el modelo .glb usando iframe desde GitHub Pages ---
+    viewer_url = "https://learouse.github.io/prototipo/"
+    components.iframe(viewer_url, height=600, width=100%, scrolling=True)
