@@ -1,4 +1,4 @@
-import tkinter as tk
+import streamlit as tk
 
 # Ventana principal
 root = tk.Tk()
@@ -53,3 +53,4 @@ for texto, comando in botones:
 mostrar_inicio()
 
 root.mainloop()
+
