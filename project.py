@@ -64,12 +64,13 @@ st.sidebar.button("✨ Pantalla 2", key="btn_2", on_click=cambiar_pagina, args=(
 # --- Contenido según la página ---
 if st.session_state.pagina == "Inicio":
     st.title("🌌 Bienvenido a AstroCycle")
-    st.write("Explora el universo con estilo moderno y elegante.")
+    #st.write("Explora el universo con estilo moderno y elegante.")
 
 elif st.session_state.pagina == "Pantalla 1":
     st.header("🪐 Pantalla 1")
-    st.write("Contenido sobre planetas, órbitas o datos astronómicos.")
+    #st.write("Contenido sobre planetas, órbitas o datos astronómicos.")
 
 elif st.session_state.pagina == "Pantalla 2":
     st.header("✨ Pantalla 2")
-    st.write("Simulaciones o animaciones del cosmos.")
+    #st.write("Simulaciones o animaciones del cosmos.")
+
