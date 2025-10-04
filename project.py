@@ -105,3 +105,12 @@ elif pagina == "Sistema Solar":
     st.image(
         "https://cdn.mos.cms.futurecdn.net/LWeQrhMqQ3eQrLKjL4UKhR-1200-80.jpg",
         use_container_width=True
+    )
+
+elif pagina == "Galaxias":
+    st.header("✨ Galaxias y más allá")
+    st.write("Viaja más lejos: explora las nebulosas, cúmulos y las estructuras más colosales del universo.")
+    st.image(
+        "https://cdn.spacetelescope.org/archives/images/wallpaper2/potw2024a.jpg",
+        use_container_width=True
+    )
