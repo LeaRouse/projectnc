@@ -45,7 +45,7 @@ icon_spec  = img_data_uri("especificaciones.png")
 icon_conf  = img_data_uri("config.png")
 logo_data  = img_data_uri("logotipoastrocycle2.png")
 
-# --- CSS + línea divisoria + Transiciones (fade) ---
+# --- CSS + línea divisoria + Transiciones (fade-in / fade-out con solo CSS) ---
 st.markdown("""
 <style>
 /* ===== FONDO ===== */
@@ -78,14 +78,14 @@ video#bgvid {
     backdrop-filter: blur(2px);
 }
 
-/* ===== BOTONES FLOTANTES ===== */
+/* ===== BOTONES FLOTANTES (CAPA VISUAL) ===== */
 .icon-button {
     position: fixed;
     background: rgba(35,35,35,0.75);
     border: 2px solid rgba(255,255,255,0.25);
     cursor: pointer;
     transition: all 0.25s ease;
-    z-index: 5;
+    z-index: 5; /* la capa click va con z-index:7 */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -126,25 +126,36 @@ video#bgvid {
 #btn-spec { right: 25px; top: 80px; }
 #btn-config { right: 25px; bottom: 30px; }
 
+/* ===== CAPAS CLICK (ENLACES INVISIBLES SOBRE LA CAPA VISUAL) ===== */
+.link-overlay {
+    position: fixed;
+    z-index: 7;        /* por encima del botón visual */
+    display: block;
+    background: transparent;
+    border-radius: 22px; /* se ajusta en los redondos */
+    /* sin target -> misma pestaña */
+    text-decoration: none;
+}
+/* posiciones idénticas a los botones visuales */
+#link-home  { left:25px; top:12%;  width:180px; height:180px; border-radius:22px; }
+#link-craft { left:25px; top:41%;  width:180px; height:180px; border-radius:22px; }
+#link-mat   { left:25px; top:70%;  width:180px; height:180px; border-radius:22px; }
+#link-spec  { right:25px; top:80px; width:80px;  height:80px;  border-radius:50%; }
+#link-conf  { right:25px; bottom:30px; width:80px; height:80px; border-radius:50%; }
+
 /* ===== TRANSICIONES SUAVES DE PÁGINA ===== */
 #main-content {
   opacity: 0;
   transform: scale(0.995);
   animation: pageFadeIn .35s ease-out forwards;
 }
-html.leaving #main-content {
-  opacity: 0;
-  transform: scale(0.985);
-  transition: opacity .22s ease-in, transform .22s ease-in;
-}
 @keyframes pageFadeIn {
   from { opacity: 0; transform: scale(0.985); }
   to   { opacity: 1; transform: scale(1); }
 }
 @media (prefers-reduced-motion: reduce) {
-  #main-content, html.leaving #main-content {
+  #main-content {
     animation: none !important;
-    transition: none !important;
     transform: none !important;
   }
 }
@@ -175,13 +186,13 @@ except AttributeError:
 if page_param:
     st.session_state.pagina = page_param
 
-# Mantener la URL actualizada al estado
+# Mantener la URL actualizada al estado (útil para refrescos o compartir enlace)
 try:
     st.query_params["page"] = st.session_state.pagina
 except AttributeError:
     st.experimental_set_query_params(page=st.session_state.pagina)
 
-# --- BOTONES FLOTANTES (solo HTML; los clicks los maneja components.html más abajo) ---
+# --- CAPA VISUAL DE BOTONES (se ve) ---
 current = st.session_state.pagina
 
 st.markdown(f"""
@@ -204,47 +215,14 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# --- JS ROBUSTO: adjunta listeners a los botones (DOM principal) y navega con fade ---
-components.html("""
-<script>
-(function(){
-  function smoothGoto(page){
-    const root = window.parent.document.documentElement;
-    if (root) root.classList.add('leaving'); // activa fade-out
-    setTimeout(function(){
-      window.parent.location.search = '?page=' + encodeURIComponent(page); // misma pestaña
-    }, 180);
-  }
-
-  function attach(){
-    const map = {
-      'btn-home':  'Home',
-      'btn-craft': 'Craft',
-      'btn-mat':   'Materiales',
-      'btn-spec':  'Especificaciones',
-      'btn-config':'Configuracion'
-    };
-    const doc = window.parent.document || document;
-
-    Object.keys(map).forEach(function(id){
-      const el = doc.getElementById(id);
-      if (el && !el._astroBound){
-        el._astroBound = true;
-        el.addEventListener('click', function(ev){
-          ev.preventDefault();
-          ev.stopPropagation();
-          smoothGoto(map[id]);
-        }, true);
-      }
-    });
-  }
-
-  // intentar ahora y reintentar periódicamente (Streamlit re-renderiza el DOM)
-  attach();
-  const timer = setInterval(attach, 500);
-})();
-</script>
-""", height=0, width=0)
+# --- CAPA CLICKABLE: ENLACES INVISIBLES QUE CAMBIAN ?page=... (MISMA PESTAÑA) ---
+st.markdown("""
+<a id="link-home"  class="link-overlay" href="?page=Home"          aria-label="Home"></a>
+<a id="link-craft" class="link-overlay" href="?page=Craft"         aria-label="Craft"></a>
+<a id="link-mat"   class="link-overlay" href="?page=Materiales"    aria-label="Materiales"></a>
+<a id="link-spec"  class="link-overlay" href="?page=Especificaciones" aria-label="Especificaciones"></a>
+<a id="link-conf"  class="link-overlay" href="?page=Configuracion" aria-label="Configuración"></a>
+""", unsafe_allow_html=True)
 
 # --- CONTENIDO ---
 pagina = st.session_state.pagina
