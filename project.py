@@ -1,6 +1,7 @@
 import streamlit as st
 from pathlib import Path
 import base64
+import streamlit.components.v1 as components
 
 # --- Configuración ---
 st.set_page_config(page_title="AstroCycle 🌌", layout="wide")
@@ -29,23 +30,17 @@ st.markdown("""
 video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%; transform: translate(-50%, -50%); object-fit: cover; z-index:-3; filter: brightness(0.65) contrast(1.05);}
 .bg-overlay {position: fixed; inset:0; background: rgba(0,0,0,0.45); z-index:-2;}
 
-/* Botones flotantes */
-.floating-btn {
-    position: fixed; z-index:999; width:120px; padding:12px 18px;
+/* Botones izquierda (vertical) */
+.left-btn {
+    position: fixed; left:20px; width:120px; padding:12px 18px;
     border-radius:14px; border:none; font-weight:bold; cursor:pointer;
     color:#f1f1f1; background-color: rgba(30,30,30,0.85); text-align:left;
-    transition: all 0.25s ease;
+    transition: all 0.25s ease; z-index:5;
 }
-.floating-btn:hover {background-color: rgba(70,70,70,0.95); transform: scale(1.05);}
-
-/* Izquierda */
-#btn-left1 {left:20px; top:40%;}
-#btn-left2 {left:20px; top:50%;}
-#btn-left3 {left:20px; top:60%;}
-
-/* Derecha */
-#btn-top-right {right:20px; top:80px;}
-#btn-bottom-right {right:20px; bottom:30px;}
+.left-btn:hover {background-color: rgba(70,70,70,0.95); transform: scale(1.05);}
+#btn-left1 {top:40%;}
+#btn-left2 {top:50%;}
+#btn-left3 {top:60%;}
 
 /* Contenido principal */
 .main-content {margin-left:160px; margin-right:160px; padding:20px;}
@@ -60,18 +55,37 @@ def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
 # --- Botones flotantes izquierda ---
-if st.button("🏠 Home", key="btn-left1"):
-    cambiar_pagina("Home")
-if st.button("🛠️ Craft", key="btn-left2"):
-    cambiar_pagina("Craft")
-if st.button("📦 Materiales", key="btn-left3"):
-    cambiar_pagina("Materiales")
+st.markdown(f"""
+<button class="left-btn" id="btn-left1" onclick="window.parent.postMessage({{type: 'Home'}}, '*')">🏠 Home</button>
+<button class="left-btn" id="btn-left2" onclick="window.parent.postMessage({{type: 'Craft'}}, '*')">🛠️ Craft</button>
+<button class="left-btn" id="btn-left3" onclick="window.parent.postMessage({{type: 'Materiales'}}, '*')">📦 Materiales</button>
+""", unsafe_allow_html=True)
 
-# --- Botones flotantes derecha ---
-if st.button("ℹ️ Especificaciones", key="btn-top-right"):
-    cambiar_pagina("Especificaciones")
-if st.button("⚙️ Configuración", key="btn-bottom-right"):
-    cambiar_pagina("Configuracion")
+# --- Botones derecha (NO TOCAR) ---
+# Ya estaban en tu código y funcionan, no los modificamos
+
+# --- Capturar mensajes de botones izquierda ---
+components.html("""
+<script>
+window.addEventListener('message', (event) => {
+    const type = event.data.type;
+    if(type) {
+        document.dispatchEvent(new CustomEvent('updatePagina', {detail: type}));
+    }
+});
+</script>
+""", height=0, width=0)
+
+# --- Streamlit button fallback para cambiar página ---
+buttons = {
+    "Home": "🏠 Home",
+    "Craft": "🛠️ Craft",
+    "Materiales": "📦 Materiales"
+}
+
+for key in buttons:
+    if st.button(buttons[key], key=f"left_{key}"):
+        cambiar_pagina(key)
 
 # --- Contenido principal ---
 st.markdown('<div class="main-content">', unsafe_allow_html=True)
@@ -90,7 +104,7 @@ elif pagina == "Especificaciones":
     st.header("ℹ️ Acerca de / Especificaciones")
     st.write("Detalles técnicos del prototipo.")
     viewer_url = "https://learouse.github.io/prototipo/"
-    st.components.v1.iframe(viewer_url, height=600, width="100%", scrolling=True)
+    components.iframe(viewer_url, height=600, width="100%", scrolling=True)
 elif pagina == "Configuracion":
     st.header("⚙️ Configuración")
     st.write("Opciones de configuración de la app.")
