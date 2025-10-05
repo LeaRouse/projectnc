@@ -62,33 +62,42 @@ st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_a
 
 # --- NAVEGACIÓN ---
 if 'pagina' not in st.session_state:
-    st.session_state.pagina = 'Inicio'
+    st.session_state.pagina = 'Home'
 
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
 # Botones del menú
-st.sidebar.button("🏠 Inicio", on_click=cambiar_pagina, args=("Inicio",))
-st.sidebar.button("🪐 Sistema Solar", on_click=cambiar_pagina, args=("Sistema Solar",))
-st.sidebar.button("✨ Modelo 3D", on_click=cambiar_pagina, args=("Modelo 3D",))
+st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
+st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
+st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
+st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
+st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
 
 # --- CONTENIDO SEGÚN LA PÁGINA ---
-if st.session_state.pagina == "Inicio":
-    st.title("🌌 Bienvenido a AstroCycle")
-    st.write("Explora el universo con estilo moderno y elegante.")
+if st.session_state.pagina == "Home":
+    st.title("🏠 Home")
+    st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
     st.image(
         "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
         use_container_width=True
     )
 
-elif st.session_state.pagina == "Sistema Solar":
-    st.header("🪐 Sistema Solar")
-    st.write("Aquí puedes agregar contenido sobre planetas, órbitas o datos astronómicos.")
+elif st.session_state.pagina == "Craft":
+    st.header("🛠️ Craft")
+    st.write("Contenido relacionado a la construcción y fabricación.")
 
-elif st.session_state.pagina == "Modelo 3D":
-    st.header("✨ Rover Prototipo 3D")
-    st.write("Puedes rotar, hacer zoom y explorar el modelo 3D interactivo.")
+elif st.session_state.pagina == "Materiales":
+    st.header("📦 Materiales")
+    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
 
-    # --- Inserta el modelo .glb usando iframe desde GitHub Pages ---
+elif st.session_state.pagina == "Especificaciones":
+    st.header("⚙️ Especificaciones")
+    st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
+    # Modelo 3D iframe
     viewer_url = "https://learouse.github.io/prototipo/"
     components.iframe(viewer_url, height=600, width="100%", scrolling=True)
+
+elif st.session_state.pagina == "Configuracion":
+    st.header("🧩 Configuración")
+    st.write("Opciones de configuración de la app.")
