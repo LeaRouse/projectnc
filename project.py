@@ -1,7 +1,6 @@
 import streamlit as st
 from pathlib import Path
 import base64
-from mimetypes import guess_type
 
 # ---------------------------------------------------------------------------
 # CONFIG
@@ -11,15 +10,12 @@ st.set_page_config(page_title="AstroCycle 🌌", page_icon="🪐", layout="wide"
 # ---------------------------------------------------------------------------
 # UTILS
 # ---------------------------------------------------------------------------
-@st.cache_data(show_spinner=False)
 def img_data_uri(path_str: str) -> str:
     p = Path(path_str)
     if not p.exists():
         return ""
-    mime, _ = guess_type(p.name)
-    mime = mime or "image/png"
     b64 = base64.b64encode(p.read_bytes()).decode("utf-8")
-    return f"data:{mime};base64,{b64}"
+    return f"data:image/png;base64,{b64}"
 
 def bg_video_html():
     video = Path("video.mp4")
@@ -51,94 +47,88 @@ if "pagina" not in st.session_state:
     st.session_state.pagina = "Home"
 
 # ---------------------------------------------------------------------------
-# BACKGROUND + GLOBAL CSS
+# BACKGROUND + CSS
 # ---------------------------------------------------------------------------
 st.markdown(bg_video_html(), unsafe_allow_html=True)
 
 st.markdown("""
 <style>
-/* Fondo */
-html, body, [data-testid="stAppViewContainer"], .stApp {
-  background: transparent !important;
-  color: #d0d0d0 !important;
-}
-video#bgvid {
-  position: fixed; top:50%; left:50%;
-  min-width:100%; min-height:100%;
-  transform:translate(-50%, -50%);
-  object-fit:cover;
-  z-index:-3;
-  filter: brightness(0.65) contrast(1.05);
-}
+.stApp { background: transparent !important; color: #d0d0d0 !important; }
+video#bgvid { position: fixed; top:50%; left:50%; min-width:100%; min-height:100%; transform:translate(-50%, -50%); object-fit:cover; z-index:-3; filter: brightness(0.65) contrast(1.05); }
 .bg-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.45); z-index:-2; }
 
-/* Botones flotantes */
 .icon-button {
-  position: fixed;
-  background: rgba(35,35,35,0.75);
-  border: 2px solid rgba(255,255,255,0.25);
-  transition: transform .22s ease, border-color .22s ease, background .22s ease;
-  z-index: 5;
-  display: flex; justify-content: center; align-items: center;
-  overflow: hidden;
+  position: fixed; display:flex; justify-content:center; align-items:center;
+  overflow:hidden; cursor:pointer; transition: transform .2s ease;
+  z-index:5;
 }
-.icon-button:hover { background: rgba(255,255,255,0.08); transform: scale(1.05); border-color: rgba(255,255,255,0.6); }
-.icon-button img { width:100%; height:100%; object-fit:cover; border-radius:inherit; filter: brightness(0.93) contrast(1.05); transition: all .22s; }
-.icon-button:hover img { filter: brightness(1.05) contrast(1.1); }
+.icon-button:hover { transform: scale(1.05); }
 
-/* Tamaño y posición (izquierda: cuadrados) */
-#btn-home, #btn-craft, #btn-mat {
-  left: 25px; width:180px; height:180px; border-radius:22px;
-}
-#btn-home  { top:12%; }
-#btn-craft { top:41%; }
-#btn-mat   { top:70%; }
+.icon-button img { width:100%; height:100%; object-fit:cover; border-radius:inherit; }
 
-/* Derecha: círculos */
-#btn-spec, #btn-config {
-  border-radius:50%; width:80px; height:80px;
-}
-#btn-spec  { right:25px; top:80px; }
-#btn-config{ right:25px; bottom:30px; }
+#btn-home, #btn-craft, #btn-mat { left:25px; width:180px; height:180px; border-radius:22px; }
+#btn-home { top:12%; } #btn-craft { top:41%; } #btn-mat { top:70%; }
 
-/* Texto */
+#btn-spec, #btn-config { right:25px; border-radius:50%; width:80px; height:80px; }
+#btn-spec { top:80px; } #btn-config { bottom:30px; }
+
 h1,h2,h3,p,span { color:#d0d0d0 !important; }
 </style>
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------------
-# CAPA VISUAL DE BOTONES (solo íconos)
+# FUNCION PARA CREAR BOTONES HTML/JS
 # ---------------------------------------------------------------------------
-def img_or_placeholder(data_uri: str):
-    if data_uri:
-        return f'<img src="{data_uri}" />'
-    return '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#aaa;font:600 14px/1 sans-serif;">img</div>'
+def create_button_html(id_name, data_uri, target_page):
+    return f"""
+    <div id="{id_name}" class="icon-button" onclick="window.parent.postMessage({{'type':'{target_page}'}}, '*')">
+        <img src="{data_uri}" />
+    </div>
+    """
 
-st.markdown(f"""
-<div id="btn-home"   class="icon-button">{img_or_placeholder(icon_home)}</div>
-<div id="btn-craft"  class="icon-button">{img_or_placeholder(icon_craft)}</div>
-<div id="btn-mat"    class="icon-button">{img_or_placeholder(icon_mat)}</div>
-<div id="btn-spec"   class="icon-button">{img_or_placeholder(icon_spec)}</div>
-<div id="btn-config" class="icon-button">{img_or_placeholder(icon_conf)}</div>
-""", unsafe_allow_html=True)
+st.markdown(
+    create_button_html("btn-home", icon_home, "Home") +
+    create_button_html("btn-craft", icon_craft, "Craft") +
+    create_button_html("btn-mat", icon_mat, "Materiales") +
+    create_button_html("btn-spec", icon_spec, "Especificaciones") +
+    create_button_html("btn-config", icon_conf, "Configuracion"),
+    unsafe_allow_html=True
+)
 
 # ---------------------------------------------------------------------------
-# BOTONES NATIVOS INVISIBLES (solo clic funcional, sin mostrar texto)
+# JS para recibir clics
 # ---------------------------------------------------------------------------
-def nav_button(slot_id: str, target_page: str):
-    st.markdown(f'<div id="{slot_id}" style="position:fixed;">', unsafe_allow_html=True)
-    if st.button(" ", key=f"k_{slot_id}"):
-        st.session_state.pagina = target_page
-        st.experimental_rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+import streamlit.components.v1 as components
+components.html("""
+<script>
+window.addEventListener('message', (event) => {
+    const type = event.data.type;
+    if(type){
+        document.dispatchEvent(new CustomEvent('updatePagina',{detail:type}));
+    }
+});
+</script>
+""", height=0, width=0)
 
-# Izquierda
-nav_button("slot-home", "Home")
-nav_button("slot-craft", "Craft")
-nav_button("slot-mat", "Materiales")
-# Derecha
-nav_button("slot-spec", "Especificaciones")
-nav_button("slot-config", "Configuracion")
+# ---------------------------------------------------------------------------
+# Escuchar eventos
+# ---------------------------------------------------------------------------
+if 'last_event' not in st.session_state:
+    st.session_state.last_event = None
+
+# Captura de JS
+if st.session_state.last_event is None:
+    st.session_state.last_event = "Home"
+
+# Usando streamlit para capturar evento de JS
+# Esto funciona gracias al CustomEvent "updatePagina"
+from streamlit_js_eval import streamlit_js_eval
+pagina_js = streamlit_js_eval(
+    "document.addEventListener('updatePagina', e => {window.parent.postMessage(e.detail,'*');});",
+    key="js_eval"
+)
+if pagina_js:
+    st.session_state.pagina = pagina_js
 
 # ---------------------------------------------------------------------------
 # CONTENIDO DINÁMICO
@@ -148,29 +138,15 @@ pagina = st.session_state.pagina
 if pagina == "Home":
     st.markdown('<div style="position:fixed; left:260px; right:0; top:0; bottom:0; display:flex; justify-content:center; align-items:center; z-index:0;">', unsafe_allow_html=True)
     if logo_data:
-        st.markdown(f"""
-        <img src="{logo_data}" alt="AstroCycle Logo"
-             style="width:1000px; max-width:85vw; height:auto;
-                    filter: drop-shadow(0 0 35px rgba(255,255,255,0.35));" />
-        """, unsafe_allow_html=True)
-    else:
-        st.info("Sube **logotipoastrocycle2.png** a la carpeta del script.")
+        st.markdown(f'<img src="{logo_data}" style="width:1000px; max-width:85vw; height:auto; filter: drop-shadow(0 0 35px rgba(255,255,255,0.35));"/>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 elif pagina == "Craft":
     st.header("🛠️ Craft")
-    st.write("Sección de construcción y desarrollo del prototipo.")
-
 elif pagina == "Materiales":
     st.header("📦 Materiales")
-    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
-
 elif pagina == "Especificaciones":
     st.header("⚙️ Especificaciones")
-    st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
-    import streamlit.components.v1 as components
     components.iframe("https://learouse.github.io/prototipo/", height=600, width="100%", scrolling=True)
-
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
-    st.write("Opciones de configuración de la app.")
