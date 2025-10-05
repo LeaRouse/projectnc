@@ -1,6 +1,7 @@
 import streamlit as st
 from pathlib import Path
 import base64
+import streamlit.components.v1 as components
 
 # --- CONFIGURACIÓN ---
 st.set_page_config(page_title="AstroCycle 🌌", layout="wide")
@@ -44,18 +45,18 @@ section[data-testid="stSidebar"] {
 }
 .stButton>button:hover {background-color:#3a3a3a; color:#fff;}
 
+/* Contenido principal */
+.main-content {margin-left:240px; padding:20px;}
+
 /* Botones flotantes derecha */
 .floating-btn {
-    position: fixed; z-index: 10; width: 50px; height: 50px; border-radius: 25px;
+    position: fixed; z-index: 999; width: 50px; height: 50px; border-radius: 25px;
     border: none; font-size: 24px; cursor: pointer; color: #d0d0d0;
     background-color: rgba(42,42,42,0.85); transition: 0.2s;
 }
-.floating-btn:hover {background-color: #3a3a3a; color: #fff;}
+.floating-btn:hover {background-color: #3a3a3a; color:#fff;}
 #btn-about {top: 20px; right: 20px;}
 #btn-config {bottom: 20px; right: 20px;}
-
-/* Contenido principal */
-.main-content {margin-left:240px; padding:20px;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -66,6 +67,7 @@ if 'pagina' not in st.session_state:
 # --- Función para cambiar página ---
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
+    st.experimental_rerun()
 
 # --- Barra lateral ---
 st.sidebar.title("🌠 AstroCycle")
@@ -73,18 +75,33 @@ st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 
-# --- Botones flotantes derecha ---
-col_top = st.empty()
-with col_top:
-    if st.button("ℹ️", key="about_btn"):
-        cambiar_pagina("About")
+# --- Botones flotantes derecha (HTML + JS) ---
+components.html(f"""
+<script>
+const aboutBtn = document.createElement('button');
+aboutBtn.innerHTML = 'ℹ️';
+aboutBtn.className = 'floating-btn';
+aboutBtn.id = 'btn-about';
+aboutBtn.onclick = () => {{ window.parent.postMessage('About', '*'); }};
+document.body.appendChild(aboutBtn);
 
-col_bottom = st.empty()
-with col_bottom:
-    st.markdown('<div style="position: fixed; bottom:20px; right:20px;">', unsafe_allow_html=True)
-    if st.button("⚙️", key="config_btn"):
-        cambiar_pagina("Configuracion")
-    st.markdown('</div>', unsafe_allow_html=True)
+const configBtn = document.createElement('button');
+configBtn.innerHTML = '⚙️';
+configBtn.className = 'floating-btn';
+configBtn.id = 'btn-config';
+configBtn.onclick = () => {{ window.parent.postMessage('Configuracion', '*'); }};
+document.body.appendChild(configBtn);
+</script>
+""", height=0, width=0)
+
+# --- Listener de mensajes ---
+from streamlit_javascript import st_javascript
+msg = st_javascript("window.addEventListener('message', e => e.data, false)")
+if msg:
+    if msg == 'About':
+        cambiar_pagina('About')
+    elif msg == 'Configuracion':
+        cambiar_pagina('Configuracion')
 
 # --- Contenido principal ---
 st.markdown('<div class="main-content">', unsafe_allow_html=True)
