@@ -3,7 +3,7 @@ from pathlib import Path
 import base64
 import streamlit.components.v1 as components
 
-# --- Configuración ---
+# --- Configuración de página ---
 st.set_page_config(page_title="AstroCycle 🌌", layout="wide")
 
 # --- Video de fondo ---
@@ -31,6 +31,24 @@ video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%
 .bg-overlay {position: fixed; inset:0; background: rgba(0,0,0,0.45); z-index:-2;}
 .stButton>button {width:100%; margin-bottom:12px; padding:12px; border-radius:12px; background: rgba(30,30,30,0.85); color:#f1f1f1; font-weight:bold; border:none; transition:0.2s;}
 .stButton>button:hover {background: rgba(70,70,70,0.95);}
+
+/* Botones flotantes derecha */
+.floating-button {
+    position: fixed;
+    z-index: 5;
+    width: 140px;
+    padding: 12px;
+    border-radius: 14px;
+    border: none;
+    font-weight: bold;
+    color: #f1f1f1;
+    background-color: rgba(30,30,30,0.85);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+.floating-button:hover { background-color: rgba(70,70,70,0.95); transform: scale(1.05); }
+#btn-top-right { right: 20px; top: 80px; }
+#btn-bottom-right { right: 20px; bottom: 30px; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -50,22 +68,65 @@ with col_left:
     st.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
     st.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 
-# --- Botones derecha ---
-# Podemos mantenerlos flotantes con HTML
+# --- Botones derecha flotantes ---
 st.markdown(f"""
-<button style="position:fixed; right:20px; top:80px; z-index:5; width:140px; padding:12px; border-radius:14px; border:none; font-weight:bold; color:#f1f1f1; background-color: rgba(30,30,30,0.85);" onclick="window.location.reload();">⚙️ Especificaciones</button>
-<button style="position:fixed; right:20px; bottom:30px; z-index:5; width:140px; padding:12px; border-radius:14px; border:none; font-weight:bold; color:#f1f1f1; background-color: rgba(30,30,30,0.85);" onclick="window.location.reload();">🧩 Configuración</button>
+<button class="floating-button" id="btn-top-right" onclick="window.parent.postMessage({{type: 'Especificaciones'}}, '*')">⚙️ Especificaciones</button>
+<button class="floating-button" id="btn-bottom-right" onclick="window.parent.postMessage({{type: 'Configuracion'}}, '*')">🧩 Configuración</button>
 """, unsafe_allow_html=True)
+
+# --- Capturar los mensajes de los botones flotantes ---
+components.html("""
+<script>
+window.addEventListener('message', (event) => {
+    const type = event.data.type;
+    if (type) {
+        document.dispatchEvent(new CustomEvent('updatePagina', {detail: type}));
+    }
+});
+</script>
+""", height=0, width=0)
+
+# Detectar cambio usando los botones tradicionales de Streamlit
+buttons = {
+    "Home": "🏠 Home",
+    "Craft": "🛠️ Craft",
+    "Materiales": "📦 Materiales",
+    "Especificaciones": "⚙️ Especificaciones",
+    "Configuracion": "🧩 Configuración"
+}
+
+for key in buttons:
+    if st.button(buttons[key]):
+        cambiar_pagina(key)
 
 # --- Contenido dinámico en la columna derecha ---
 with col_right:
     pagina = st.session_state.pagina
+
     if pagina == "Home":
         st.title("🏠 Home")
         st.write("Bienvenido a **AstroCycle**. Explora todo desde aquí.")
+        # Imagen logotipo
+        IMG_FILE = Path("logotipoastrocycle.png")
+        if IMG_FILE.exists():
+            st.image(str(IMG_FILE), use_column_width=True, caption="Logotipo AstroCycle")
+        else:
+            st.warning("No se encontró logotipoastrocycle.png")
+            
     elif pagina == "Craft":
         st.header("🛠️ Craft")
         st.write("Sección de construcción y desarrollo del prototipo.")
+        
     elif pagina == "Materiales":
         st.header("📦 Materiales")
         st.write("Aquí se muestran los materiales utilizados y sus detalles.")
+        
+    elif pagina == "Especificaciones":
+        st.header("⚙️ Especificaciones")
+        st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
+        viewer_url = "https://learouse.github.io/prototipo/"
+        components.iframe(viewer_url, height=600, width="100%", scrolling=True)
+        
+    elif pagina == "Configuracion":
+        st.header("🧩 Configuración")
+        st.write("Opciones de configuración de la app.")
