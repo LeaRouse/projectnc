@@ -2,6 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from pathlib import Path
 import base64
+from mimetypes import guess_type
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="AstroCycle 🌌", page_icon="🪐", layout="wide")
@@ -24,9 +25,7 @@ def get_video_html():
 
 st.markdown(get_video_html(), unsafe_allow_html=True)
 
-from mimetypes import guess_type
-
-# --- Función para convertir PNG a Base64 ---
+# --- Utilidad: PNG/JPG -> data URI ---
 @st.cache_data(show_spinner=False)
 def img_data_uri(path_str: str) -> str:
     p = Path(path_str)
@@ -38,15 +37,15 @@ def img_data_uri(path_str: str) -> str:
     b64 = base64.b64encode(p.read_bytes()).decode("utf-8")
     return f"data:{mime};base64,{b64}"
 
-# --- Cargar las imágenes ---
+# --- Cargar imágenes ---
 icon_home  = img_data_uri("home.png")
 icon_craft = img_data_uri("craft.png")
 icon_mat   = img_data_uri("materiales.png")
 icon_spec  = img_data_uri("especificaciones.png")
 icon_conf  = img_data_uri("config.png")
-logo_data = img_data_uri("logotipoastrocycle2.png")
+logo_data  = img_data_uri("logotipoastrocycle2.png")
 
-# --- CSS GENERAL ---
+# --- CSS + línea divisoria + Transiciones + goto() ---
 st.markdown("""
 <style>
 /* ===== FONDO ===== */
@@ -65,7 +64,7 @@ video#bgvid {
 .sidebar-line {
     position: fixed;
     top: 0;
-    left: 230px;               /* distancia desde el borde izquierdo */
+    left: 230px;
     height: 100vh;
     width: 2px;
     background: linear-gradient(
@@ -92,15 +91,11 @@ video#bgvid {
     align-items: center;
     overflow: hidden;
 }
-
-/* --- EFECTO HOVER --- */
 .icon-button:hover {
     background: rgba(255,255,255,0.08);
     transform: scale(1.05);
     border-color: rgba(255,255,255,0.6);
 }
-
-/* --- IMÁGENES --- */
 .icon-button img {
     width: 100%;
     height: 100%;
@@ -109,9 +104,7 @@ video#bgvid {
     filter: brightness(0.93) contrast(1.05);
     transition: all 0.25s ease;
 }
-.icon-button:hover img {
-    filter: brightness(1.05) contrast(1.1);
-}
+.icon-button:hover img { filter: brightness(1.05) contrast(1.1); }
 
 /* --- BOTONES IZQUIERDA (CUADRADOS GRANDES Y ESPACIADOS) --- */
 #btn-home, #btn-craft, #btn-mat {
@@ -133,14 +126,44 @@ video#bgvid {
 #btn-spec { right: 25px; top: 80px; }
 #btn-config { right: 25px; bottom: 30px; }
 
+/* ===== TRANSICIONES SUAVES DE PÁGINA ===== */
+#main-content {
+  opacity: 0;
+  transform: scale(0.995);
+  animation: pageFadeIn .35s ease-out forwards;
+}
+html.leaving #main-content {
+  opacity: 0;
+  transform: scale(0.985);
+  transition: opacity .22s ease-in, transform .22s ease-in;
+}
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: scale(0.985); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  #main-content, html.leaving #main-content {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
 /* --- TEXTOS --- */
 h1,h2,h3,p,span { color:#d0d0d0 !important; }
 </style>
 
-<!-- Inserta la línea visual -->
 <div class="sidebar-line"></div>
-""", unsafe_allow_html=True)
 
+<script>
+function goto(page) {
+  // activa fade-out
+  document.documentElement.classList.add('leaving');
+  // cambia ?page=... en la misma pestaña tras breve pausa
+  setTimeout(() => { window.location.search = '?page=' + encodeURIComponent(page); }, 180);
+}
+</script>
+""", unsafe_allow_html=True)
 
 # --- Session state para página ---
 if 'pagina' not in st.session_state:
@@ -167,94 +190,39 @@ try:
 except AttributeError:
     st.experimental_set_query_params(page=st.session_state.pagina)
 
-# --- BOTONES FLOTANTES CON NAVEGACIÓN INTERNA (mismo tab, sin JS) ---
-current = st.session_state.pagina  # para marcar activo (opcional)
+# --- BOTONES FLOTANTES (onclick -> goto('...')) ---
+current = st.session_state.pagina
 
 st.markdown(f"""
-<style>
-/* resalte del botón activo (opcional) */
-.icon-button.active {{
-  outline: 3px solid rgba(255,255,255,0.7);
-  box-shadow: 0 0 20px rgba(255,255,255,0.25);
-}}
-
-/* formulario invisible que capta el click */
-.icon-as-form {{
-  position: fixed;
-  z-index: 6;            /* por encima de la capa visual (z-index:5) */
-  margin: 0; padding: 0; background: none; border: none;
-  width: 180px; height: 180px; border-radius: 22px;
-}}
-/* ¡hace que el botón llene el área del formulario! */
-.icon-as-form button {{
-  width: 100%; height: 100%;
-  border: 0; background: transparent;
-  cursor: pointer;
-}}
-
-/* ubicaciones de los formularios (zona clickeable) */
-#home-form {{ left:25px; top:12%;  }}
-#craft-form {{ left:25px; top:41%;  }}
-#mat-form   {{ left:25px; top:70%;  }}
-#spec-form  {{ right:25px; top:80px;    width:80px; height:80px; border-radius:50%; }}
-#conf-form  {{ right:25px; bottom:30px; width:80px; height:80px; border-radius:50%; }}
-
-/* capa visual (lo que ves) */
-.icon-visual {{
-  position: fixed;
-  background: rgba(35,35,35,0.75);
-  border: 2px solid rgba(255,255,255,0.25);
-  display: flex; justify-content: center; align-items: center;
-  overflow: hidden; z-index: 5;
-}}
-#btn-home, #btn-craft, #btn-mat {{ left:25px; width:180px; height:180px; border-radius:22px; }}
-#btn-home {{ top:12%; }}  #btn-craft {{ top:41%; }}  #btn-mat {{ top:70%; }}
-#btn-spec, #btn-config {{ border-radius:50%; width:80px; height:80px; }}
-#btn-spec {{ right:25px; top:80px; }}  #btn-config {{ right:25px; bottom:30px; }}
-
-.icon-visual:hover {{ background: rgba(255,255,255,0.08); transform: scale(1.05); border-color: rgba(255,255,255,0.6); }}
-.icon-visual img {{ width:100%; height:100%; object-fit:cover; border-radius:inherit; filter: brightness(0.93) contrast(1.05); transition: all .25s; }}
-.icon-visual:hover img {{ filter: brightness(1.05) contrast(1.1); }}
-</style>
-
-<!-- Capa visual (se ve) -->
-<div id="btn-home"   class="icon-visual {'active' if current=='Home' else ''}"><img src="{icon_home}"  alt="Home"></div>
-<div id="btn-craft"  class="icon-visual {'active' if current=='Craft' else ''}"><img src="{icon_craft}" alt="Craft"></div>
-<div id="btn-mat"    class="icon-visual {'active' if current=='Materiales' else ''}"><img src="{icon_mat}"   alt="Materiales"></div>
-<div id="btn-spec"   class="icon-visual {'active' if current=='Especificaciones' else ''}"><img src="{icon_spec}" alt="Especificaciones"></div>
-<div id="btn-config" class="icon-visual {'active' if current=='Configuracion' else ''}"><img src="{icon_conf}" alt="Configuración"></div>
-
-<!-- Capas clickables (formularios GET que cambian ?page=... en el mismo tab) -->
-<form id="home-form"  class="icon-as-form" method="get">
-  <input type="hidden" name="page" value="Home"><button type="submit" aria-label="Home"></button>
-</form>
-<form id="craft-form" class="icon-as-form" method="get">
-  <input type="hidden" name="page" value="Craft"><button type="submit" aria-label="Craft"></button>
-</form>
-<form id="mat-form"   class="icon-as-form" method="get">
-  <input type="hidden" name="page" value="Materiales"><button type="submit" aria-label="Materiales"></button>
-</form>
-<form id="spec-form"  class="icon-as-form" method="get">
-  <input type="hidden" name="page" value="Especificaciones"><button type="submit" aria-label="Especificaciones"></button>
-</form>
-<form id="conf-form"  class="icon-as-form" method="get">
-  <input type="hidden" name="page" value="Configuracion"><button type="submit" aria-label="Configuración"></button>
-</form>
+<div>
+  <div class="icon-button" id="btn-home"  onclick="goto('Home')">
+    <img src="{icon_home}"  alt="Home">
+  </div>
+  <div class="icon-button" id="btn-craft" onclick="goto('Craft')">
+    <img src="{icon_craft}" alt="Craft">
+  </div>
+  <div class="icon-button" id="btn-mat"   onclick="goto('Materiales')">
+    <img src="{icon_mat}"   alt="Materiales">
+  </div>
+  <div class="icon-button" id="btn-spec"  onclick="goto('Especificaciones')">
+    <img src="{icon_spec}" alt="Especificaciones">
+  </div>
+  <div class="icon-button" id="btn-config" onclick="goto('Configuracion')">
+    <img src="{icon_conf}" alt="Configuración">
+  </div>
+</div>
 """, unsafe_allow_html=True)
-
 
 # --- CONTENIDO ---
 pagina = st.session_state.pagina
-IMG_FILE = Path("logotipoastrocycle2.png")
 
 if pagina == "Home":
-   
-    # 1) Armamos el tag del logo fuera del f-string grande (sin anidar comillas)
+    # Logo centrado (solo logo)
     if logo_data:
         logo_tag = (
             f'<img src="{logo_data}" alt="AstroCycle logo" '
             f'style="width:1000px; max-width:85vw; height:auto; '
-            + f'filter:drop-shadow(0 0 35px rgba(255,255,255,0.35)); transform:scale(1.75); '
+            f'filter:drop-shadow(0 0 35px rgba(255,255,255,0.35)); '
             f'transition:transform 0.6s ease-in-out;" '
             f'onmouseover="this.style.transform=\'scale(1.04)\'" '
             f'onmouseout="this.style.transform=\'scale(1.0)\'" />'
@@ -262,49 +230,42 @@ if pagina == "Home":
     else:
         logo_tag = '<div style="color:#ccc;">No se encontró logotipoastrocycle2.png</div>'
 
-
-    # 2) Contenedor centrado solo en el área principal (a la derecha del menú)
     html_home = f"""
-    <div style="
-        position: fixed;
-        left: 260px;   /* ancho del menú + separación; ajusta si cambias tus botones */
-        right: 0;
-        top: 0;
-        bottom: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        z-index: 0;
-    ">
-        {logo_tag}
+    <div id="main-content">
+      <div style="
+          position: fixed;
+          left: 260px; right: 0; top: 0; bottom: 0;
+          display: flex; justify-content: center; align-items: center;
+          text-align: center; z-index: 0;
+      ">
+          {logo_tag}
+      </div>
     </div>
     """
-
     st.markdown(html_home, unsafe_allow_html=True)
 
 elif pagina == "Craft":
+    st.markdown('<div id="main-content">', unsafe_allow_html=True)
     st.header("🛠️ Craft")
     st.write("Sección de construcción y desarrollo del prototipo.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 elif pagina == "Materiales":
+    st.markdown('<div id="main-content">', unsafe_allow_html=True)
     st.header("📦 Materiales")
     st.write("Aquí se muestran los materiales utilizados y sus detalles.")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 elif pagina == "Especificaciones":
+    st.markdown('<div id="main-content">', unsafe_allow_html=True)
     st.header("⚙️ Especificaciones")
     st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
     viewer_url = "https://learouse.github.io/prototipo/"
     components.iframe(viewer_url, height=600, width="100%", scrolling=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 elif pagina == "Configuracion":
+    st.markdown('<div id="main-content">', unsafe_allow_html=True)
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
-
-
-
-
-
-
-
-
+    st.markdown('</div>', unsafe_allow_html=True)
