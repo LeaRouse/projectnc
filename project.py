@@ -208,7 +208,7 @@ if pagina == "Home":
     if logo_data:
         logo_tag = (
             f'<img src="{logo_data}" alt="AstroCycle logo" '
-            f'style="width:1000px; max-width:85vw; height:auto; '
+            f'style="width:1600px; max-width:85vw; height:auto; '
             f'filter:drop-shadow(0 0 35px rgba(255,255,255,0.35)); '
             f'transition:transform 0.6s ease-in-out;" '
             f'onmouseover="this.style.transform=\'scale(1.04)\'" '
@@ -255,6 +255,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
