@@ -1,7 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# --- Configuración de página ---
+# --- Configuración de la página ---
 st.set_page_config(page_title="AstroCycle 🌌", page_icon="🪐", layout="wide")
 
 # --- Estado de página ---
@@ -12,13 +12,11 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
-# --- CSS profesional ---
+# --- CSS ---
 st.markdown("""
 <style>
-/* Fondo general */
 .stApp { background-color: #0a0a0a !important; color: #d0d0d0 !important; }
 
-/* Navbar global */
 .encabezado-global {
     width:100%; background-color:#1a1a1a; color:#d0d0d0;
     padding:12px 20px; font-size:20px; font-weight:bold;
@@ -26,26 +24,23 @@ st.markdown("""
     text-align:center; margin-bottom:20px;
 }
 
-/* Menú lateral */
 .menu-lateral {
-    display:flex; flex-direction:column; gap:10px; padding-top:10px;
+    display:flex; flex-direction:column; gap:10px; padding-top:10px; height:100%;
 }
 
-/* Botones uniformes */
 .menu-lateral button {
-    width: 100%; height: 50px;  /* todos iguales */
-    border-radius:10px; border:none;
-    font-weight:bold; text-align:left;
-    display:flex; align-items:center; padding-left:12px;
-    font-size:16px; cursor:pointer; transition:0.2s;
+    width: 100%; height: 50px; border-radius:10px; border:none;
+    font-weight:bold; text-align:left; display:flex; align-items:center;
+    padding-left:12px; font-size:16px; cursor:pointer; transition:0.2s;
     background-color:#2a2a2a; color:#d0d0d0;
 }
+
 .menu-lateral button:hover { background-color:#3a3a3a; color:#ffffff; transform:scale(1.02); }
 
-/* Botón activo */
 .menu-lateral .activo { background-color:#555555; color:#ffffff; }
 
-/* Contenido */
+.menu-lateral .bottom { margin-top:auto; }
+
 .contenido { padding-left:20px; }
 </style>
 """, unsafe_allow_html=True)
@@ -56,33 +51,49 @@ st.markdown('<div class="encabezado-global">🌌 AstroCycle - Panel de Control d
 # --- Layout ---
 col1, col2 = st.columns([1,5])
 
-# --- Definir páginas e iconos ---
-paginas = [
+# --- Menú lateral ---
+paginas_arriba = [
     ("🏠", "Home"),
     ("📊", "Datos Generales"),
     ("🤖", "Status"),
     ("🛠️", "Craft"),
-    ("📦", "Materiales"),
+    ("📦", "Materiales")
+]
+
+paginas_abajo = [
     ("⚙️", "Especificaciones"),
     ("🧩", "Configuración")
 ]
 
-# --- Menú lateral con HTML buttons ---
 with col1:
-    menu_html = '<div class="menu-lateral">'
-    for icono, nombre in paginas:
-        clase = "activo" if st.session_state.pagina == nombre else ""
-        # Cada botón HTML con onclick para cambiar st.session_state
-        menu_html += f"""
-        <button class="{clase}" onclick="window.location.href='#{nombre}'">{icono} {nombre}</button>
-        """
-    menu_html += '</div>'
-    st.markdown(menu_html, unsafe_allow_html=True)
+    st.markdown('<div class="menu-lateral">', unsafe_allow_html=True)
 
-    # Capturar clic usando botones invisibles de Streamlit
-    for _, nombre in paginas:
-        if st.button(f"btn_{nombre}", key=f"btn_{nombre}"):
+    # Botones de arriba
+    for icono, nombre in paginas_arriba:
+        clase = "activo" if st.session_state.pagina == nombre else ""
+        if st.button(f"{icono} {nombre}", key=nombre):
             cambiar_pagina(nombre)
+        st.markdown(f"""
+            <style>
+            div.stButton > button[key="{nombre}"] {{ background-color:{'#555555' if clase=='activo' else '#2a2a2a'} !important; }}
+            </style>
+        """, unsafe_allow_html=True)
+
+    # Separar los botones de abajo
+    st.markdown('<div class="bottom"></div>', unsafe_allow_html=True)
+
+    # Botones de abajo
+    for icono, nombre in paginas_abajo:
+        clase = "activo" if st.session_state.pagina == nombre else ""
+        if st.button(f"{icono} {nombre}", key=nombre):
+            cambiar_pagina(nombre)
+        st.markdown(f"""
+            <style>
+            div.stButton > button[key="{nombre}"] {{ background-color:{'#555555' if clase=='activo' else '#2a2a2a'} !important; }}
+            </style>
+        """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- Contenido ---
 with col2:
