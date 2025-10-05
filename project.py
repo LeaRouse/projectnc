@@ -6,8 +6,8 @@ import base64
 st.set_page_config(page_title="AstroCycle", layout="wide")
 
 # ---------- Archivos esperados ----------
-VIDEO_FILE = Path("video.mp4")               # tu fondo animado
-MODEL_FILE = Path("Rove_prototipo1.glb")     # tu modelo 3D corregido
+VIDEO_FILE = Path("video.mp4")
+MODEL_FILE = Path("Rove_prototipo1.glb")
 
 # ---------- Fondo animado ----------
 def get_video_html():
@@ -53,11 +53,13 @@ st.markdown("""
         padding-top: 18px;
     }
 
-    /* Botones uniformes y transparentes */
-    section[data-testid="stSidebar"] [data-baseweb="radio"] > div:first-child {
+    /* ---------- Menú lateral limpio ---------- */
+    /* Ocultamos los íconos de radio */
+    section[data-testid="stSidebar"] [data-baseweb="radio"] input[type="radio"] {
         display: none !important;
     }
 
+    /* Contenedor de opciones como botones */
     div[role="radiogroup"] > label {
         display: block;
         width: 100%;
@@ -155,7 +157,7 @@ elif page == "⚙️ Especificaciones":
     st.write("Incluye la vista 3D del modelo del rover:")
     if MODEL_FILE.exists():
         st.markdown(f"""
-            <model-viewer src="prototipo1.glb" alt="Modelo 3D del Rover"
+            <model-viewer src="Rove_prototipo1.glb" alt="Modelo 3D del Rover"
                 camera-controls auto-rotate exposure="1"
                 style="width:100%; height:600px; background: transparent;">
             </model-viewer>
