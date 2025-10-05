@@ -24,7 +24,7 @@ def get_video_html():
 
 st.markdown(get_video_html(), unsafe_allow_html=True)
 
-# --- CSS ---
+# --- CSS GENERAL ---
 st.markdown("""
 <style>
 /* Fondo */
@@ -39,31 +39,39 @@ video#bgvid {
 }
 .bg-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.45); z-index:-2; }
 
-/* Botones flotantes */
-.control-button {
+/* ===== BOTONES DE IMAGEN ===== */
+.icon-button {
     position: fixed;
-    background-color: rgba(30,30,30,0.85);
-    color: #f1f1f1;
-    border: none;
-    border-radius: 14px;
-    padding: 12px 18px;
-    font-weight: bold;
+    background: rgba(30,30,30,0.6);
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    padding: 10px;
     cursor: pointer;
     transition: all 0.25s ease;
     z-index: 5;
-    width: 140px;
-    text-align: left;
+    width: 70px;
+    height: 70px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-.control-button:hover { background-color: rgba(70,70,70,0.95); transform: scale(1.05); }
+.icon-button:hover {
+    background: rgba(255,255,255,0.1);
+    transform: scale(1.1);
+    border-color: rgba(255,255,255,0.7);
+}
+.icon-button img {
+    width: 42px;
+    height: 42px;
+    filter: brightness(0.9);
+}
 
-/* Botones izquierda */
-#btn-left1 { left: 20px; top: 40%; }
-#btn-left2 { left: 20px; top: 50%; }
-#btn-left3 { left: 20px; top: 60%; }
-
-/* Botones derecha */
-#btn-top-right { right: 20px; top: 80px; }
-#btn-bottom-right { right: 20px; bottom: 30px; }
+/* Posiciones */
+#btn-home { left: 20px; top: 35%; }
+#btn-craft { left: 20px; top: 45%; }
+#btn-mat { left: 20px; top: 55%; }
+#btn-spec { right: 20px; top: 80px; }
+#btn-config { right: 20px; bottom: 30px; }
 
 /* Textos */
 h1,h2,h3,p,span { color:#d0d0d0 !important; }
@@ -77,25 +85,27 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
-# --- Botones flotantes HTML (solo flotantes, no st.button) ---
+# --- BOTONES FLOTANTES CON IMÁGENES ---
+# Asegúrate de tener tus íconos en la misma carpeta: home.png, craft.png, materiales.png, especificaciones.png, config.png
 st.markdown("""
-<button class="control-button" id="btn-left1">🏠 Home</button>
-<button class="control-button" id="btn-left2">🛠️ Craft</button>
-<button class="control-button" id="btn-left3">📦 Materiales</button>
-
-<button class="control-button" id="btn-top-right">⚙️ Especificaciones</button>
-<button class="control-button" id="btn-bottom-right">🧩 Configuración</button>
+<div>
+  <div class="icon-button" id="btn-home"><img src="home.png"></div>
+  <div class="icon-button" id="btn-craft"><img src="craft.png"></div>
+  <div class="icon-button" id="btn-mat"><img src="materiales.png"></div>
+  <div class="icon-button" id="btn-spec"><img src="especificaciones.png"></div>
+  <div class="icon-button" id="btn-config"><img src="config.png"></div>
+</div>
 """, unsafe_allow_html=True)
 
-# --- Capturar clicks de botones flotantes con JS ---
+# --- JS para cambiar de página ---
 components.html("""
 <script>
 const mapping = {
-    "btn-left1": "Home",
-    "btn-left2": "Craft",
-    "btn-left3": "Materiales",
-    "btn-top-right": "Especificaciones",
-    "btn-bottom-right": "Configuracion"
+    "btn-home": "Home",
+    "btn-craft": "Craft",
+    "btn-mat": "Materiales",
+    "btn-spec": "Especificaciones",
+    "btn-config": "Configuracion"
 };
 for(const id in mapping){
     const el = document.getElementById(id);
@@ -112,11 +122,6 @@ window.addEventListener('message', event => {
 </script>
 """, height=0, width=0)
 
-# --- Escuchar cambios ---
-if 'last_event' not in st.session_state:
-    st.session_state.last_event = None
-
-# Escuchar eventos de JS
 components.html("""
 <script>
 document.addEventListener('updatePagina', e => {
@@ -125,7 +130,7 @@ document.addEventListener('updatePagina', e => {
 </script>
 """, height=0, width=0)
 
-# --- Contenido dinámico ---
+# --- CONTENIDO ---
 pagina = st.session_state.pagina
 IMG_FILE = Path("logotipoastrocycle.png")
 
