@@ -75,8 +75,8 @@ video#bgvid {
 
 .icon-button img {
     filter: brightness(0.9);
-    width: 42px;
-    height: 42px;
+    width: 58px;
+    height: 58px;
 }
 
 /* --- EFECTO HOVER --- */
@@ -86,26 +86,28 @@ video#bgvid {
     border-color: rgba(255,255,255,0.7);
 }
 
-/* --- BOTONES IZQUIERDA (CUADRADOS) --- */
+/* --- BOTONES IZQUIERDA (CUADRADOS GRANDES Y ESPACIADOS) --- */
 #btn-home, #btn-craft, #btn-mat {
-    left: 20px;
-    width: 80px;
-    height: 80px;
-    border-radius: 18px;   /* ← bordes suaves */
-    background: rgba(35,35,35,0.65);
+    left: 25px;
+    width: 105px;
+    height: 105px;
+    border-radius: 22px;   /* ← bordes suaves */
+    background: rgba(40,40,40,0.7);
 }
-#btn-home { top: 35%; }
-#btn-craft { top: 46%; }
-#btn-mat { top: 57%; }
+
+/* separaciones verticales */
+#btn-home { top: 32%; }
+#btn-craft { top: 48%; }
+#btn-mat { top: 64%; }
 
 /* --- BOTONES DERECHA (CÍRCULOS) --- */
 #btn-spec, #btn-config {
     border-radius: 50%;
-    width: 70px;
-    height: 70px;
+    width: 75px;
+    height: 75px;
 }
-#btn-spec { right: 20px; top: 80px; }
-#btn-config { right: 20px; bottom: 30px; }
+#btn-spec { right: 25px; top: 80px; }
+#btn-config { right: 25px; bottom: 30px; }
 
 /* --- TEXTOS --- */
 h1,h2,h3,p,span { color:#d0d0d0 !important; }
@@ -196,5 +198,6 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
