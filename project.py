@@ -1,6 +1,7 @@
 import streamlit as st
 from pathlib import Path
 import base64
+import streamlit.components.v1 as components
 
 # --- CONFIGURACIÓN ---
 st.set_page_config(page_title="AstroCycle 🌌", layout="wide")
@@ -26,7 +27,6 @@ st.markdown(get_video_html(), unsafe_allow_html=True)
 # --- CSS ---
 st.markdown("""
 <style>
-/* Fondo */
 .stApp {background: transparent !important; color: #d0d0d0 !important;}
 video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%; transform: translate(-50%, -50%); object-fit: cover; z-index:-3; filter: brightness(0.65) contrast(1.05);}
 .bg-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: -2;}
@@ -44,23 +44,13 @@ section[data-testid="stSidebar"] {
     text-align:left; cursor:pointer; transition:0.2s;
 }
 .stButton>button:hover {background-color:#3a3a3a; color:#fff;}
-
-/* Contenido principal */
 .main-content {margin-left:240px; padding:20px;}
 
 /* Botones flotantes derecha */
 .floating-btn {
-    position: fixed;
-    z-index: 10;
-    width: 50px;
-    height: 50px;
-    border-radius: 25px;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #d0d0d0;
-    background-color: rgba(42,42,42,0.85);
-    transition: 0.2s;
+    position: fixed; z-index: 10; width: 50px; height: 50px; border-radius: 25px;
+    border: none; font-size: 24px; cursor: pointer; color: #d0d0d0;
+    background-color: rgba(42,42,42,0.85); transition: 0.2s;
 }
 .floating-btn:hover {background-color: #3a3a3a; color: #fff;}
 #btn-about {top: 20px; right: 20px;}
@@ -72,9 +62,10 @@ section[data-testid="stSidebar"] {
 if 'pagina' not in st.session_state:
     st.session_state.pagina = "Home"
 
-# --- Función cambiar página ---
+# --- Función para cambiar página ---
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
+    st.experimental_rerun()  # fuerza recarga para actualizar el contenido
 
 # --- Barra lateral ---
 st.sidebar.title("🌠 AstroCycle")
@@ -82,17 +73,11 @@ st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 
-# --- Botones flotantes derecha ---
-st.markdown("""
-<button id="btn-about" class="floating-btn" onclick="window.parent.postMessage({type:'About'}, '*')">ℹ️</button>
-<button id="btn-config" class="floating-btn" onclick="window.parent.postMessage({type:'Configuracion'}, '*')">⚙️</button>
-""", unsafe_allow_html=True)
-
-# --- Listener botones invisibles (Streamlit) ---
-if st.button("About_hidden", key="about_hidden"):
-    cambiar_pagina("About")
-if st.button("Configuracion_hidden", key="config_hidden"):
-    cambiar_pagina("Configuracion")
+# --- Botones flotantes derecha (HTML) ---
+components.html(f"""
+<button class="floating-btn" id="btn-about" onclick="window.parent.location.href='#{st.session_state.pagina}'; window.parent.document.querySelector('iframe').contentWindow.postMessage('About','*')">ℹ️</button>
+<button class="floating-btn" id="btn-config" onclick="window.parent.location.href='#{st.session_state.pagina}'; window.parent.document.querySelector('iframe').contentWindow.postMessage('Configuracion','*')">⚙️</button>
+""", height=0, width=0)
 
 # --- Contenido principal ---
 st.markdown('<div class="main-content">', unsafe_allow_html=True)
