@@ -199,13 +199,10 @@ pagina = st.session_state.pagina
 IMG_FILE = Path("logotipoastrocycle2.png")
 
 if pagina == "Home":
-    # usar el data URI generado arriba
-    if not logo_data:
-        st.warning("No se encontró logotipoastrocycle2.png (revisa el nombre y la carpeta).")
     st.markdown(f"""
     <div style="
         position: fixed;
-        left: 260px;  /* ancho del menú + separación; ajusta si cambias tus botones */
+        left: 260px;
         right: 0;
         top: 0;
         bottom: 0;
@@ -215,15 +212,14 @@ if pagina == "Home":
         text-align: center;
         z-index: 0;
     ">
-        {'<div style="color:#ccc;">No se encontró el logo</div>' if not logo_data else f'''
-        <img src="{logo_data}" alt="AstroCycle logo"
+        <img src="data:image/png;base64,{base64.b64encode(open('logotipoastrocycle2.png','rb').read()).decode()}"
+             alt="AstroCycle logo"
              style="
                 width: 800px;
                 max-width: 70vw;
                 height: auto;
                 filter: drop-shadow(0 0 25px rgba(255,255,255,0.25));
              " />
-        '''}
     </div>
     """, unsafe_allow_html=True)
 
@@ -244,6 +240,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
