@@ -1,5 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
+from pathlib import Path
+import base64
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
@@ -8,18 +10,53 @@ st.set_page_config(
     layout="wide"
 )
 
+# --- VIDEO DE FONDO ---
+VIDEO_FILE = Path("video.mp4")  # tu archivo se llama video.mp4
+
+def get_video_html():
+    if VIDEO_FILE.exists():
+        data = VIDEO_FILE.read_bytes()
+        b64 = base64.b64encode(data).decode("utf-8")
+        return f"""
+        <video autoplay loop muted playsinline id="bgvid">
+            <source src="data:video/mp4;base64,{b64}" type="video/mp4">
+        </video>
+        <div class="bg-overlay"></div>
+        """
+    else:
+        return "<!-- No se encontró video.mp4 -->"
+
 # --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
-/* Fondo principal completo */
+/* Fondo principal con video */
 .stApp, .css-18e3th9, .css-1d391kg, .block-container {
-    background-color: #0a0a0a !important; /* negro profundo */
-    color: #d0d0d0 !important; /* gris claro */
+    background: transparent !important; 
+    color: #d0d0d0 !important;
+}
+
+video#bgvid {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    z-index: -3;
+    filter: brightness(0.65) contrast(1.05);
+}
+
+.bg-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: -2;
 }
 
 /* Barra lateral */
 section[data-testid="stSidebar"] {
-    background-color: #1c1c1c !important; /* gris oscuro */
+    background-color: rgba(28,28,28,0.85) !important;
     border-radius: 20px;
     padding: 20px;
     position: relative;
@@ -36,12 +73,12 @@ button[title="Collapse"] {
 .sidebar-title {
     font-size: 24px;
     font-weight: bold;
-    color: #e0e0e0; /* gris claro */
+    color: #e0e0e0;
     text-align: center;
     margin-bottom: 25px;
 }
 
-/* Botones del menú: todos iguales */
+/* Botones del menú */
 .stButton>button {
     display: block;
     width: 100%;
@@ -51,25 +88,27 @@ button[title="Collapse"] {
     border: none;
     font-weight: bold;
     color: #d0d0d0;
-    background-color: #2a2a2a; /* gris medio oscuro */
+    background-color: #2a2a2a;
     transition: 0.2s;
     text-align: left;
     cursor: pointer;
 }
 
-/* Hover */
 .stButton>button:hover {
-    background-color: #3a3a3a; /* un poco más claro al pasar el mouse */
+    background-color: #3a3a3a;
     color: #ffffff;
     transform: scale(1.02);
 }
 
 /* Textos principales */
 h1, h2, h3, h4, p, span {
-    color: #d0d0d0 !important; /* gris claro */
+    color: #d0d0d0 !important;
 }
 </style>
 """, unsafe_allow_html=True)
+
+# --- Insertar video de fondo ---
+st.markdown(get_video_html(), unsafe_allow_html=True)
 
 # --- Menú lateral ---
 st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
@@ -81,7 +120,6 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# Botones del menú
 st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
