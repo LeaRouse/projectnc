@@ -237,4 +237,5 @@ elif pagina=="Especificaciones":
 elif pagina=="Configuracion":
     st.markdown('<div id="main-content">', unsafe_allow_html=True)
     st.header("🧩 Configuración")
-    st.write("Opciones de configuración de la app
+    st.write("Opciones de configuración de la app.")
+    st.markdown('</div>', unsafe_allow_html=True)
