@@ -3,7 +3,7 @@ from pathlib import Path
 import base64
 import streamlit.components.v1 as components
 
-# --- Configuración de página ---
+# --- Configuración ---
 st.set_page_config(page_title="AstroCycle 🌌", layout="wide")
 
 # --- Video de fondo ---
@@ -29,8 +29,6 @@ st.markdown("""
 .stApp {background: transparent !important; color: #d0d0d0 !important;}
 video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%; transform: translate(-50%, -50%); object-fit: cover; z-index:-3; filter: brightness(0.65) contrast(1.05);}
 .bg-overlay {position: fixed; inset:0; background: rgba(0,0,0,0.45); z-index:-2;}
-.stButton>button {width:100%; margin-bottom:12px; padding:12px; border-radius:12px; background: rgba(30,30,30,0.85); color:#f1f1f1; font-weight:bold; border:none; transition:0.2s;}
-.stButton>button:hover {background: rgba(70,70,70,0.95);}
 
 /* Botones flotantes derecha */
 .floating-button {
@@ -52,15 +50,15 @@ video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%
 </style>
 """, unsafe_allow_html=True)
 
-# --- Session state para página ---
+# --- Session state ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = "Home"
 
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
-# --- Layout con columnas ---
-col_left, col_right = st.columns([1, 4])  # izquierda para botones, derecha para contenido
+# --- Layout ---
+col_left, col_right = st.columns([1, 4])
 
 # --- Botones izquierda ---
 with col_left:
@@ -74,7 +72,7 @@ st.markdown(f"""
 <button class="floating-button" id="btn-bottom-right" onclick="window.parent.postMessage({{type: 'Configuracion'}}, '*')">🧩 Configuración</button>
 """, unsafe_allow_html=True)
 
-# --- Capturar los mensajes de los botones flotantes ---
+# --- Captura mensajes botones flotantes ---
 components.html("""
 <script>
 window.addEventListener('message', (event) => {
@@ -86,33 +84,19 @@ window.addEventListener('message', (event) => {
 </script>
 """, height=0, width=0)
 
-# Detectar cambio usando los botones tradicionales de Streamlit
-buttons = {
-    "Home": "🏠 Home",
-    "Craft": "🛠️ Craft",
-    "Materiales": "📦 Materiales",
-    "Especificaciones": "⚙️ Especificaciones",
-    "Configuracion": "🧩 Configuración"
-}
-
-for key in buttons:
-    if st.button(buttons[key]):
-        cambiar_pagina(key)
-
-# --- Contenido dinámico en la columna derecha ---
+# --- Contenido dinámico columna derecha ---
 with col_right:
     pagina = st.session_state.pagina
 
     if pagina == "Home":
         st.title("🏠 Home")
         st.write("Bienvenido a **AstroCycle**. Explora todo desde aquí.")
-        # Imagen logotipo
         IMG_FILE = Path("logotipoastrocycle.png")
         if IMG_FILE.exists():
             st.image(str(IMG_FILE), use_column_width=True, caption="Logotipo AstroCycle")
         else:
             st.warning("No se encontró logotipoastrocycle.png")
-            
+
     elif pagina == "Craft":
         st.header("🛠️ Craft")
         st.write("Sección de construcción y desarrollo del prototipo.")
