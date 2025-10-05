@@ -168,7 +168,7 @@ except AttributeError:
     st.experimental_set_query_params(page=st.session_state.pagina)
 
 # --- BOTONES FLOTANTES CON NAVEGACIÓN INTERNA (misma pestaña) ---
-current = st.session_state.pagina  # para marcar activo (opcional)
+current = st.session_state.pagina  # para resaltar el activo (opcional)
 
 st.markdown(f"""
 <style>
@@ -177,8 +177,8 @@ st.markdown(f"""
   outline: 3px solid rgba(255,255,255,0.7);
   box-shadow: 0 0 20px rgba(255,255,255,0.25);
 }}
-/* convertimos los DIV en <a> clicables manteniendo estilos */
-.icon-button {text-decoration: none;}
+/* convertimos los <a> en clicables manteniendo estilos y sin subrayado */
+.icon-button {{ text-decoration: none; display:flex; }}
 </style>
 
 <div>
@@ -262,6 +262,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
