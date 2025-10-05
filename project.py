@@ -6,8 +6,8 @@ import base64
 st.set_page_config(page_title="AstroCycle", layout="wide")
 
 # ---------- Archivos esperados ----------
-VIDEO_FILE = Path("video.mp4")
-MODEL_FILE = Path("Rove_prototipo1.glb")
+VIDEO_FILE = Path("video.mp4")               # tu fondo animado
+MODEL_FILE = Path("Rove_prototipo1.glb")     # tu modelo 3D corregido
 
 # ---------- Fondo animado ----------
 def get_video_html():
@@ -46,69 +46,52 @@ st.markdown("""
         z-index: -1;
     }
 
-    .container-main {
-        display: flex;
-        flex-direction: row;
-        height: 100vh;
-        gap: 0;
-    }
-
-    .menu-container {
+    section[data-testid="stSidebar"] {
         background: rgba(10,10,10,0.35);
         backdrop-filter: blur(6px);
-        border-right: 1px solid rgba(255,255,255,0.1);
-        padding: 18px;
-        width: 250px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        gap: 12px;
-        height: 100vh;
+        border-radius: 12px;
+        padding-top: 18px;
+    }
+
+    /* Botones uniformes y transparentes */
+    section[data-testid="stSidebar"] [data-baseweb="radio"] > div:first-child {
+        display: none !important;
+    }
+
+    div[role="radiogroup"] > label {
+        display: block;
+        width: 100%;
+        height: 56px;
+        line-height: 56px;
+        padding-left: 16px;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        background: rgba(255,255,255,0.03);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.06);
+        font-weight: 600;
+        transition: all 0.14s ease;
         box-sizing: border-box;
     }
 
-    .menu-title {
-        font-size: 22px;
-        font-weight: bold;
-        color: #fff;
-        margin-bottom: 14px;
-    }
-
-    .menu-button {
-        background: rgba(255,255,255,0.05);
-        color: #fff;
-        border: 1px solid rgba(255,255,255,0.08);
-        border-radius: 8px;
-        padding: 12px;
-        text-align: left;
-        font-weight: 600;
-        transition: all 0.2s ease;
+    div[role="radiogroup"] > label:hover {
+        background: rgba(255,255,255,0.06);
+        transform: translateY(-1px);
         cursor: pointer;
-        width: 100%;
     }
 
-    .menu-button:hover {
-        background: rgba(255,255,255,0.12);
-        transform: translateX(3px);
-    }
-
-    .menu-button.active {
-        background: rgba(255,255,255,0.18);
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-
-    .content {
-        flex: 1;
-        padding: 30px;
-        color: white;
-        overflow-y: auto;
-        height: 100vh;
+    div[role="radiogroup"] > label[aria-checked="true"] {
+        background: rgba(255,255,255,0.10) !important;
+        border: 1px solid rgba(255,255,255,0.12);
+        box-shadow: 0 6px 18px rgba(0,0,0,0.45);
     }
 
     .main-title {
         color: #ffffff;
+        text-align: left;
         font-size: 34px;
-        margin-bottom: 8px;
+        margin-top: 6px;
+        margin-bottom: 6px;
     }
 
     .muted {
@@ -117,40 +100,27 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ---------- Fondo animado ----------
+# ---------- Video de fondo ----------
 st.markdown(get_video_html(), unsafe_allow_html=True)
 st.markdown('<div class="bg-overlay"></div>', unsafe_allow_html=True)
 
-# ---------- Contenedor principal ----------
-st.markdown("<div class='container-main'>", unsafe_allow_html=True)
+# ---------- Sidebar ----------
+st.sidebar.title("🚀 AstroCycle")
 
-# ---------- Columna izquierda (barra de menú) ----------
-with st.container():
-    st.markdown("<div class='menu-container'>", unsafe_allow_html=True)
-    st.markdown("<div class='menu-title'>🚀 AstroCycle</div>", unsafe_allow_html=True)
+pages = [
+    "🏠 Home",
+    "📊 Datos Generales",
+    "🤖 Status",
+    "🛠️ Craft",
+    "⚙️ Especificaciones"
+]
+page = st.sidebar.radio("", pages, index=0)
 
-    pages = {
-        "🏠 Home": "Home",
-        "📊 Datos Generales": "Datos Generales",
-        "🤖 Status": "Status",
-        "🛠️ Craft": "Craft",
-        "⚙️ Especificaciones": "Especificaciones",
-        "🧩 Configuración": "Configuración"
-    }
+st.sidebar.markdown("---")
+if st.sidebar.button("⚙ Configuración"):
+    page = "⚙ Configuración"
 
-    if "page" not in st.session_state:
-        st.session_state.page = "🏠 Home"
-
-    for icon_text in pages.keys():
-        if st.button(icon_text, key=icon_text, use_container_width=True):
-            st.session_state.page = icon_text
-
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# ---------- Columna derecha (contenido dinámico) ----------
-st.markdown("<div class='content'>", unsafe_allow_html=True)
-page = st.session_state.page
-
+# ---------- Contenido ----------
 if page == "🏠 Home":
     st.markdown("<h1 class='main-title'>AstroCycle</h1>", unsafe_allow_html=True)
     st.markdown("<p class='muted'>Panel principal del rover interplanetario.</p>", unsafe_allow_html=True)
@@ -192,18 +162,11 @@ elif page == "⚙️ Especificaciones":
             <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
         """, unsafe_allow_html=True)
     else:
-        st.error("❌ No se encontró el archivo 'Rove_prototipo1.glb'.")
+        st.error("❌ No se encontró el archivo 'Rove_prototipo1.glb'. Súbelo a la carpeta del proyecto.")
 
-elif page == "🧩 Configuración":
+elif page == "⚙ Configuración":
     st.markdown("<h2 class='main-title'>Configuración</h2>", unsafe_allow_html=True)
     st.write("Ajustes y parámetros del sistema.")
-    st.toggle("Modo oscuro", value=True)
-    st.selectbox("Idioma", ["Español", "Inglés"])
-    st.slider("Volumen general", 0, 100, 70)
-    st.button("Guardar cambios", type="primary")
-
-st.markdown("</div>", unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Nota inferior ----------
 st.markdown("""
