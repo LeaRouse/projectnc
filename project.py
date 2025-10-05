@@ -212,7 +212,7 @@ if pagina == "Home":
                 width: 1000px;           /* ← aumenta el tamaño base */
                 max-width: 85vw;         /* ← permite que crezca más en pantallas grandes */
                 height: auto;
-                filter: drop-shadow(0 0 35px rgba(255,255,255,0.35));
+                f'filter: drop-shadow(0 0 35px rgba(255,255,255,0.35));
                 transition: transform 0.6s ease-in-out;
             "
             onmouseover="this.style.transform=\'scale(1.04)\'"
@@ -260,6 +260,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
