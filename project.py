@@ -199,10 +199,7 @@ pagina = st.session_state.pagina
 IMG_FILE = Path("logotipoastrocycle2.png")
 
 if pagina == "Home":
-    # Diagnóstico rápido (lo puedes dejar o quitar)
-    st.write("Archivo existe:", Path("logotipoastrocycle2.png").exists())
-    st.write("Data URI generada:", bool(logo_data))
-
+   
     # 1) Armamos el tag del logo fuera del f-string grande (sin anidar comillas)
     if logo_data:
         logo_tag = (
@@ -254,3 +251,4 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
