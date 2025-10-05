@@ -2,7 +2,6 @@ import streamlit as st
 from pathlib import Path
 import base64
 
-# ---------- Configuración ----------
 st.set_page_config(page_title="AstroCycle", layout="wide")
 
 # ---------- Archivos esperados ----------
@@ -26,6 +25,7 @@ def get_video_html():
 st.markdown("""
     <style>
     #MainMenu, header, footer {visibility: hidden;}
+    body {margin: 0; padding: 0;}
 
     video#bgvid {
         position: fixed;
@@ -35,70 +35,74 @@ st.markdown("""
         min-height: 100%;
         transform: translate(-50%, -50%);
         object-fit: cover;
-        z-index: -2;
-        filter: brightness(0.65) contrast(1.05) saturate(1.05);
+        z-index: -3;
+        filter: brightness(0.65) contrast(1.05);
     }
 
     .bg-overlay {
         position: fixed;
         inset: 0;
         background: rgba(0,0,0,0.45);
-        z-index: -1;
+        z-index: -2;
     }
 
-    /* 🔹 Sin espacio superior extra */
-    .block-container {
-        padding-top: 0rem !important;
-        margin-top: 0rem !important;
-    }
-
-    /* 🔹 Barra lateral fija y compacta */
-    section[data-testid="stSidebar"] {
+    /* 🔹 Barra lateral fija personalizada */
+    .sidebar-fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 240px;
         background: rgba(10,10,10,0.35);
         backdrop-filter: blur(6px);
         border-right: 1px solid rgba(255,255,255,0.1);
-        height: 100vh;
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 250px;
-        padding: 10px 16px;
+        padding: 24px 16px;
+        box-sizing: border-box;
+        z-index: 10;
     }
 
-    /* 🔹 Ajuste del contenido para que no quede detrás */
-    div[data-testid="stVerticalBlock"] {
-        padding-left: 270px !important;
+    .sidebar-fixed h2 {
+        color: white;
+        font-size: 22px;
+        margin-bottom: 24px;
     }
 
-    div[role="radiogroup"] > label {
+    .sidebar-fixed button {
         display: block;
         width: 100%;
-        height: 50px;
-        line-height: 50px;
-        padding-left: 16px;
-        margin-bottom: 10px;
+        background: rgba(255,255,255,0.07);
+        color: white;
+        border: none;
         border-radius: 8px;
-        background: rgba(255,255,255,0.05);
-        color: #fff;
+        padding: 10px 12px;
+        text-align: left;
+        font-size: 16px;
         font-weight: 600;
-        transition: all 0.14s ease;
-        box-sizing: border-box;
-    }
-
-    div[role="radiogroup"] > label:hover {
-        background: rgba(255,255,255,0.1);
+        margin-bottom: 12px;
         cursor: pointer;
+        transition: 0.15s;
     }
 
-    div[role="radiogroup"] > label[aria-checked="true"] {
-        background: rgba(255,255,255,0.2);
-        box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    .sidebar-fixed button:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateY(-1px);
+    }
+
+    .sidebar-fixed button.active {
+        background: rgba(255,255,255,0.25);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* 🔹 Contenido principal */
+    .main-content {
+        margin-left: 260px;
+        padding: 20px 40px;
+        color: white;
     }
 
     .main-title {
-        color: #ffffff;
-        font-size: 34px;
-        margin: 0;
+        font-size: 36px;
+        margin-bottom: 8px;
     }
 
     .muted {
@@ -107,29 +111,37 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ---------- Video de fondo ----------
+# ---------- Fondo ----------
 st.markdown(get_video_html(), unsafe_allow_html=True)
 st.markdown('<div class="bg-overlay"></div>', unsafe_allow_html=True)
 
-# ---------- Sidebar ----------
-st.sidebar.title("🚀 AstroCycle")
+# ---------- Sidebar manual ----------
+st.markdown("""
+<div class="sidebar-fixed">
+    <h2>🚀 AstroCycle</h2>
+    <form action="#" method="get">
+        <button name="page" value="home" class="sidebar-btn">🏠 Home</button>
+        <button name="page" value="datos">📊 Datos Generales</button>
+        <button name="page" value="status">🤖 Status</button>
+        <button name="page" value="craft">🛠️ Craft</button>
+        <button name="page" value="especificaciones">⚙️ Especificaciones</button>
+        <button name="page" value="configuracion">🧩 Configuración</button>
+    </form>
+</div>
+""", unsafe_allow_html=True)
 
-pages = [
-    "🏠 Home",
-    "📊 Datos Generales",
-    "🤖 Status",
-    "🛠️ Craft",
-    "⚙️ Especificaciones",
-    "⚙️ Configuración"
-]
-page = st.sidebar.radio("", pages, index=0)
+# ---------- Obtener la página actual ----------
+query_params = st.experimental_get_query_params()
+page = query_params.get("page", ["home"])[0]
 
-# ---------- Contenido ----------
-if page == "🏠 Home":
+# ---------- Contenido dinámico ----------
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
+
+if page == "home":
     st.markdown("<h1 class='main-title'>AstroCycle</h1>", unsafe_allow_html=True)
     st.markdown("<p class='muted'>Panel principal del rover interplanetario.</p>", unsafe_allow_html=True)
 
-elif page == "📊 Datos Generales":
+elif page == "datos":
     st.markdown("<h2 class='main-title'>Datos Generales</h2>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns(3)
     with c1:
@@ -140,21 +152,20 @@ elif page == "📊 Datos Generales":
         st.metric("Ubicación", "Hangar C")
     with c3:
         st.metric("Estado", "Operativo")
-        st.metric("Última revisión", "2025-10-04")
+        st.metric("Última revisión", "2025-10-05")
 
-elif page == "🤖 Status":
+elif page == "status":
     st.markdown("<h2 class='main-title'>Estado del Sistema</h2>", unsafe_allow_html=True)
     battery = st.slider("Nivel de batería (%)", 0, 100, 85)
     st.progress(battery)
     st.metric("Sensores activos", "6/6")
     st.metric("Conectividad", "Online")
-    st.radio("Modo de energía", ["Normal", "Ahorro", "Reinicio"])
 
-elif page == "🛠️ Craft":
+elif page == "craft":
     st.markdown("<h2 class='main-title'>Sección de Fabricación</h2>", unsafe_allow_html=True)
     st.write("Visualiza el proceso de creación, ensamblaje y mantenimiento del rover.")
 
-elif page == "⚙️ Especificaciones":
+elif page == "especificaciones":
     st.markdown("<h2 class='main-title'>Especificaciones Técnicas</h2>", unsafe_allow_html=True)
     st.write("Incluye la vista 3D del modelo del rover:")
     if MODEL_FILE.exists():
@@ -168,13 +179,8 @@ elif page == "⚙️ Especificaciones":
     else:
         st.error("❌ No se encontró el archivo 'Rove_prototipo1.glb'.")
 
-elif page == "⚙️ Configuración":
+elif page == "configuracion":
     st.markdown("<h2 class='main-title'>Configuración del Sistema</h2>", unsafe_allow_html=True)
     st.write("Ajustes generales, idioma, calibración de sensores y mantenimiento preventivo.")
 
-# ---------- Nota inferior ----------
-st.markdown("""
-    <div style="position: fixed; right: 12px; bottom: 12px; color: rgba(255,255,255,0.6); font-size:12px;">
-        ⚙️ Sube <b>video.mp4</b> y <b>Rove_prototipo1.glb</b> a esta carpeta antes de publicar.
-    </div>
-""", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
