@@ -51,15 +51,16 @@ video#bgvid {
 .sidebar {
     position: fixed;
     left: 0;
-    top: 0;
+    top: 80px; /* espacio para que no quede tapada por la barra de Streamlit */
     width: 200px;
-    height: 100%;
+    height: calc(100% - 100px);
     background-color: rgba(28,28,28,0.85);
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     z-index: 5;
+    border-radius: 0 12px 12px 0;
 }
 
 /* Botones barra lateral */
@@ -96,40 +97,8 @@ st.markdown(get_video_html(), unsafe_allow_html=True)
 if 'pagina' not in st.session_state:
     st.session_state.pagina = "Home"
 
-# --- Cambiar página ---
+# --- Función para cambiar página ---
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
-# --- Barra lateral con solo 3 botones ---
-st.markdown("""
-<div class="sidebar">
-    <button onclick="window.parent.postMessage({type:'Home'}, '*')">🏠 Home</button>
-    <button onclick="window.parent.postMessage({type:'Craft'}, '*')">🛠️ Craft</button>
-    <button onclick="window.parent.postMessage({type:'Materiales'}, '*')">📦 Materiales</button>
-</div>
-""", unsafe_allow_html=True)
-
-# --- Botones funcionales con Streamlit ---
-if st.button("🏠 Home", key="home"):
-    cambiar_pagina("Home")
-if st.button("🛠️ Craft", key="craft"):
-    cambiar_pagina("Craft")
-if st.button("📦 Materiales", key="materiales"):
-    cambiar_pagina("Materiales")
-
-# --- Contenido principal al costado de la barra ---
-st.markdown('<div class="main-content">', unsafe_allow_html=True)
-
-pagina = st.session_state.pagina
-
-if pagina == "Home":
-    st.title("🏠 Home")
-    st.write("Bienvenido a **AstroCycle**. Explora todo desde aquí.")
-elif pagina == "Craft":
-    st.header("🛠️ Craft")
-    st.write("Sección de construcción y desarrollo del prototipo.")
-elif pagina == "Materiales":
-    st.header("📦 Materiales")
-    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
-
-st.markdown('</div>', unsafe_allow_html=True)
+# --- Barra lateral con solo 3 botones
