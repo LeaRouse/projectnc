@@ -1,116 +1,63 @@
 import streamlit as st
-import streamlit.components.v1 as components
+from streamlit.components.v1 import iframe
 
-# --- CONFIGURACIÓN DE PÁGINA ---
-st.set_page_config(
-    page_title="AstroCycle 🌌",
-    page_icon="🪐",
-    layout="wide"
-)
+st.set_page_config(layout="wide", page_title="Panel Rover")
 
-# --- CSS PERSONALIZADO ---
-st.markdown("""
+# 🔹 Fondo animado con tu GIF
+page_bg = """
 <style>
-/* Fondo principal completo */
-.stApp, .main, .block-container, .css-1d391kg {
-    background-color: #0a0a1a !important; /* azul muy oscuro / negro espacial */
-    color: #a0c4ff;
+[data-testid="stAppViewContainer"] {
+  background: url("https://cdn.discordapp.com/attachments/882749328861564969/1424203752348323901/VideodeWhatsApp2025-10-04alas20.10.24_4530686d-ezgif.com-video-to-gif-converter.gif?ex=68e3189a&is=68e1c71a&hm=a61f2e60afe76a05157dcabe8b2e235a1ed337db0a9262074c2ece64ca2fdffe&") no-repeat center center fixed;
+  background-size: cover;
 }
 
-/* Barra lateral */
-section[data-testid="stSidebar"] {
-    background-color: #1a1a2e; /* azul oscuro profesional */
-    border-radius: 20px;
-    padding: 20px;
-    position: relative;
-    height: 100vh;
-    overflow: visible !important;
+[data-testid="stHeader"] {
+  background: rgba(0,0,0,0);
 }
 
-/* Ocultar el botón de colapso/expandir */
-button[title="Collapse"] {
-    display: none;
+[data-testid="stSidebar"] {
+  background-color: rgba(10, 10, 10, 0.8);
+  color: white;
 }
 
-/* Título lateral */
-.sidebar-title {
-    font-size: 24px;
-    font-weight: bold;
-    color: #a0c4ff; /* azul claro para contraste suave */
-    text-align: center;
-    margin-bottom: 25px;
+div.stButton > button {
+  width: 100%;
+  background-color: rgba(50, 50, 50, 0.85);
+  color: white;
+  border-radius: 8px;
+  padding: 10px;
+  transition: 0.3s;
+  font-weight: 500;
 }
 
-/* Botones del menú: todos iguales */
-.stButton > button {
-    display: block;
-    width: 100%;
-    margin-bottom: 15px;
-    padding: 12px;
-    border-radius: 12px;
-    border: none;
-    font-weight: bold;
-    color: #cfd9e0;
-    background-color: #2b2b44;
-    transition: 0.2s;
-    text-align: left;
-    cursor: pointer;
-}
-
-/* Hover */
-.stButton > button:hover {
-    background-color: #3a3a5c;
-    color: #ffffff;
-    transform: scale(1.02);
-}
-
-/* Textos principales */
-h1, h2, h3, h4, p, span {
-    color: #a0c4ff !important;
+div.stButton > button:hover {
+  background-color: rgba(100, 100, 100, 0.9);
 }
 </style>
-""", unsafe_allow_html=True)
+"""
+st.markdown(page_bg, unsafe_allow_html=True)
 
-# --- TÍTULO DEL MENÚ ---
-st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
+# 🔹 Barra lateral
+st.sidebar.title("🚀 Rover Control")
+pagina = st.sidebar.radio(
+    "Menú",
+    ["Home", "Datos generales", "Status", "Craft", "Materiales", "Especificaciones", "Configuración"]
+)
 
-# --- NAVEGACIÓN ---
-if 'pagina' not in st.session_state:
-    st.session_state.pagina = 'Home'
+# 🔹 Contenido principal (placeholder)
+st.title(f"Página: {pagina}")
 
-def cambiar_pagina(nombre):
-    st.session_state.pagina = nombre
-
-# --- Botones ---
-st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
-st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
-st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
-st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
-st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
-
-# --- CONTENIDO ---
-if st.session_state.pagina == "Home":
-    st.title("🏠 Home")
-    st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
-    st.image(
-        "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
-        use_container_width=True
-    )
-
-elif st.session_state.pagina == "Craft":
-    st.header("🛠️ Craft")
-    st.write("Contenido relacionado a la construcción y fabricación.")
-
-elif st.session_state.pagina == "Materiales":
-    st.header("📦 Materiales")
-    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
-
-elif st.session_state.pagina == "Especificaciones":
-    st.header("⚙️ Especificaciones")
-    st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
-    viewer_url = "https://learouse.github.io/prototipo/"
-    components.iframe(viewer_url, height=600, width="100%", scrolling=True)
-
-elif st.session_state.pagina == "Configuracion":
-    st.header("🧩 Configuración")
-    st.write("Opciones de configuración de la app.")
+if pagina == "Home":
+    st.write("Bienvenido al panel principal del Rover 🚀")
+elif pagina == "Datos generales":
+    st.write("Aquí irán los datos generales del Rover.")
+elif pagina == "Status":
+    st.write("Estado actual del sistema.")
+elif pagina == "Craft":
+    st.write("Detalles de fabricación y prototipo.")
+elif pagina == "Materiales":
+    st.write("Inventario de materiales.")
+elif pagina == "Especificaciones":
+    st.write("Detalles técnicos del sistema.")
+elif pagina == "Configuración":
+    st.write("Configuración del sistema y opciones avanzadas.")
