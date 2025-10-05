@@ -1,7 +1,6 @@
 import streamlit as st
 from pathlib import Path
 import base64
-import streamlit.components.v1 as components
 
 # --- CONFIGURACIÓN ---
 st.set_page_config(page_title="AstroCycle 🌌", layout="wide")
@@ -74,31 +73,19 @@ st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 
-# --- Botones flotantes derecha usando HTML + Streamlit ---
-components.html(f"""
-<div style="position: fixed; top:20px; right:20px; z-index:999;">
-    <form method="post">
-        <input type="submit" name="about_btn" value="ℹ️" class="floating-btn">
-    </form>
-</div>
-<div style="position: fixed; bottom:20px; right:20px; z-index:999;">
-    <form method="post">
-        <input type="submit" name="config_btn" value="⚙️" class="floating-btn">
-    </form>
-</div>
-""", height=0, width=0)
+# --- Botones flotantes usando st.empty y CSS ---
+about_placeholder = st.empty()
+config_placeholder = st.empty()
 
-# --- Detectar clicks de botones flotantes ---
-if "about_btn" in st.session_state:
-    st.session_state.pagina = "About"
-if "config_btn" in st.session_state:
-    st.session_state.pagina = "Configuracion"
+with about_placeholder.container():
+    if st.button("ℹ️", key="about_btn"):
+        cambiar_pagina("About")
+    st.markdown("<style>#about_btn {position: fixed; top:20px; right:20px;}</style>", unsafe_allow_html=True)
 
-# --- Detectar botones usando query_params (reemplazo de experimental) ---
-if st.query_params.get("about_btn"):
-    cambiar_pagina("About")
-if st.query_params.get("config_btn"):
-    cambiar_pagina("Configuracion")
+with config_placeholder.container():
+    if st.button("⚙️", key="config_btn"):
+        cambiar_pagina("Configuracion")
+    st.markdown("<style>#config_btn {position: fixed; bottom:20px; right:20px;}</style>", unsafe_allow_html=True)
 
 # --- Contenido principal ---
 st.markdown('<div class="main-content">', unsafe_allow_html=True)
