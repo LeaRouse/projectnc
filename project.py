@@ -1,6 +1,7 @@
 import streamlit as st
 from pathlib import Path
 import base64
+import streamlit.components.v1 as components
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(page_title="AstroCycle 🌌", page_icon="🪐", layout="wide")
@@ -21,6 +22,8 @@ def get_video_html():
     else:
         return "<!-- No se encontró video.mp4 -->"
 
+st.markdown(get_video_html(), unsafe_allow_html=True)
+
 # --- CSS ---
 st.markdown("""
 <style>
@@ -33,6 +36,8 @@ video#bgvid {
     filter: brightness(0.65) contrast(1.05);
 }
 .bg-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: -2;}
+
+/* Barra lateral */
 .sidebar {
     position: fixed; left: 0; top: 80px;
     width: 200px; height: calc(100% - 100px);
@@ -49,36 +54,67 @@ video#bgvid {
 }
 .sidebar button:hover {background-color: #3a3a3a; color: #fff;}
 .sidebar button.active {background-color: #505050; color: #fff;}
+
+/* Contenido principal */
 .main-content {margin-left: 220px; padding: 20px;}
 </style>
 """, unsafe_allow_html=True)
-
-# --- Insertar video de fondo ---
-st.markdown(get_video_html(), unsafe_allow_html=True)
 
 # --- Session state ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = "Home"
 
-# --- Función para cambiar página ---
-def cambiar_pagina(pagina):
-    st.session_state.pagina = pagina
-
-# --- Barra lateral (solo 3 botones, HTML puro) ---
-page = st.session_state.pagina
-st.markdown(f"""
+# --- HTML barra lateral con botones que actualizan st.session_state vía postMessage ---
+sidebar_html = f"""
 <div class="sidebar">
-    <button class="{ 'active' if page=='Home' else '' }" onclick="window.parent.postMessage({{type:'Home'}}, '*')">🏠 Home</button>
-    <button class="{ 'active' if page=='Craft' else '' }" onclick="window.parent.postMessage({{type:'Craft'}}, '*')">🛠️ Craft</button>
-    <button class="{ 'active' if page=='Materiales' else '' }" onclick="window.parent.postMessage({{type:'Materiales'}}, '*')">📦 Materiales</button>
+    <button id="btn-home" class="{'active' if st.session_state.pagina=='Home' else ''}">🏠 Home</button>
+    <button id="btn-craft" class="{'active' if st.session_state.pagina=='Craft' else ''}">🛠️ Craft</button>
+    <button id="btn-materiales" class="{'active' if st.session_state.pagina=='Materiales' else ''}">📦 Materiales</button>
 </div>
-""", unsafe_allow_html=True)
 
-# --- Escuchar clicks usando botones Streamlit invisibles ---
-# Cada botón cambia st.session_state
-if st.button("Home_hidden", key="home_hidden"):
-    cambiar_pagina("Home")
-if st.button("Craft_hidden", key="craft_hidden"):
-    cambiar_pagina("Craft")
-if st.button("Materiales_hidden", key="materiales_hidden"):
-    cambiar_pagina("Materiales")
+<script>
+const send_page = (page) => {{
+    const streamlitEvent = new CustomEvent("streamlit:custom", {{detail: page}});
+    document.dispatchEvent(streamlitEvent);
+}};
+
+document.getElementById("btn-home").onclick = () => send_page("Home");
+document.getElementById("btn-craft").onclick = () => send_page("Craft");
+document.getElementById("btn-materiales").onclick = () => send_page("Materiales");
+</script>
+"""
+
+# --- Componente HTML para la barra lateral ---
+components.html(sidebar_html, height=0, width=0)
+
+# --- Listener en Streamlit ---
+# Cada vez que se dispara un CustomEvent, actualizamos st.session_state
+if 'page_event' not in st.session_state:
+    st.session_state.page_event = None
+
+# Usamos un pequeño truco con componentes para recibir mensajes
+components.html("""
+<script>
+window.addEventListener('message', event => {
+    if (event.data.type === 'changePage') {
+        window.parent.postMessage(event.data.page, "*");
+    }
+});
+</script>
+""", height=0, width=0)
+
+# --- Contenido principal ---
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
+pagina = st.session_state.pagina
+
+if pagina == "Home":
+    st.title("🏠 Home")
+    st.write("Bienvenido a **AstroCycle**. Explora todo desde aquí.")
+elif pagina == "Craft":
+    st.header("🛠️ Craft")
+    st.write("Sección de construcción y desarrollo del prototipo.")
+elif pagina == "Materiales":
+    st.header("📦 Materiales")
+    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
+
+st.markdown('</div>', unsafe_allow_html=True)
