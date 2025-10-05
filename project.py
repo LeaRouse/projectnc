@@ -88,7 +88,7 @@ video#bgvid {
 
 /* --- BOTONES IZQUIERDA (CUADRADOS GRANDES Y ESPACIADOS) --- */
 #btn-home, #btn-craft, #btn-mat {
-    left: 15px;
+    left: 35px;
     width: 155px;
     height: 155px;
     border-radius: 22px;   /* ← bordes suaves */
@@ -96,9 +96,9 @@ video#bgvid {
 }
 
 /* separaciones verticales */
-#btn-home { top: 32%; }
-#btn-craft { top: 48%; }
-#btn-mat { top: 64%; }
+#btn-home { top: 20%; }
+#btn-craft { top: 50%; }
+#btn-mat { top: 80%; }
 
 /* --- BOTONES DERECHA (CÍRCULOS) --- */
 #btn-spec, #btn-config {
@@ -198,6 +198,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
