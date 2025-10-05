@@ -44,6 +44,7 @@ icon_craft = img_data_uri("craft.png")
 icon_mat   = img_data_uri("materiales.png")
 icon_spec  = img_data_uri("especificaciones.png")
 icon_conf  = img_data_uri("config.png")
+logo_data = img_data_uri("logotipoastrocycle.png")
 
 # --- CSS GENERAL ---
 st.markdown("""
@@ -197,8 +198,7 @@ document.addEventListener('updatePagina', e => {
 pagina = st.session_state.pagina
 IMG_FILE = Path("logotipoastrocycle.png")
 
-if pagina == "Home":
-    # Construye la etiqueta <img> del logo o un fallback si no existe
+elif pagina == "Home":
     logo_tag = (
         f'<img src="{logo_data}" alt="AstroCycle logo" '
         f'style="width:700px; max-width:70vw; height:auto; margin-top:16px;" />'
@@ -206,17 +206,15 @@ if pagina == "Home":
         '<div style="color:#ccc; margin-top:16px;">No se encontró logotipoastrocycle.png</div>'
     )
 
-    # Contenedor que ocupa solo el área principal (a la derecha del menú)
     st.markdown(f"""
     <div style="
         position: fixed;
-        /* deja espacio para el panel izquierdo: 25px margen + 180px botón + ~55px aire = 260px */
-        left: 260px; 
+        left: 260px;
         right: 0;
         top: 0;
         bottom: 0;
         display: grid;
-        place-items: center;   /* centra vertical y horizontalmente en el área principal */
+        place-items: center;
         z-index: 0;
         text-align: center;
     ">
@@ -244,6 +242,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
