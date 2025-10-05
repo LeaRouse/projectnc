@@ -51,21 +51,22 @@ st.markdown("""
         position: fixed;
         top: 0;
         left: 0;
-        width: 240px;
+        width: 260px;
         height: 100%;
         background: rgba(15, 15, 15, 0.7);
         backdrop-filter: blur(10px);
         border-right: 1px solid rgba(255,255,255,0.1);
         display: flex;
         flex-direction: column;
-        padding: 20px 10px;
+        padding: 20px 14px;
         z-index: 10;
+        overflow-y: auto;
     }
 
     .sidebar h2 {
         color: #fff;
         text-align: center;
-        margin-bottom: 30px;
+        margin-bottom: 20px;
     }
 
     .sidebar button {
@@ -73,13 +74,14 @@ st.markdown("""
         color: #fff;
         border: 1px solid rgba(255,255,255,0.1);
         border-radius: 10px;
-        padding: 14px;
+        padding: 12px;
         font-size: 16px;
         font-weight: 600;
         margin-bottom: 10px;
         width: 100%;
         transition: all 0.2s ease;
         cursor: pointer;
+        text-align: left;
     }
 
     .sidebar button:hover {
@@ -93,9 +95,14 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(0,0,0,0.4);
     }
 
-    /* ---------- Contenido principal ---------- */
+    .sub-btn {
+        margin-left: 10px;
+        font-size: 14px !important;
+        background: rgba(255,255,255,0.03);
+    }
+
     .main-content {
-        margin-left: 260px;
+        margin-left: 280px;
         padding: 20px 40px;
     }
 
@@ -104,6 +111,13 @@ st.markdown("""
         font-size: 36px;
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+
+    .sub-title {
+        color: #b0c4de;
+        font-size: 24px;
+        margin-top: 4px;
+        margin-bottom: 16px;
     }
 
     .muted {
@@ -116,66 +130,84 @@ st.markdown("""
 st.markdown(get_video_html(), unsafe_allow_html=True)
 st.markdown('<div class="bg-overlay"></div>', unsafe_allow_html=True)
 
-# ---------- Estado del botón ----------
+# ---------- Estado ----------
 if "page" not in st.session_state:
     st.session_state.page = "🏠 Home"
+if "subpage" not in st.session_state:
+    st.session_state.subpage = None
 
-# ---------- Barra lateral personalizada ----------
-st.markdown(
-    f"""
-    <div class="sidebar">
-        <h2>🚀 AstroCycle</h2>
-        <form action="?page=🏠 Home"><button class="{'active' if st.session_state.page=='🏠 Home' else ''}">🏠 Home</button></form>
-        <form action="?page=📊 Datos Generales"><button class="{'active' if st.session_state.page=='📊 Datos Generales' else ''}">📊 Datos Generales</button></form>
-        <form action="?page=🤖 Status"><button class="{'active' if st.session_state.page=='🤖 Status' else ''}">🤖 Status</button></form>
-        <form action="?page=🛠️ Craft"><button class="{'active' if st.session_state.page=='🛠️ Craft' else ''}">🛠️ Craft</button></form>
-        <form action="?page=⚙️ Especificaciones"><button class="{'active' if st.session_state.page=='⚙️ Especificaciones' else ''}">⚙️ Especificaciones</button></form>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+# ---------- Barra lateral ----------
+st.markdown('<div class="sidebar">', unsafe_allow_html=True)
+st.markdown("<h2>🚀 AstroCycle</h2>", unsafe_allow_html=True)
 
-# ---------- Control manual de navegación ----------
-params = st.query_params
-if "page" in params:
-    st.session_state.page = params["page"]
+def nav_button(label, target_page):
+    active = "active" if st.session_state.page == target_page else ""
+    if st.button(label, key=label, use_container_width=True):
+        st.session_state.page = target_page
+        st.session_state.subpage = None
+    st.markdown(f"<style>div[data-testid='stButton'] button#{label} {{border-radius:10px;}}</style>", unsafe_allow_html=True)
+
+# Páginas principales
+main_pages = ["🏠 Home", "📊 Datos Generales", "🤖 Status", "🛠️ Craft", "⚙️ Especificaciones"]
+for p in main_pages:
+    nav_button(p, p)
+
+# Subpáginas (solo visibles en "📊 Datos Generales")
+if st.session_state.page == "📊 Datos Generales":
+    if st.button("📄 Información del Rover", key="sub_info", use_container_width=True):
+        st.session_state.subpage = "info"
+    if st.button("📡 Telemetría", key="sub_tele", use_container_width=True):
+        st.session_state.subpage = "tele"
+    if st.button("🧰 Mantenimiento", key="sub_maint", use_container_width=True):
+        st.session_state.subpage = "maint"
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# ---------- Contenido principal ----------
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
 
 page = st.session_state.page
-
-# ---------- Contenido dinámico ----------
-st.markdown('<div class="main-content">', unsafe_allow_html=True)
+sub = st.session_state.subpage
 
 if page == "🏠 Home":
     st.markdown("<h1 class='main-title'>AstroCycle</h1>", unsafe_allow_html=True)
     st.markdown("<p class='muted'>Panel principal del rover interplanetario.</p>", unsafe_allow_html=True)
 
 elif page == "📊 Datos Generales":
-    st.markdown("<h2 class='main-title'>Datos Generales</h2>", unsafe_allow_html=True)
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.metric("Nombre", "Rover X-Proto")
-        st.metric("Modelo", "Rove 2025")
-    with c2:
-        st.metric("Código", "RC-002")
-        st.metric("Ubicación", "Hangar C")
-    with c3:
-        st.metric("Estado", "Operativo")
-        st.metric("Última revisión", "2025-10-04")
+    st.markdown("<h1 class='main-title'>📊 Datos Generales</h1>", unsafe_allow_html=True)
+    if sub is None:
+        st.markdown("<p class='muted'>Selecciona una subpágina a la izquierda.</p>", unsafe_allow_html=True)
+    elif sub == "info":
+        st.markdown("<h2 class='sub-title'>📄 Información del Rover</h2>", unsafe_allow_html=True)
+        c1, c2 = st.columns(2)
+        with c1:
+            st.metric("Nombre", "Rover X-Proto")
+            st.metric("Modelo", "Rove 2025")
+        with c2:
+            st.metric("Código", "RC-002")
+            st.metric("Ubicación", "Hangar C")
+    elif sub == "tele":
+        st.markdown("<h2 class='sub-title'>📡 Telemetría</h2>", unsafe_allow_html=True)
+        st.line_chart({"Temperatura °C": [18, 19, 21, 20, 22, 23, 22]})
+        st.line_chart({"Batería %": [100, 97, 94, 92, 89, 86, 84]})
+    elif sub == "maint":
+        st.markdown("<h2 class='sub-title'>🧰 Mantenimiento</h2>", unsafe_allow_html=True)
+        st.write("- Último chequeo: 2025-10-04")
+        st.write("- Componentes reemplazados: módulo térmico y panel solar secundario.")
 
 elif page == "🤖 Status":
-    st.markdown("<h2 class='main-title'>Estado del Sistema</h2>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>🤖 Estado del Sistema</h1>", unsafe_allow_html=True)
     battery = st.slider("Nivel de batería (%)", 0, 100, 85)
     st.progress(battery)
     st.metric("Sensores activos", "6/6")
     st.metric("Conectividad", "Online")
-    st.radio("Modo de energía", ["Normal", "Ahorro", "Reinicio"])
 
 elif page == "🛠️ Craft":
-    st.markdown("<h2 class='main-title'>Sección de Fabricación</h2>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>🛠️ Sección de Fabricación</h1>", unsafe_allow_html=True)
     st.write("Visualiza el proceso de creación, ensamblaje y mantenimiento del rover.")
 
 elif page == "⚙️ Especificaciones":
-    st.markdown("<h2 class='main-title'>Especificaciones Técnicas</h2>", unsafe_allow_html=True)
+    st.markdown("<h1 class='main-title'>⚙️ Especificaciones Técnicas</h1>", unsafe_allow_html=True)
     st.write("Incluye la vista 3D del modelo del rover:")
     if MODEL_FILE.exists():
         st.markdown(f"""
@@ -186,13 +218,13 @@ elif page == "⚙️ Especificaciones":
             <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
         """, unsafe_allow_html=True)
     else:
-        st.error("❌ No se encontró el archivo 'Rove_prototipo1.glb'. Súbelo a la carpeta del proyecto.")
+        st.error("❌ No se encontró el archivo 'Rove_prototipo1.glb'.")
 
 st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- Nota inferior ----------
 st.markdown("""
     <div style="position: fixed; right: 12px; bottom: 12px; color: rgba(255,255,255,0.6); font-size:12px;">
-        ⚙️ Sube <b>video.mp4</b> y <b>Rove_prototipo1.glb</b> a esta carpeta antes de publicar en Streamlit Cloud.
+        ⚙️ Sube <b>video.mp4</b> y <b>Rove_prototipo1.glb</b> antes de publicar.
     </div>
 """, unsafe_allow_html=True)
