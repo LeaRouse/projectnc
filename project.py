@@ -150,7 +150,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # -------------------------------------------------------------------
-# BOTONES FUNCIONALES CON JS
+# BOTONES FUNCIONALES CON JS PARA CAMBIAR SUBPÁGINA
 # -------------------------------------------------------------------
 components.html("""
 <script>
@@ -196,7 +196,7 @@ components.html("""
 """, height=0, width=0)
 
 # -------------------------------------------------------------------
-# SUBPÁGINAS
+# CONTENIDO DE SUBPÁGINAS
 # -------------------------------------------------------------------
 pagina = st.session_state.pagina
 
