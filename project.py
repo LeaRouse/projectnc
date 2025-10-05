@@ -11,14 +11,15 @@ st.set_page_config(
 # --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
-/* Fondo principal */
-.stApp {
-    background-color: #0a0a1a; /* azul muy oscuro / negro espacial */
+/* Fondo principal completo */
+.stApp, .css-18e3th9, .css-1d391kg, .block-container {
+    background-color: #0a0a0a !important; /* negro profundo */
+    color: #d0d0d0 !important; /* gris claro */
 }
 
 /* Barra lateral */
 section[data-testid="stSidebar"] {
-    background-color: #1a1a2e; /* azul oscuro profesional */
+    background-color: #1c1c1c !important; /* gris oscuro */
     border-radius: 20px;
     padding: 20px;
     position: relative;
@@ -26,7 +27,7 @@ section[data-testid="stSidebar"] {
     overflow: visible !important;
 }
 
-/* Ocultar el botón de colapso/expandir */
+/* Ocultar botón de colapso */
 button[title="Collapse"] {
     display: none;
 }
@@ -35,59 +36,59 @@ button[title="Collapse"] {
 .sidebar-title {
     font-size: 24px;
     font-weight: bold;
-    color: #a0c4ff; /* azul claro para contraste suave */
+    color: #e0e0e0; /* gris claro */
     text-align: center;
     margin-bottom: 25px;
 }
 
 /* Botones del menú: todos iguales */
-.stButton > button {
+.stButton>button {
     display: block;
     width: 100%;
-    margin-bottom: 15px;      /* distancia uniforme entre todos */
-    padding: 12px;             /* altura uniforme */
+    margin-bottom: 15px;
+    padding: 12px;
     border-radius: 12px;
     border: none;
     font-weight: bold;
-    color: #cfd9e0;            /* gris claro para texto */
-    background-color: #2b2b44; /* azul grisáceo oscuro */
+    color: #d0d0d0;
+    background-color: #2a2a2a; /* gris medio oscuro */
     transition: 0.2s;
     text-align: left;
     cursor: pointer;
 }
 
-/* Hover: cambio suave */
-.stButton > button:hover {
-    background-color: #3a3a5c; /* ligeramente más claro */
+/* Hover */
+.stButton>button:hover {
+    background-color: #3a3a3a; /* un poco más claro al pasar el mouse */
     color: #ffffff;
     transform: scale(1.02);
 }
 
-/* Títulos y textos principales */
+/* Textos principales */
 h1, h2, h3, h4, p, span {
-    color: #a0c4ff; /* azul claro profesional */
+    color: #d0d0d0 !important; /* gris claro */
 }
 </style>
 """, unsafe_allow_html=True)
 
-# --- TÍTULO DEL MENÚ ---
+# --- Menú lateral ---
 st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
 
-# --- NAVEGACIÓN ---
+# --- Navegación ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = 'Home'
 
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# --- Todos los botones alineados y con la misma distancia ---
+# Botones del menú
 st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
 st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
 
-# --- CONTENIDO ---
+# --- Contenido según página ---
 if st.session_state.pagina == "Home":
     st.title("🏠 Home")
     st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
