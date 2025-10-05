@@ -1,7 +1,6 @@
 import streamlit as st
 from pathlib import Path
 import base64
-import streamlit.components.v1 as components
 
 # --- CONFIGURACIÓN ---
 st.set_page_config(page_title="AstroCycle 🌌", layout="wide")
@@ -44,7 +43,6 @@ section[data-testid="stSidebar"] {
     text-align:left; cursor:pointer; transition:0.2s;
 }
 .stButton>button:hover {background-color:#3a3a3a; color:#fff;}
-.main-content {margin-left:240px; padding:20px;}
 
 /* Botones flotantes derecha */
 .floating-btn {
@@ -55,6 +53,9 @@ section[data-testid="stSidebar"] {
 .floating-btn:hover {background-color: #3a3a3a; color: #fff;}
 #btn-about {top: 20px; right: 20px;}
 #btn-config {bottom: 20px; right: 20px;}
+
+/* Contenido principal */
+.main-content {margin-left:240px; padding:20px;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -65,7 +66,6 @@ if 'pagina' not in st.session_state:
 # --- Función para cambiar página ---
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
-    st.experimental_rerun()  # fuerza recarga para actualizar el contenido
 
 # --- Barra lateral ---
 st.sidebar.title("🌠 AstroCycle")
@@ -73,11 +73,18 @@ st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 
-# --- Botones flotantes derecha (HTML) ---
-components.html(f"""
-<button class="floating-btn" id="btn-about" onclick="window.parent.location.href='#{st.session_state.pagina}'; window.parent.document.querySelector('iframe').contentWindow.postMessage('About','*')">ℹ️</button>
-<button class="floating-btn" id="btn-config" onclick="window.parent.location.href='#{st.session_state.pagina}'; window.parent.document.querySelector('iframe').contentWindow.postMessage('Configuracion','*')">⚙️</button>
-""", height=0, width=0)
+# --- Botones flotantes derecha ---
+col_top = st.empty()
+with col_top:
+    if st.button("ℹ️", key="about_btn"):
+        cambiar_pagina("About")
+
+col_bottom = st.empty()
+with col_bottom:
+    st.markdown('<div style="position: fixed; bottom:20px; right:20px;">', unsafe_allow_html=True)
+    if st.button("⚙️", key="config_btn"):
+        cambiar_pagina("Configuracion")
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- Contenido principal ---
 st.markdown('<div class="main-content">', unsafe_allow_html=True)
@@ -94,7 +101,7 @@ elif pagina == "Materiales":
     st.write("Aquí se muestran los materiales utilizados y sus detalles.")
 elif pagina == "About":
     st.header("ℹ️ Acerca de")
-    st.write("Esta es la información acerca de la aplicación AstroCycle.")
+    st.write("Información sobre la aplicación AstroCycle.")
 elif pagina == "Configuracion":
     st.header("⚙️ Configuración")
     st.write("Opciones de configuración de la aplicación.")
