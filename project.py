@@ -1,109 +1,85 @@
 import streamlit as st
+from pathlib import Path
 
-# --- CONFIGURACIÓN DE PÁGINA ---
-st.set_page_config(page_title="Rover UI", layout="wide")
+# ---- CONFIGURACIÓN BÁSICA ----
+st.set_page_config(page_title="AstroCycle", page_icon="🚀", layout="wide")
 
-# --- VIDEO DE FONDO (con suavizado) ---
+# ---- ESTILO CSS ----
+page_bg_video = Path("video.mp4")
+
 st.markdown("""
     <style>
-    /* Fondo de video animado */
-    .video-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        z-index: -2;
-        overflow: hidden;
+    /* Ocultar el encabezado y el menú de Streamlit */
+    #MainMenu {visibility: hidden;}
+    header {visibility: hidden;}
+    footer {visibility: hidden;}
+
+    /* Fondo de video a pantalla completa */
+    .stApp {
+        background-color: transparent;
     }
-    .video-background video {
-        position: absolute;
-        top: 50%;
-        left: 50%;
+    video {
+        position: fixed;
+        right: 0;
+        bottom: 0;
         min-width: 100%;
         min-height: 100%;
-        width: auto;
-        height: auto;
-        transform: translate(-50%, -50%);
-        object-fit: cover;
-        filter: brightness(0.7) contrast(1.05) saturate(1.2);
-        image-rendering: auto; /* suavizado */
-    }
-    /* Capa oscura */
-    .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.55);
         z-index: -1;
+        object-fit: cover;
     }
 
-    /* --- Sidebar --- */
-    section[data-testid="stSidebar"] {
-        background: rgba(20, 20, 20, 0.6);
-        border-radius: 18px;
-        padding-top: 30px;
-        backdrop-filter: blur(6px);
+    /* Título */
+    .title {
+        text-align: center;
+        font-size: 60px;
+        color: white;
+        text-shadow: 0 0 20px #00ffff;
+        font-family: 'Segoe UI', sans-serif;
+        margin-top: 20px;
     }
 
     /* Botones */
-    div[data-testid="stSidebar"] button {
-        background-color: rgba(35, 35, 35, 0.7) !important;
-        color: #f0f0f0 !important;
-        border: none !important;
-        border-radius: 10px !important;
-        font-size: 16px !important;
-        width: 100% !important;
-        height: 45px !important;
-        margin-bottom: 10px !important;
-        transition: all 0.2s ease-in-out;
+    .stButton>button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        font-size: 18px;
+        padding: 15px 40px;
+        border-radius: 10px;
+        width: 220px;
+        height: 60px;
+        margin: 10px auto;
+        display: block;
+        transition: all 0.3s ease;
     }
-    div[data-testid="stSidebar"] button:hover {
-        background-color: rgba(80,80,80,0.8) !important;
+    .stButton>button:hover {
+        background: rgba(255, 255, 255, 0.25);
         transform: scale(1.05);
     }
-
-    /* Textos principales */
-    h1, h2, h3, p {
-        color: #e6e6e6 !important;
-        text-shadow: 0 0 10px rgba(0,0,0,0.4);
-    }
     </style>
-
-    <div class="video-background">
-        <video autoplay muted loop playsinline>
-            <source src="video.mp4" type="video/mp4">
-        </video>
-    </div>
-    <div class="overlay"></div>
 """, unsafe_allow_html=True)
 
-# --- MENÚ LATERAL ---
-st.sidebar.title("🚀 Rover UI")
-pagina = st.sidebar.radio("Navegación", ["Home", "Craft", "Materiales", "Especificaciones", "Configuración"])
+# ---- REPRODUCIR VIDEO ----
+video_file = open(page_bg_video, "rb").read()
+video_url = f"data:video/mp4;base64,{video_file.encode('base64').decode()}" if hasattr(video_file, 'encode') else None
 
-# --- CONTENIDO PRINCIPAL ---
-if pagina == "Home":
-    st.title("🏠 Home")
-    st.write("Bienvenido al sistema del Rover. Aquí puedes acceder a toda la información del proyecto.")
-elif pagina == "Craft":
-    st.title("🛠 Craft")
-    st.write("Detalles del ensamblaje, construcción y mantenimiento del Rover.")
-elif pagina == "Materiales":
-    st.title("⚙ Materiales")
-    st.write("Lista de materiales y recursos disponibles para fabricación.")
-elif pagina == "Especificaciones":
-    st.title("📋 Especificaciones")
-    st.write("Características técnicas del sistema, estructura y rendimiento.")
-    # Modelo 3D incrustado
-    st.markdown("""
-        <model-viewer src="prototipo1.glb" alt="Rover 3D Model"
-        camera-controls auto-rotate rotation-per-second="30deg"
-        style="width:100%;height:600px;background:transparent;"></model-viewer>
-        <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-    """, unsafe_allow_html=True)
-elif pagina == "Configuración":
-    st.title("⚙ Configuración")
-    st.write("Ajustes generales del sistema y calibración del Rover.")
+st.markdown(f"""
+    <video autoplay loop muted playsinline>
+        <source src="video.mp4" type="video/mp4">
+    </video>
+""", unsafe_allow_html=True)
+
+# ---- CONTENIDO PRINCIPAL ----
+st.markdown("<h1 class='title'>AstroCycle</h1>", unsafe_allow_html=True)
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.button("Inicio")
+
+with col2:
+    st.button("Simulación")
+
+with col3:
+    st.button("Acerca de")
+
