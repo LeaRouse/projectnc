@@ -1,110 +1,117 @@
 import streamlit as st
-from pathlib import Path
-import base64
 
-# --- CONFIGURACIÓN ---
-st.set_page_config(page_title="AstroCycle 🌌", layout="wide")
+# ---------- Configuración ----------
+st.set_page_config(page_title="AstroCycle", layout="wide")
 
-# --- VIDEO DE FONDO ---
-VIDEO_FILE = Path("video.mp4")
-
-def get_video_html():
-    if VIDEO_FILE.exists():
-        data = VIDEO_FILE.read_bytes()
-        b64 = base64.b64encode(data).decode("utf-8")
-        return f"""
-        <video autoplay loop muted playsinline id="bgvid">
-            <source src="data:video/mp4;base64,{b64}" type="video/mp4">
-        </video>
-        <div class="bg-overlay"></div>
-        """
-    else:
-        return "<!-- No se encontró video.mp4 -->"
-
-st.markdown(get_video_html(), unsafe_allow_html=True)
-
-# --- CSS ---
+# ---------- Estilos personalizados ----------
 st.markdown("""
-<style>
-.stApp {background: transparent !important; color: #d0d0d0 !important;}
-video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%; transform: translate(-50%, -50%); object-fit: cover; z-index:-3; filter: brightness(0.65) contrast(1.05);}
-.bg-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: -2;}
+    <style>
+    #MainMenu, header, footer {visibility: hidden;}
 
-/* Barra lateral */
-section[data-testid="stSidebar"] {
-    width: 220px; position: fixed; top: 80px; left:0; height: calc(100%-80px);
-    background-color: rgba(28,28,28,0.85); border-radius:0 12px 12px 0; padding:20px;
-}
+    .sidebar-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100vh;
+        background: rgba(15, 15, 15, 0.9);
+        backdrop-filter: blur(10px);
+        color: white;
+        padding: 24px 16px;
+        box-sizing: border-box;
+    }
 
-/* Botones barra lateral */
-.stButton>button {
-    width: 100%; margin-bottom: 15px; padding:12px; border-radius:12px;
-    border:none; font-weight:bold; background-color:#2a2a2a; color:#d0d0d0;
-    text-align:left; cursor:pointer; transition:0.2s;
-}
-.stButton>button:hover {background-color:#3a3a3a; color:#fff;}
+    .sidebar-title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 24px;
+        text-align: center;
+    }
 
-/* Contenido principal */
-.main-content {margin-left:240px; padding:20px;}
+    .menu-button {
+        display: block;
+        width: 100%;
+        padding: 12px 16px;
+        text-align: left;
+        border-radius: 8px;
+        border: none;
+        background: rgba(255,255,255,0.05);
+        color: #fff;
+        font-weight: 500;
+        margin-bottom: 10px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
 
-/* Botones flotantes derecha */
-.floating-btn {
-    position: fixed; z-index: 999; width: 50px; height: 50px; border-radius: 25px;
-    border: none; font-size: 24px; cursor: pointer; color: #d0d0d0;
-    background-color: rgba(42,42,42,0.85); transition: 0.2s;
-}
-.floating-btn:hover {background-color: #3a3a3a; color:#fff;}
-#btn-about {top: 20px; right: 20px;}
-#btn-config {bottom: 20px; right: 20px;}
-</style>
+    .menu-button:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateX(3px);
+    }
+
+    .menu-button.active {
+        background: rgba(255,255,255,0.25);
+        font-weight: 600;
+    }
+
+    .content-container {
+        margin-left: 270px;
+        padding: 30px;
+        color: white;
+    }
+
+    body {
+        background: radial-gradient(circle at 20% 20%, #0a0a0a, #000);
+        color: white;
+    }
+    </style>
 """, unsafe_allow_html=True)
 
-# --- Session state ---
-if 'pagina' not in st.session_state:
-    st.session_state.pagina = "Home"
+# ---------- Menú lateral ----------
+st.markdown("""
+<div class="sidebar-container">
+    <div class="sidebar-title">🚀 AstroCycle</div>
+""", unsafe_allow_html=True)
 
-# --- Función para cambiar página ---
-def cambiar_pagina(pagina):
-    st.session_state.pagina = pagina
+# Lista de páginas
+pages = ["🏠 Home", "📊 Datos Generales", "🤖 Status", "🛠️ Craft", "⚙️ Especificaciones"]
+# Estado de página
+if "page" not in st.session_state:
+    st.session_state.page = pages[0]
 
-# --- Barra lateral ---
-st.sidebar.title("🌠 AstroCycle")
-st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
-st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
-st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
+# Renderizamos los botones
+for p in pages:
+    active_class = "active" if st.session_state.page == p else ""
+    if st.button(p, key=p):
+        st.session_state.page = p
+    st.markdown(f"<div style='height:2px'></div>", unsafe_allow_html=True)
 
-# --- Botones flotantes usando st.empty y CSS ---
-about_placeholder = st.empty()
-config_placeholder = st.empty()
+st.markdown("</div>", unsafe_allow_html=True)
 
-with about_placeholder.container():
-    if st.button("ℹ️", key="about_btn"):
-        cambiar_pagina("About")
-    st.markdown("<style>#about_btn {position: fixed; top:20px; right:20px;}</style>", unsafe_allow_html=True)
+# ---------- Contenido dinámico ----------
+st.markdown("<div class='content-container'>", unsafe_allow_html=True)
 
-with config_placeholder.container():
-    if st.button("⚙️", key="config_btn"):
-        cambiar_pagina("Configuracion")
-    st.markdown("<style>#config_btn {position: fixed; bottom:20px; right:20px;}</style>", unsafe_allow_html=True)
+if st.session_state.page == "🏠 Home":
+    st.markdown("## 🏠 Home")
+    st.write("Bienvenido al panel principal del proyecto AstroCycle.")
 
-# --- Contenido principal ---
-st.markdown('<div class="main-content">', unsafe_allow_html=True)
-pagina = st.session_state.pagina
+elif st.session_state.page == "📊 Datos Generales":
+    st.markdown("## 📊 Datos Generales")
+    st.write("Aquí se muestran los datos principales del rover.")
 
-if pagina == "Home":
-    st.title("🏠 Home")
-    st.write("Bienvenido a **AstroCycle**. Explora todo desde aquí.")
-elif pagina == "Craft":
-    st.header("🛠️ Craft")
-    st.write("Sección de construcción y desarrollo del prototipo.")
-elif pagina == "Materiales":
-    st.header("📦 Materiales")
-    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
-elif pagina == "About":
-    st.header("ℹ️ Acerca de")
-    st.write("Información sobre la aplicación AstroCycle.")
-elif pagina == "Configuracion":
-    st.header("⚙️ Configuración")
-    st.write("Opciones de configuración de la aplicación.")
+elif st.session_state.page == "🤖 Status":
+    st.markdown("## 🤖 Estado del Sistema")
+    battery = st.slider("Nivel de batería (%)", 0, 100, 85)
+    st.progress(battery)
+    st.metric("Sensores activos", "6/6")
+    st.metric("Conectividad", "Online")
 
-st.markdown('</div>', unsafe_allow_html=True)
+elif st.session_state.page == "🛠️ Craft":
+    st.markdown("## 🛠️ Sección de Fabricación")
+    st.write("Visualiza el proceso de ensamblaje y mantenimiento del rover.")
+
+elif st.session_state.page == "⚙️ Especificaciones":
+    st.markdown("## ⚙️ Especificaciones Técnicas")
+    st.write("Incluye la vista 3D del modelo del rover.")
+
+st.markdown("</div>", unsafe_allow_html=True)
