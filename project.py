@@ -36,8 +36,6 @@ def img_data_uri(path_str: str) -> str:
     b64 = base64.b64encode(p.read_bytes()).decode("utf-8")
     return f"data:{mime};base64,{b64}"
 
-from mimetypes import guess_type
-
 # --- Cargar imágenes ---
 icon_home  = img_data_uri("home.png")
 icon_craft = img_data_uri("craft.png")
@@ -137,15 +135,15 @@ video#bgvid { position: fixed; top:50%; left:50%; min-width:100%; min-height:100
 # --- Sidebar Izquierda (3 botones) ---
 st.markdown(f"""
 <div class="sidebar-left">
-    <a href="?page=Home" class="sidebar-btn" title="Home">
+    <a href="#Home" class="sidebar-btn" title="Home">
         <img src="{icon_home}" alt="Home" />
         <span>Home</span>
     </a>
-    <a href="?page=Craft" class="sidebar-btn" title="Craft">
+    <a href="#Craft" class="sidebar-btn" title="Craft">
         <img src="{icon_craft}" alt="Craft" />
         <span>Craft</span>
     </a>
-    <a href="?page=Materiales" class="sidebar-btn" title="Materiales">
+    <a href="#Materiales" class="sidebar-btn" title="Materiales">
         <img src="{icon_mat}" alt="Materiales" />
         <span>Materiales</span>
     </a>
@@ -155,24 +153,22 @@ st.markdown(f"""
 # --- Sidebar Derecha (2 botones) ---
 st.markdown(f"""
 <div class="sidebar-right" style="top: 80px; display: flex; flex-direction: column; gap: 20px;">
-    <a href="?page=Especificaciones" class="sidebar-btn" title="Especificaciones">
+    <a href="#Especificaciones" class="sidebar-btn" title="Especificaciones">
         <img src="{icon_spec}" alt="Especificaciones" />
     </a>
-    <a href="?page=Configuracion" class="sidebar-btn" title="Configuración">
+    <a href="#Configuracion" class="sidebar-btn" title="Configuración">
         <img src="{icon_conf}" alt="Configuración" />
     </a>
 </div>
 """, unsafe_allow_html=True)
 
-# --- Obtener página actual desde URL o session_state ---
-pagina = st.experimental_get_query_params().get("page", [None])[0]
-if pagina is None:
-    pagina = "Home"  # Página por defecto
-
-# --- Contenido dinámico ---
+# --- Mostrar el contenido en base a la sección seleccionada ---
 st.markdown('<div id="main-content">', unsafe_allow_html=True)
 
-if pagina == "Home":
+# Usamos `st.radio` para cambiar entre secciones sin recargar la página.
+seccion = st.radio("Selecciona una sección", ["Home", "Craft", "Materiales", "Especificaciones", "Configuracion"])
+
+if seccion == "Home":
     if logo_data:
         st.markdown(f"""
         <div style="text-align:center;">
@@ -182,25 +178,22 @@ if pagina == "Home":
         """, unsafe_allow_html=True)
     st.write("Bienvenido a AstroCycle 🌌, la app para tu prototipo estelar.")
 
-elif pagina == "Craft":
+elif seccion == "Craft":
     st.header("🛠️ Craft")
     st.write("Sección de construcción y desarrollo del prototipo.")
 
-elif pagina == "Materiales":
+elif seccion == "Materiales":
     st.header("📦 Materiales")
     st.write("Aquí se muestran los materiales utilizados y sus detalles.")
 
-elif pagina == "Especificaciones":
+elif seccion == "Especificaciones":
     st.header("⚙️ Especificaciones")
     st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
     viewer_url = "https://learouse.github.io/prototipo/"
     components.iframe(viewer_url, height=600, width="100%", scrolling=True)
 
-elif pagina == "Configuracion":
+elif seccion == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
-
-else:
-    st.error("Página no encontrada.")
 
 st.markdown('</div>', unsafe_allow_html=True)
