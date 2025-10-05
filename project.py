@@ -88,7 +88,7 @@ video#bgvid {
 
 /* --- BOTONES IZQUIERDA (CUADRADOS GRANDES Y ESPACIADOS) --- */
 #btn-home, #btn-craft, #btn-mat {
-    left: 45px;
+    left: 15px;
     width: 155px;
     height: 155px;
     border-radius: 22px;   /* ← bordes suaves */
@@ -198,6 +198,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
