@@ -1,10 +1,9 @@
 import streamlit as st
 from pathlib import Path
 import base64
-import streamlit.components.v1 as components
 
-# --- CONFIGURACIÓN DE PÁGINA ---
-st.set_page_config(page_title="AstroCycle 🌌", page_icon="🪐", layout="wide")
+# --- CONFIGURACIÓN ---
+st.set_page_config(page_title="AstroCycle 🌌", layout="wide")
 
 # --- VIDEO DE FONDO ---
 VIDEO_FILE = Path("video.mp4")
@@ -28,35 +27,12 @@ st.markdown(get_video_html(), unsafe_allow_html=True)
 st.markdown("""
 <style>
 .stApp {background: transparent !important; color: #d0d0d0 !important;}
-video#bgvid {
-    position: fixed; top: 50%; left: 50%;
-    min-width: 100%; min-height: 100%;
-    transform: translate(-50%, -50%);
-    object-fit: cover; z-index: -3;
-    filter: brightness(0.65) contrast(1.05);
-}
+video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%; transform: translate(-50%, -50%); object-fit: cover; z-index:-3; filter: brightness(0.65) contrast(1.05);}
 .bg-overlay {position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: -2;}
-
-/* Barra lateral */
-.sidebar {
-    position: fixed; left: 0; top: 80px;
-    width: 200px; height: calc(100% - 100px);
-    background-color: rgba(28,28,28,0.85);
-    padding: 20px; display: flex; flex-direction: column;
-    align-items: stretch; z-index: 5; border-radius: 0 12px 12px 0;
-}
-.sidebar button {
-    display: block; margin-bottom: 15px; padding: 12px;
-    border: none; border-radius: 12px;
-    background-color: #2a2a2a; color: #d0d0d0;
-    font-weight: bold; text-align: left; cursor: pointer;
-    transition: 0.2s;
-}
-.sidebar button:hover {background-color: #3a3a3a; color: #fff;}
-.sidebar button.active {background-color: #505050; color: #fff;}
-
-/* Contenido principal */
-.main-content {margin-left: 220px; padding: 20px;}
+section[data-testid="stSidebar"] {width: 220px; position: fixed; top: 80px; left:0; height: calc(100%-80px); background-color: rgba(28,28,28,0.85); border-radius:0 12px 12px 0; padding:20px;}
+.stButton>button {width: 100%; margin-bottom: 15px; padding:12px; border-radius:12px; border:none; font-weight:bold; background-color:#2a2a2a; color:#d0d0d0; text-align:left; cursor:pointer; transition:0.2s;}
+.stButton>button:hover {background-color:#3a3a3a; color:#fff;}
+.main-content {margin-left:240px; padding:20px;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -64,44 +40,15 @@ video#bgvid {
 if 'pagina' not in st.session_state:
     st.session_state.pagina = "Home"
 
-# --- HTML barra lateral con botones que actualizan st.session_state vía postMessage ---
-sidebar_html = f"""
-<div class="sidebar">
-    <button id="btn-home" class="{'active' if st.session_state.pagina=='Home' else ''}">🏠 Home</button>
-    <button id="btn-craft" class="{'active' if st.session_state.pagina=='Craft' else ''}">🛠️ Craft</button>
-    <button id="btn-materiales" class="{'active' if st.session_state.pagina=='Materiales' else ''}">📦 Materiales</button>
-</div>
+# --- Función cambiar página ---
+def cambiar_pagina(pagina):
+    st.session_state.pagina = pagina
 
-<script>
-const send_page = (page) => {{
-    const streamlitEvent = new CustomEvent("streamlit:custom", {{detail: page}});
-    document.dispatchEvent(streamlitEvent);
-}};
-
-document.getElementById("btn-home").onclick = () => send_page("Home");
-document.getElementById("btn-craft").onclick = () => send_page("Craft");
-document.getElementById("btn-materiales").onclick = () => send_page("Materiales");
-</script>
-"""
-
-# --- Componente HTML para la barra lateral ---
-components.html(sidebar_html, height=0, width=0)
-
-# --- Listener en Streamlit ---
-# Cada vez que se dispara un CustomEvent, actualizamos st.session_state
-if 'page_event' not in st.session_state:
-    st.session_state.page_event = None
-
-# Usamos un pequeño truco con componentes para recibir mensajes
-components.html("""
-<script>
-window.addEventListener('message', event => {
-    if (event.data.type === 'changePage') {
-        window.parent.postMessage(event.data.page, "*");
-    }
-});
-</script>
-""", height=0, width=0)
+# --- Barra lateral con solo 3 botones ---
+st.sidebar.title("🌠 AstroCycle")
+st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
+st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
+st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 
 # --- Contenido principal ---
 st.markdown('<div class="main-content">', unsafe_allow_html=True)
