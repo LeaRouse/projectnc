@@ -24,7 +24,6 @@ def get_video_html():
 # --- CSS ---
 st.markdown("""
 <style>
-/* Fondo */
 .stApp { background: transparent !important; color: #d0d0d0 !important; }
 video#bgvid {
     position: fixed; top: 50%; left: 50%;
@@ -58,7 +57,7 @@ video#bgvid {
 # --- Video de fondo ---
 st.markdown(get_video_html(), unsafe_allow_html=True)
 
-# --- Session state para página ---
+# --- Session state ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = "Home"
 
@@ -112,11 +111,11 @@ with col_right:
     if pagina == "Home":
         IMG_FILE = Path("logotipoastrocycle.png")
         st.markdown("""
-        <div style="display:flex; flex-direction:column; justify-content:flex-start; align-items:center; height:90vh; margin-top:50px;">
-            <h1 style="color:#ffffff; font-size:100px; margin-bottom:40px; text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">AstroCycle</h1>
+        <div style="display:flex; flex-direction:column; justify-content:flex-start; align-items:center; height:90vh; margin-top:10px;">
+            <h1 style="color:#ffffff; font-size:120px; margin-bottom:30px; text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">AstroCycle</h1>
         """, unsafe_allow_html=True)
         if IMG_FILE.exists():
-            st.image(str(IMG_FILE), use_container_width=False, width=600)
+            st.image(str(IMG_FILE), use_container_width=False, width=700)
         else:
             st.warning("No se encontró logotipoastrocycle.png")
         st.markdown("</div>", unsafe_allow_html=True)
