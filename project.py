@@ -1,117 +1,154 @@
 import streamlit as st
+import streamlit.components.v1 as components
+from pathlib import Path
+import base64
 
-# ---------- Configuración ----------
-st.set_page_config(page_title="AstroCycle", layout="wide")
+# --- CONFIGURACIÓN DE PÁGINA ---
+st.set_page_config(page_title="AstroCycle 🌌", page_icon="🪐", layout="wide")
 
-# ---------- Estilos personalizados ----------
+# --- VIDEO DE FONDO ---
+VIDEO_FILE = Path("video.mp4")
+
+def get_video_html():
+    if VIDEO_FILE.exists():
+        data = VIDEO_FILE.read_bytes()
+        b64 = base64.b64encode(data).decode("utf-8")
+        return f"""
+        <video autoplay loop muted playsinline id="bgvid">
+            <source src="data:video/mp4;base64,{b64}" type="video/mp4">
+        </video>
+        <div class="bg-overlay"></div>
+        """
+    else:
+        return "<!-- No se encontró video.mp4 -->"
+
+# --- CSS ---
 st.markdown("""
-    <style>
-    #MainMenu, header, footer {visibility: hidden;}
+<style>
+/* Fondo */
+.stApp {
+    background: transparent !important;
+    color: #d0d0d0 !important;
+}
+video#bgvid {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    z-index: -3;
+    filter: brightness(0.65) contrast(1.05);
+}
+.bg-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: -2;
+}
 
-    .sidebar-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 240px;
-        height: 100vh;
-        background: rgba(15, 15, 15, 0.9);
-        backdrop-filter: blur(10px);
-        color: white;
-        padding: 24px 16px;
-        box-sizing: border-box;
-    }
+/* Botones flotantes */
+.control-button {
+    position: fixed;
+    background-color: rgba(30,30,30,0.85);
+    color: #f1f1f1;
+    border: none;
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    z-index: 5;
+    width: 120px;
+    text-align: left;
+}
+.control-button:hover {
+    background-color: rgba(70,70,70,0.95);
+    transform: scale(1.05);
+}
 
-    .sidebar-title {
-        font-size: 22px;
-        font-weight: bold;
-        color: #fff;
-        margin-bottom: 24px;
-        text-align: center;
-    }
+/* Botones izquierda (vertical) */
+#btn-left1 { left: 20px; top: 40%; }
+#btn-left2 { left: 20px; top: 50%; }
+#btn-left3 { left: 20px; top: 60%; }
 
-    .menu-button {
-        display: block;
-        width: 100%;
-        padding: 12px 16px;
-        text-align: left;
-        border-radius: 8px;
-        border: none;
-        background: rgba(255,255,255,0.05);
-        color: #fff;
-        font-weight: 500;
-        margin-bottom: 10px;
-        transition: all 0.2s ease;
-        cursor: pointer;
-    }
+/* Botones derecha */
+#btn-top-right { right: 20px; top: 80px; }  /* alejado del header de Streamlit */
+#btn-bottom-right { right: 20px; bottom: 30px; }
 
-    .menu-button:hover {
-        background: rgba(255,255,255,0.15);
-        transform: translateX(3px);
-    }
-
-    .menu-button.active {
-        background: rgba(255,255,255,0.25);
-        font-weight: 600;
-    }
-
-    .content-container {
-        margin-left: 270px;
-        padding: 30px;
-        color: white;
-    }
-
-    body {
-        background: radial-gradient(circle at 20% 20%, #0a0a0a, #000);
-        color: white;
-    }
-    </style>
+</style>
 """, unsafe_allow_html=True)
 
-# ---------- Menú lateral ----------
-st.markdown("""
-<div class="sidebar-container">
-    <div class="sidebar-title">🚀 AstroCycle</div>
+# --- Video de fondo ---
+st.markdown(get_video_html(), unsafe_allow_html=True)
+
+# --- Session state para página ---
+if 'pagina' not in st.session_state:
+    st.session_state.pagina = "Home"
+
+def cambiar_pagina(pagina):
+    st.session_state.pagina = pagina
+
+# --- Botones izquierda ---
+st.markdown(f"""
+<button class="control-button" id="btn-left1" onclick="window.parent.postMessage({{type: 'Home'}}, '*')">🏠 Home</button>
+<button class="control-button" id="btn-left2" onclick="window.parent.postMessage({{type: 'Craft'}}, '*')">🛠️ Craft</button>
+<button class="control-button" id="btn-left3" onclick="window.parent.postMessage({{type: 'Materiales'}}, '*')">📦 Materiales</button>
 """, unsafe_allow_html=True)
 
-# Lista de páginas
-pages = ["🏠 Home", "📊 Datos Generales", "🤖 Status", "🛠️ Craft", "⚙️ Especificaciones"]
-# Estado de página
-if "page" not in st.session_state:
-    st.session_state.page = pages[0]
+# --- Botones derecha ---
+st.markdown(f"""
+<button class="control-button" id="btn-top-right" onclick="window.parent.postMessage({{type: 'Especificaciones'}}, '*')">⚙️ Especificaciones</button>
+<button class="control-button" id="btn-bottom-right" onclick="window.parent.postMessage({{type: 'Configuracion'}}, '*')">🧩 Configuración</button>
+""", unsafe_allow_html=True)
 
-# Renderizamos los botones
-for p in pages:
-    active_class = "active" if st.session_state.page == p else ""
-    if st.button(p, key=p):
-        st.session_state.page = p
-    st.markdown(f"<div style='height:2px'></div>", unsafe_allow_html=True)
+# --- Capturar los mensajes de los botones ---
+components.html("""
+<script>
+window.addEventListener('message', (event) => {
+    const type = event.data.type;
+    if (type) {
+        document.dispatchEvent(new CustomEvent('updatePagina', {detail: type}));
+    }
+});
+</script>
+""", height=0, width=0)
 
-st.markdown("</div>", unsafe_allow_html=True)
+# Escuchar en Streamlit
+if 'last_event' not in st.session_state:
+    st.session_state.last_event = None
 
-# ---------- Contenido dinámico ----------
-st.markdown("<div class='content-container'>", unsafe_allow_html=True)
+# Detectar cambio usando button clicks tradicionales de Streamlit
+buttons = {
+    "Home": "🏠 Home",
+    "Craft": "🛠️ Craft",
+    "Materiales": "📦 Materiales",
+    "Especificaciones": "⚙️ Especificaciones",
+    "Configuracion": "🧩 Configuración"
+}
 
-if st.session_state.page == "🏠 Home":
-    st.markdown("## 🏠 Home")
-    st.write("Bienvenido al panel principal del proyecto AstroCycle.")
+for key in buttons:
+    if st.button(buttons[key]):
+        cambiar_pagina(key)
 
-elif st.session_state.page == "📊 Datos Generales":
-    st.markdown("## 📊 Datos Generales")
-    st.write("Aquí se muestran los datos principales del rover.")
+# --- Contenido dinámico ---
+pagina = st.session_state.pagina
 
-elif st.session_state.page == "🤖 Status":
-    st.markdown("## 🤖 Estado del Sistema")
-    battery = st.slider("Nivel de batería (%)", 0, 100, 85)
-    st.progress(battery)
-    st.metric("Sensores activos", "6/6")
-    st.metric("Conectividad", "Online")
-
-elif st.session_state.page == "🛠️ Craft":
-    st.markdown("## 🛠️ Sección de Fabricación")
-    st.write("Visualiza el proceso de ensamblaje y mantenimiento del rover.")
-
-elif st.session_state.page == "⚙️ Especificaciones":
-    st.markdown("## ⚙️ Especificaciones Técnicas")
-    st.write("Incluye la vista 3D del modelo del rover.")
-
-st.markdown("</div>", unsafe_allow_html=True)
+if pagina == "Home":
+    st.title("🏠 Home")
+    st.write("Bienvenido a **AstroCycle**. Explora todo desde aquí.")
+elif pagina == "Craft":
+    st.header("🛠️ Craft")
+    st.write("Sección de construcción y desarrollo del prototipo.")
+elif pagina == "Materiales":
+    st.header("📦 Materiales")
+    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
+elif pagina == "Especificaciones":
+    st.header("⚙️ Especificaciones")
+    st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
+    viewer_url = "https://learouse.github.io/prototipo/"
+    components.iframe(viewer_url, height=600, width="100%", scrolling=True)
+elif pagina == "Configuracion":
+    st.header("🧩 Configuración")
+    st.write("Opciones de configuración de la app.")
