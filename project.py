@@ -1,7 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# --- Configuración de la página ---
+# --- Configuración de página ---
 st.set_page_config(page_title="AstroCycle 🌌", page_icon="🪐", layout="wide")
 
 # --- Estado de página ---
@@ -12,7 +12,7 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
-# --- Fondo con imagen ---
+# --- CSS para dashboard ---
 st.markdown("""
 <style>
 .stApp {
@@ -26,19 +26,32 @@ st.markdown("""
 
 /* Menú lateral */
 .menu-lateral {
-    display:flex; flex-direction:column; gap:10px; padding-top:10px; height:100%;
+    display:flex; flex-direction:column; gap:12px; padding:15px; height:100%;
 }
 
-/* Botones uniformes */
+/* Botones uniformes tipo dashboard */
 .menu-lateral button {
-    width: 100%; height: 50px; border-radius:10px; border:none;
-    font-weight:bold; text-align:left; display:flex; align-items:center;
-    padding-left:12px; font-size:16px; cursor:pointer; transition:0.2s;
-    background-color:#2a2a2a; color:#d0d0d0;
+    width: 100%; height: 55px; border-radius:12px; border:none;
+    font-weight:bold; display:flex; align-items:center;
+    padding-left:16px; font-size:16px; cursor:pointer;
+    background-color:#2a2a2a; color:#d0d0d0; transition:0.2s;
 }
-.menu-lateral button:hover { background-color:#3a3a3a; color:#ffffff; transform:scale(1.02); }
-.menu-lateral .activo { background-color:#555555; color:#ffffff; }
+
+.menu-lateral button:hover {
+    background-color:#3a3a3a; color:#ffffff; transform:scale(1.02);
+}
+
+.menu-lateral .activo {
+    background-color:#555555; color:#ffffff;
+}
+
+/* Separa los botones de abajo */
 .menu-lateral .bottom { margin-top:auto; }
+
+/* Iconos alineados */
+.menu-lateral span.icono {
+    margin-right: 10px; font-size:18px;
+}
 
 /* Contenido */
 .contenido { padding-left:20px; }
@@ -62,18 +75,23 @@ paginas_abajo = [
     ("🧩", "Configuración")
 ]
 
-# --- Menú lateral con HTML buttons ---
+# --- Menú lateral ---
 with col1:
     st.markdown('<div class="menu-lateral">', unsafe_allow_html=True)
 
     # Botones de arriba
     for icono, nombre in paginas_arriba:
         clase = "activo" if st.session_state.pagina == nombre else ""
-        if st.button(f"{icono} {nombre}", key=nombre):
+        if st.button(f"{nombre}", key=nombre):
             cambiar_pagina(nombre)
         st.markdown(f"""
             <style>
-            div.stButton > button[key="{nombre}"] {{ background-color:{'#555555' if clase=='activo' else '#2a2a2a'} !important; }}
+            div.stButton > button[key="{nombre}"] {{
+                background-color:{'#555555' if clase=='activo' else '#2a2a2a'} !important;
+            }}
+            div.stButton > button[key="{nombre}"]::before {{
+                content: '{icono}'; margin-right:10px;
+            }}
             </style>
         """, unsafe_allow_html=True)
 
@@ -83,11 +101,16 @@ with col1:
     # Botones de abajo
     for icono, nombre in paginas_abajo:
         clase = "activo" if st.session_state.pagina == nombre else ""
-        if st.button(f"{icono} {nombre}", key=nombre):
+        if st.button(f"{nombre}", key=nombre):
             cambiar_pagina(nombre)
         st.markdown(f"""
             <style>
-            div.stButton > button[key="{nombre}"] {{ background-color:{'#555555' if clase=='activo' else '#2a2a2a'} !important; }}
+            div.stButton > button[key="{nombre}"] {{
+                background-color:{'#555555' if clase=='activo' else '#2a2a2a'} !important;
+            }}
+            div.stButton > button[key="{nombre}"]::before {{
+                content: '{icono}'; margin-right:10px;
+            }}
             </style>
         """, unsafe_allow_html=True)
 
