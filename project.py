@@ -102,41 +102,35 @@ st.markdown(f"""
 <div class="icon-button" id="btn-config"><img src="{icon_conf}"></div>
 """, unsafe_allow_html=True)
 
-# --- BOTONES INVISIBLES PARA NAVEGACIÓN ---
-botones = {
-    "btn-home": "Home",
-    "btn-craft": "Craft",
-    "btn-mat": "Materiales",
-    "btn-spec": "Especificaciones",
-    "btn-config": "Configuracion"
-}
+# --- BOTONES INVISIBLES DE STREAMLIT PARA CAMBIAR CONTENIDO SIN RECARGAR ---
+# Detectamos clicks con botones invisibles colocados estratégicamente
 
-for slot_id, target_page in botones.items():
-    st.markdown(f"""
-    <div style="
-        position: fixed; z-index: 8;
-        width: { '180px' if slot_id in ['btn-home','btn-craft','btn-mat'] else '80px' };
-        height: { '180px' if slot_id in ['btn-home','btn-craft','btn-mat'] else '80px' };
-        left: { '25px' if slot_id in ['btn-home','btn-craft','btn-mat'] else 'auto' };
-        right: { '25px' if slot_id in ['btn-spec','btn-config'] else 'auto' };
-        top: { '12%' if slot_id=='btn-home' else '41%' if slot_id=='btn-craft' else '70%' if slot_id=='btn-mat' else '80px' if slot_id=='btn-spec' else 'auto' };
-        bottom: { '30px' if slot_id=='btn-config' else 'auto' };
-    ">
-        <form>
-            <input type="submit" style="
-                width:100%; height:100%;
-                background:transparent; border:none; cursor:pointer;
-            " formaction="?page={target_page}">
-        </form>
-    </div>
-    """, unsafe_allow_html=True)
+# Colocamos botones invisibles en la página
+placeholder_buttons = st.empty()
+with placeholder_buttons.container():
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        if st.button("", key="btn_home", help="Home"):
+            st.session_state.pagina = "Home"
+    with col2:
+        if st.button("", key="btn_craft", help="Craft"):
+            st.session_state.pagina = "Craft"
+    with col3:
+        if st.button("", key="btn_mat", help="Materiales"):
+            st.session_state.pagina = "Materiales"
+    with col4:
+        if st.button("", key="btn_spec", help="Especificaciones"):
+            st.session_state.pagina = "Especificaciones"
+    with col5:
+        if st.button("", key="btn_config", help="Configuración"):
+            st.session_state.pagina = "Configuracion"
 
 # --- CONTENIDO DINÁMICO ---
-pagina = st.experimental_get_query_params().get("page", [st.session_state.pagina])[0]
-st.session_state.pagina = pagina
+pagina = st.session_state.pagina
+
+st.markdown('<div id="main-content">', unsafe_allow_html=True)
 
 if pagina == "Home":
-    st.markdown('<div id="main-content">', unsafe_allow_html=True)
     if logo_data:
         st.markdown(f"""
         <div style="text-align:center;">
@@ -144,30 +138,23 @@ if pagina == "Home":
             filter: drop-shadow(0 0 35px rgba(255,255,255,0.35));"/>
         </div>
         """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
 
 elif pagina == "Craft":
-    st.markdown('<div id="main-content">', unsafe_allow_html=True)
     st.header("🛠️ Craft")
     st.write("Sección de construcción y desarrollo del prototipo.")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 elif pagina == "Materiales":
-    st.markdown('<div id="main-content">', unsafe_allow_html=True)
     st.header("📦 Materiales")
     st.write("Aquí se muestran los materiales utilizados y sus detalles.")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 elif pagina == "Especificaciones":
-    st.markdown('<div id="main-content">', unsafe_allow_html=True)
     st.header("⚙️ Especificaciones")
     st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
     viewer_url = "https://learouse.github.io/prototipo/"
     components.iframe(viewer_url, height=600, width="100%", scrolling=True)
-    st.markdown('</div>', unsafe_allow_html=True)
 
 elif pagina == "Configuracion":
-    st.markdown('<div id="main-content">', unsafe_allow_html=True)
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
-    st.markdown('</div>', unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
