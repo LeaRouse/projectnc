@@ -170,34 +170,40 @@ except AttributeError:
 # --- BOTONES FLOTANTES CON IMÁGENES ---
 # Asegúrate de tener tus íconos en la misma carpeta: home.png, craft.png, materiales.png, especificaciones.png, config.png
 # --- BOTONES FLOTANTES CON NAVEGACIÓN (vía query params) ---
+# Página actual para marcar activo (opcional)
+current = st.session_state.pagina
+
 st.markdown(f"""
+<style>
+.icon-button.active {{
+  outline: 3px solid rgba(255,255,255,0.7);
+  box-shadow: 0 0 20px rgba(255,255,255,0.25);
+}}
+</style>
+
 <div>
-  <div class="icon-button" id="btn-home"
-       onclick="window.parent.location.search='?page=Home'">
+  <a href="?page=Home" class="icon-button {'active' if current=='Home' else ''}" id="btn-home">
     <img src="{icon_home}" alt="Home">
-  </div>
+  </a>
 
-  <div class="icon-button" id="btn-craft"
-       onclick="window.parent.location.search='?page=Craft'">
+  <a href="?page=Craft" class="icon-button {'active' if current=='Craft' else ''}" id="btn-craft">
     <img src="{icon_craft}" alt="Craft">
-  </div>
+  </a>
 
-  <div class="icon-button" id="btn-mat"
-       onclick="window.parent.location.search='?page=Materiales'">
+  <a href="?page=Materiales" class="icon-button {'active' if current=='Materiales' else ''}" id="btn-mat">
     <img src="{icon_mat}" alt="Materiales">
-  </div>
+  </a>
 
-  <div class="icon-button" id="btn-spec"
-       onclick="window.parent.location.search='?page=Especificaciones'">
+  <a href="?page=Especificaciones" class="icon-button {'active' if current=='Especificaciones' else ''}" id="btn-spec">
     <img src="{icon_spec}" alt="Especificaciones">
-  </div>
+  </a>
 
-  <div class="icon-button" id="btn-config"
-       onclick="window.parent.location.search='?page=Configuracion'">
+  <a href="?page=Configuracion" class="icon-button {'active' if current=='Configuracion' else ''}" id="btn-config">
     <img src="{icon_conf}" alt="Configuración">
-  </div>
+  </a>
 </div>
 """, unsafe_allow_html=True)
+
 
 # --- CONTENIDO ---
 pagina = st.session_state.pagina
@@ -256,5 +262,6 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
