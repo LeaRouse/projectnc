@@ -43,22 +43,28 @@ video#bgvid {
 .layout {
     display: flex;
     height: 100vh;
+    margin: 0;
+    padding: 0;
 }
 
 .sidebar {
     width: 240px;
-    background: rgba(20,20,20,0.5);
+    background: rgba(20,20,20,0.6);
     backdrop-filter: blur(8px);
-    padding: 20px;
+    padding: 15px 15px 15px 15px;
     border-right: 1px solid rgba(255,255,255,0.1);
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 .content {
     flex: 1;
-    padding: 40px;
+    padding: 25px 40px;
     color: white;
     overflow-y: auto;
+    box-sizing: border-box;
 }
 
 button {
@@ -66,12 +72,13 @@ button {
     border: none;
     border-radius: 8px;
     color: white;
-    padding: 12px;
-    margin-bottom: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
     width: 100%;
     text-align: left;
     font-weight: 600;
     cursor: pointer;
+    font-size: 15px;
 }
 button:hover {
     background: rgba(255,255,255,0.15);
@@ -82,23 +89,24 @@ button:hover {
 st.markdown(get_video_html(), unsafe_allow_html=True)
 st.markdown("<div class='bg-overlay'></div>", unsafe_allow_html=True)
 
+# Estructura general
 st.markdown("<div class='layout'>", unsafe_allow_html=True)
 
-# Barra lateral
-with st.container():
-    st.markdown("<div class='sidebar'>", unsafe_allow_html=True)
-    st.markdown("### 🚀 AstroCycle")
+# --- Barra lateral ---
+st.markdown("<div class='sidebar'>", unsafe_allow_html=True)
+st.markdown("### 🚀 AstroCycle")
 
-    pages = ["🏠 Home", "📊 Datos Generales", "🤖 Status", "🛠️ Craft", "⚙️ Especificaciones", "🧩 Configuración"]
-    if "page" not in st.session_state:
-        st.session_state.page = "🏠 Home"
+pages = ["🏠 Home", "📊 Datos Generales", "🤖 Status", "🛠️ Craft", "⚙️ Especificaciones", "🧩 Configuración"]
+if "page" not in st.session_state:
+    st.session_state.page = "🏠 Home"
 
-    for p in pages:
-        if st.button(p, key=p):
-            st.session_state.page = p
-    st.markdown("</div>", unsafe_allow_html=True)
+for p in pages:
+    if st.button(p, key=p):
+        st.session_state.page = p
 
-# Contenido
+st.markdown("</div>", unsafe_allow_html=True)
+
+# --- Contenido principal ---
 st.markdown("<div class='content'>", unsafe_allow_html=True)
 page = st.session_state.page
 
