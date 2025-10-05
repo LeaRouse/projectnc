@@ -1,11 +1,21 @@
-# --- util: cargar PNG como data URI ---
+# --- IMPORTS (deben ir al inicio del archivo) ---
+import streamlit as st
+import streamlit.components.v1 as components
+from pathlib import Path
+import base64
 from mimetypes import guess_type
 
-@st.cache_data
+# Decorador compatible (cache_data si existe, si no cache)
+try:
+    cache_dec = st.cache_data
+except AttributeError:
+    cache_dec = st.cache
+
+@cache_dec(show_spinner=False)
 def img_data_uri(path_str: str) -> str:
     p = Path(path_str)
     if not p.exists():
-        return ""  # para poder avisar después
+        return ""
     mime, _ = guess_type(p.name)
     if not mime:
         mime = "image/png"
@@ -48,3 +58,4 @@ if not icon_spec:  missing.append("especificaciones.png")
 if not icon_conf:  missing.append("config.png")
 if missing:
     st.warning("No se encontraron: " + ", ".join(missing))
+
