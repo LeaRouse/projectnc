@@ -46,54 +46,64 @@ st.markdown("""
         z-index: -1;
     }
 
-    section[data-testid="stSidebar"] {
-        background: rgba(10,10,10,0.35);
-        backdrop-filter: blur(6px);
-        border-radius: 12px;
-        padding-top: 18px;
+    /* ---------- Barra lateral fija ---------- */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 240px;
+        height: 100%;
+        background: rgba(15, 15, 15, 0.7);
+        backdrop-filter: blur(10px);
+        border-right: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        flex-direction: column;
+        padding: 20px 10px;
+        z-index: 10;
     }
 
-    /* ---------- Menú lateral limpio ---------- */
-    /* Ocultamos los íconos de radio */
-    section[data-testid="stSidebar"] [data-baseweb="radio"] input[type="radio"] {
-        display: none !important;
-    }
-
-    /* Contenedor de opciones como botones */
-    div[role="radiogroup"] > label {
-        display: block;
-        width: 100%;
-        height: 56px;
-        line-height: 56px;
-        padding-left: 16px;
-        margin-bottom: 12px;
-        border-radius: 10px;
-        background: rgba(255,255,255,0.03);
+    .sidebar h2 {
         color: #fff;
-        border: 1px solid rgba(255,255,255,0.06);
-        font-weight: 600;
-        transition: all 0.14s ease;
-        box-sizing: border-box;
+        text-align: center;
+        margin-bottom: 30px;
     }
 
-    div[role="radiogroup"] > label:hover {
-        background: rgba(255,255,255,0.06);
-        transform: translateY(-1px);
+    .sidebar button {
+        background: rgba(255,255,255,0.05);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        width: 100%;
+        transition: all 0.2s ease;
         cursor: pointer;
     }
 
-    div[role="radiogroup"] > label[aria-checked="true"] {
-        background: rgba(255,255,255,0.10) !important;
-        border: 1px solid rgba(255,255,255,0.12);
-        box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+    .sidebar button:hover {
+        background: rgba(255,255,255,0.15);
+        transform: translateY(-1px);
+    }
+
+    .sidebar button.active {
+        background: rgba(255,255,255,0.25);
+        border-color: rgba(255,255,255,0.3);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    /* ---------- Contenido principal ---------- */
+    .main-content {
+        margin-left: 260px;
+        padding: 20px 40px;
     }
 
     .main-title {
         color: #ffffff;
-        text-align: left;
-        font-size: 34px;
-        margin-top: 6px;
-        margin-bottom: 6px;
+        font-size: 36px;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 
     .muted {
@@ -102,27 +112,39 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# ---------- Video de fondo ----------
+# ---------- Fondo ----------
 st.markdown(get_video_html(), unsafe_allow_html=True)
 st.markdown('<div class="bg-overlay"></div>', unsafe_allow_html=True)
 
-# ---------- Sidebar ----------
-st.sidebar.title("🚀 AstroCycle")
+# ---------- Estado del botón ----------
+if "page" not in st.session_state:
+    st.session_state.page = "🏠 Home"
 
-pages = [
-    "🏠 Home",
-    "📊 Datos Generales",
-    "🤖 Status",
-    "🛠️ Craft",
-    "⚙️ Especificaciones"
-]
-page = st.sidebar.radio("", pages, index=0)
+# ---------- Barra lateral personalizada ----------
+st.markdown(
+    f"""
+    <div class="sidebar">
+        <h2>🚀 AstroCycle</h2>
+        <form action="?page=🏠 Home"><button class="{'active' if st.session_state.page=='🏠 Home' else ''}">🏠 Home</button></form>
+        <form action="?page=📊 Datos Generales"><button class="{'active' if st.session_state.page=='📊 Datos Generales' else ''}">📊 Datos Generales</button></form>
+        <form action="?page=🤖 Status"><button class="{'active' if st.session_state.page=='🤖 Status' else ''}">🤖 Status</button></form>
+        <form action="?page=🛠️ Craft"><button class="{'active' if st.session_state.page=='🛠️ Craft' else ''}">🛠️ Craft</button></form>
+        <form action="?page=⚙️ Especificaciones"><button class="{'active' if st.session_state.page=='⚙️ Especificaciones' else ''}">⚙️ Especificaciones</button></form>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-st.sidebar.markdown("---")
-if st.sidebar.button("⚙ Configuración"):
-    page = "⚙ Configuración"
+# ---------- Control manual de navegación ----------
+params = st.query_params
+if "page" in params:
+    st.session_state.page = params["page"]
 
-# ---------- Contenido ----------
+page = st.session_state.page
+
+# ---------- Contenido dinámico ----------
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
+
 if page == "🏠 Home":
     st.markdown("<h1 class='main-title'>AstroCycle</h1>", unsafe_allow_html=True)
     st.markdown("<p class='muted'>Panel principal del rover interplanetario.</p>", unsafe_allow_html=True)
@@ -166,9 +188,7 @@ elif page == "⚙️ Especificaciones":
     else:
         st.error("❌ No se encontró el archivo 'Rove_prototipo1.glb'. Súbelo a la carpeta del proyecto.")
 
-elif page == "⚙ Configuración":
-    st.markdown("<h2 class='main-title'>Configuración</h2>", unsafe_allow_html=True)
-    st.write("Ajustes y parámetros del sistema.")
+st.markdown('</div>', unsafe_allow_html=True)
 
 # ---------- Nota inferior ----------
 st.markdown("""
