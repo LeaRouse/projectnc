@@ -82,19 +82,3 @@ if st.button("Craft_hidden", key="craft_hidden"):
     cambiar_pagina("Craft")
 if st.button("Materiales_hidden", key="materiales_hidden"):
     cambiar_pagina("Materiales")
-
-"""# --- Contenido al costado de la barra ---
-st.markdown('<div class="main-content">', unsafe_allow_html=True)
-
-pagina = st.session_state.pagina
-if pagina == "Home":
-    st.title("🏠 Home")
-    st.write("Bienvenido a **AstroCycle**. Explora todo desde aquí.")
-elif pagina == "Craft":
-    st.header("🛠️ Craft")
-    st.write("Sección de construcción y desarrollo del prototipo.")
-elif pagina == "Materiales":
-    st.header("📦 Materiales")
-    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
-
-st.markdown('</div>', unsafe_allow_html=True)"""
