@@ -103,10 +103,6 @@ window.addEventListener('message', (event) => {
 </script>
 """, height=0, width=0)
 
-# --- Escuchar cambios en Streamlit ---
-if 'last_event' not in st.session_state:
-    st.session_state.last_event = None
-
 # --- Columnas: izquierda para botones (vacía), derecha para contenido ---
 col_left, col_right = st.columns([1,6])
 
@@ -116,8 +112,8 @@ with col_right:
     if pagina == "Home":
         IMG_FILE = Path("logotipoastrocycle.png")
         st.markdown("""
-        <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:90vh;">
-            <h1 style="color:#ffffff; font-size:80px; margin-bottom:50px; text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">AstroCycle</h1>
+        <div style="display:flex; flex-direction:column; justify-content:flex-start; align-items:center; height:90vh; margin-top:50px;">
+            <h1 style="color:#ffffff; font-size:100px; margin-bottom:40px; text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">AstroCycle</h1>
         """, unsafe_allow_html=True)
         if IMG_FILE.exists():
             st.image(str(IMG_FILE), use_container_width=False, width=600)
