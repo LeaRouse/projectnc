@@ -100,7 +100,7 @@ h1,h2,h3,p,span { color:#d0d0d0 !important;}
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------
-# BOTONES VISUALES
+# BOTONES VISUALES (solo los negros/transparente)
 # ---------------------------------------------------------------------
 def img_or_placeholder(data_uri):
     if data_uri: return f'<img src="{data_uri}" />'
@@ -115,36 +115,61 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------------------
-# BOTONES NATIVOS INVISIBLES
+# JS para que los botones negros/transparente funcionen y cambien la página
 # ---------------------------------------------------------------------
-def nav_button(slot_id, label, target_page):
-    st.markdown(f'<div id="{slot_id}" style="position:fixed; z-index:8; width:180px; height:180px; left:25px; top:0;">', unsafe_allow_html=True)
-    if st.button(label, key=f"k_{slot_id}"):
-        cambiar_pagina(target_page)
-    st.markdown('</div>', unsafe_allow_html=True)
+components.html(f"""
+<script>
+(function(){
+  function smoothGoto(page){{
+    const root = window.parent.document.documentElement;
+    if(root) root.classList.add('leaving');
+    setTimeout(function(){{
+      window.parent.location.search = '?page=' + encodeURIComponent(page);
+    }}, 180);
+  }}
 
-nav_button("slot-home",  "Home", "Home")
-nav_button("slot-craft", "Craft","Craft")
-nav_button("slot-mat",   "Materiales","Materiales")
+  const map = {{
+    'btn-home': 'Home',
+    'btn-craft': 'Craft',
+    'btn-mat': 'Materiales',
+    'btn-spec': 'Especificaciones',
+    'btn-config': 'Configuracion'
+  }};
 
-# Botones de la derecha
-st.markdown(f"""
-<div id="slot-spec" style="position:fixed; right:25px; top:80px; width:80px; height:80px; z-index:8;">
-  <form><button onclick="return false;">Spec</button></form>
-</div>
-<div id="slot-conf" style="position:fixed; right:25px; bottom:30px; width:80px; height:80px; z-index:8;">
-  <form><button onclick="return false;">Config</button></form>
-</div>
-""", unsafe_allow_html=True)
+  Object.keys(map).forEach(function(id){{
+    const el = window.parent.document.getElementById(id);
+    if(el && !el._astroBound){{
+      el._astroBound = true;
+      el.addEventListener('click', function(ev){{
+        ev.preventDefault(); ev.stopPropagation();
+        smoothGoto(map[id]);
+      }});
+    }}
+  }});
+  setInterval(function(){{
+    Object.keys(map).forEach(function(id){{
+      const el = window.parent.document.getElementById(id);
+      if(el && !el._astroBound){{
+        el._astroBound = true;
+        el.addEventListener('click', function(ev){{
+          ev.preventDefault(); ev.stopPropagation();
+          smoothGoto(map[id]);
+        }});
+      }}
+    }});
+  }}, 500);
+})();
+</script>
+""", height=0, width=0)
 
 # ---------------------------------------------------------------------
-# CONTENIDO LADO DERECHO DE BOTONES IZQUIERDOS
+# CONTENIDO (se muestra al lado derecho de los botones)
 # ---------------------------------------------------------------------
 pagina = st.session_state.pagina
 col1, col2 = st.columns([1,4])
 
 with col1:
-    pass  # botones flotantes ya están, no hacemos nada aquí
+    pass  # los botones flotantes ya están
 
 with col2:
     if pagina=="Home":
@@ -153,15 +178,24 @@ with col2:
         if logo_data:
             st.image(logo_data, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
-
     elif pagina=="Craft":
         st.markdown('<div id="main-content">', unsafe_allow_html=True)
         st.header("🛠️ Craft")
         st.write("Sección de construcción y desarrollo del prototipo.")
         st.markdown('</div>', unsafe_allow_html=True)
-
     elif pagina=="Materiales":
         st.markdown('<div id="main-content">', unsafe_allow_html=True)
         st.header("📦 Materiales")
         st.write("Aquí se muestran los materiales utilizados y sus detalles.")
+        st.markdown('</div>', unsafe_allow_html=True)
+    elif pagina=="Especificaciones":
+        st.markdown('<div id="main-content">', unsafe_allow_html=True)
+        st.header("⚙️ Especificaciones")
+        st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
+        components.iframe("https://learouse.github.io/prototipo/", height=600, width="100%", scrolling=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+    elif pagina=="Configuracion":
+        st.markdown('<div id="main-content">', unsafe_allow_html=True)
+        st.header("🧩 Configuración")
+        st.write("Opciones de configuración de la app.")
         st.markdown('</div>', unsafe_allow_html=True)
