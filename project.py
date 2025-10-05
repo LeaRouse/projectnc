@@ -215,13 +215,13 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# --- CAPA CLICKABLE: ENLACES INVISIBLES QUE CAMBIAN ?page=... (MISMA PESTAÑA) ---
+# --- CAPA CLICKABLE: ENLACES INVISIBLES (MISMA PESTAÑA) ---
 st.markdown("""
-<a id="link-home"  class="link-overlay" href="?page=Home"          aria-label="Home"></a>
-<a id="link-craft" class="link-overlay" href="?page=Craft"         aria-label="Craft"></a>
-<a id="link-mat"   class="link-overlay" href="?page=Materiales"    aria-label="Materiales"></a>
-<a id="link-spec"  class="link-overlay" href="?page=Especificaciones" aria-label="Especificaciones"></a>
-<a id="link-conf"  class="link-overlay" href="?page=Configuracion" aria-label="Configuración"></a>
+<a id="link-home"  class="link-overlay" href="?page=Home"            target="_self" aria-label="Home"></a>
+<a id="link-craft" class="link-overlay" href="?page=Craft"           target="_self" aria-label="Craft"></a>
+<a id="link-mat"   class="link-overlay" href="?page=Materiales"      target="_self" aria-label="Materiales"></a>
+<a id="link-spec"  class="link-overlay" href="?page=Especificaciones" target="_self" aria-label="Especificaciones"></a>
+<a id="link-conf"  class="link-overlay" href="?page=Configuracion"   target="_self" aria-label="Configuración"></a>
 """, unsafe_allow_html=True)
 
 # --- CONTENIDO ---
@@ -280,3 +280,4 @@ elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
     st.markdown('</div>', unsafe_allow_html=True)
+
