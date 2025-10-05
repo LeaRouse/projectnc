@@ -167,42 +167,49 @@ try:
 except AttributeError:
     st.experimental_set_query_params(page=st.session_state.pagina)
 
-# --- BOTONES FLOTANTES CON NAVEGACIÓN INTERNA (misma pestaña) ---
-current = st.session_state.pagina  # para resaltar el activo (opcional)
-
+# --- BOTONES FLOTANTES QUE CAMBIAN CONTENIDO INTERNAMENTE ---
+# Definimos un pequeño script para manejar clics dentro de la misma sesión
 st.markdown(f"""
-<style>
-/* resaltado del botón activo (opcional) */
-.icon-button.active {{
-  outline: 3px solid rgba(255,255,255,0.7);
-  box-shadow: 0 0 20px rgba(255,255,255,0.25);
-}}
-/* convertimos los <a> en clicables manteniendo estilos y sin subrayado */
-.icon-button {{ text-decoration: none; display:flex; }}
-</style>
-
 <div>
-  <a href="?page=Home" class="icon-button {'active' if current=='Home' else ''}" id="btn-home">
-    <img src="{icon_home}" alt="Home">
-  </a>
-
-  <a href="?page=Craft" class="icon-button {'active' if current=='Craft' else ''}" id="btn-craft">
-    <img src="{icon_craft}" alt="Craft">
-  </a>
-
-  <a href="?page=Materiales" class="icon-button {'active' if current=='Materiales' else ''}" id="btn-mat">
-    <img src="{icon_mat}" alt="Materiales">
-  </a>
-
-  <a href="?page=Especificaciones" class="icon-button {'active' if current=='Especificaciones' else ''}" id="btn-spec">
-    <img src="{icon_spec}" alt="Especificaciones">
-  </a>
-
-  <a href="?page=Configuracion" class="icon-button {'active' if current=='Configuracion' else ''}" id="btn-config">
-    <img src="{icon_conf}" alt="Configuración">
-  </a>
+  <div class="icon-button" id="btn-home"><img src="{icon_home}" alt="Home"></div>
+  <div class="icon-button" id="btn-craft"><img src="{icon_craft}" alt="Craft"></div>
+  <div class="icon-button" id="btn-mat"><img src="{icon_mat}" alt="Materiales"></div>
+  <div class="icon-button" id="btn-spec"><img src="{icon_spec}" alt="Especificaciones"></div>
+  <div class="icon-button" id="btn-config"><img src="{icon_conf}" alt="Configuración"></div>
 </div>
+
+<script>
+  // Escucha clics en los iconos y envía el nombre de la página al backend Streamlit
+  const mapping = {{
+    "btn-home": "Home",
+    "btn-craft": "Craft",
+    "btn-mat": "Materiales",
+    "btn-spec": "Especificaciones",
+    "btn-config": "Configuracion"
+  }};
+
+  Object.keys(mapping).forEach(id => {{
+    const el = parent.document.getElementById(id) || document.getElementById(id);
+    if (el) {{
+      el.addEventListener('click', () => {{
+        window.parent.postMessage({{ type: 'set_page', page: mapping[id] }}, '*');
+      }});
+    }}
+  }});
+</script>
 """, unsafe_allow_html=True)
+
+# Escucha los mensajes de JS en Streamlit y cambia la página sin recargar
+components.html("""
+<script>
+window.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'set_page') {
+    const page = event.data.page;
+    fetch('/_stcore', {method: 'POST', body: JSON.stringify({page})});
+  }
+});
+</script>
+""", height=0)
 
 
 # --- CONTENIDO ---
@@ -262,6 +269,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
