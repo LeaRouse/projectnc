@@ -2,69 +2,102 @@ import streamlit as st
 from pathlib import Path
 import base64
 
+# --- CONFIGURACIÓN INICIAL ---
 st.set_page_config(page_title="AstroCycle", layout="wide")
 
 VIDEO_FILE = Path("video.mp4")
 MODEL_FILE = Path("Rove_prototipo1.glb")
 
-# --- Configuración visual global ---
+# --- VIDEO DE FONDO (se carga una sola vez) ---
+if "video_bg" not in st.session_state:
+    if VIDEO_FILE.exists():
+        video_base64 = base64.b64encode(VIDEO_FILE.read_bytes()).decode("utf-8")
+        st.session_state.video_bg = f"""
+            <video autoplay loop muted playsinline 
+                style="
+                    position: fixed; 
+                    right: 0; bottom: 0; 
+                    min-width: 100%; min-height: 100%;
+                    z-index: -1;
+                    object-fit: cover;
+                    filter: brightness(0.35);
+                    background-color: #000;
+                ">
+                <source src="data:video/mp4;base64,{video_base64}" type="video/mp4">
+            </video>
+        """
+    else:
+        st.session_state.video_bg = """
+            <div style="position: fixed; right:0; bottom:0; 
+                width:100%; height:100%; background:black; z-index:-1;"></div>
+        """
+
+st.markdown(st.session_state.video_bg, unsafe_allow_html=True)
+
+# --- ESTILOS GENERALES ---
 st.markdown("""
     <style>
     #MainMenu, header, footer {visibility: hidden;}
     .block-container {padding-top: 0rem; padding-bottom: 0rem;}
+
+    /* Fondo general oscuro */
+    .stApp {
+        background-color: rgba(0,0,0,0.9);
+    }
+
+    /* Sidebar fija */
+    section[data-testid="stSidebar"] {
+        background-color: rgba(20, 20, 30, 0.9);
+        border-right: 1px solid rgba(100,100,120,0.3);
+        padding-top: 40px;
+        width: 240px;
+    }
+
+    /* Botones del menú */
+    div[data-testid="stSidebar"] .stRadio > label {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    div[data-testid="stSidebar"] div[role="radio"] {
+        background-color: rgba(50,50,70,0.7);
+        color: white;
+        border-radius: 10px;
+        text-align: center;
+        padding: 10px 0;
+        font-weight: 600;
+        width: 100%;
+        transition: 0.2s;
+    }
+
+    div[data-testid="stSidebar"] div[role="radio"]:hover {
+        background-color: rgba(70,70,100,0.9);
+        transform: scale(1.03);
+    }
+
+    div[data-testid="stSidebar"] div[aria-checked="true"] {
+        background-color: rgba(100,100,130,1);
+        color: #00d0ff;
+    }
+
+    h1, h2, h3, h4, p, li {
+        color: white;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# --- Fondo de video ---
-if VIDEO_FILE.exists():
-    video_base64 = base64.b64encode(VIDEO_FILE.read_bytes()).decode("utf-8")
-    st.markdown(f"""
-        <video autoplay loop muted playsinline 
-        style="
-            position: fixed; 
-            right: 0; bottom: 0; 
-            min-width: 100%; min-height: 100%; 
-            z-index: -1; 
-            object-fit: cover;
-            filter: brightness(0.35);
-        ">
-        <source src="data:video/mp4;base64,{video_base64}" type="video/mp4">
-        </video>
-    """, unsafe_allow_html=True)
-else:
-    st.warning("⚠️ No se encontró el archivo 'video.mp4'. Colócalo junto a app.py.")
+# --- MENÚ LATERAL ---
+st.sidebar.title("🚀 ASTROCYCLE")
+pagina = st.sidebar.radio(
+    "Navegación",
+    ["Inicio", "Datos Generales", "Status", "Fabricación", "Especificaciones", "Configuración"],
+    index=0
+)
 
-# --- Estado de visibilidad de la barra lateral ---
-if "menu_visible" not in st.session_state:
-    st.session_state.menu_visible = True
-
-# --- Botón para mostrar/ocultar barra lateral ---
-menu_button = st.button("☰ Menú", key="menu_toggle")
-
-if menu_button:
-    st.session_state.menu_visible = not st.session_state.menu_visible
-
-# --- Contenido de la barra lateral ---
-if st.session_state.menu_visible:
-    with st.sidebar:
-        st.title("ASTROCYCLE 🚀")
-        pagina = st.radio("Navegación", [
-            "Inicio",
-            "Datos Generales",
-            "Status",
-            "Fabricación",
-            "Especificaciones",
-            "Configuración"
-        ])
-else:
-    pagina = st.session_state.get("pagina_actual", "Inicio")
-
-st.session_state.pagina_actual = pagina
-
-# --- Encabezado principal ---
+# --- CONTENIDO PRINCIPAL ---
 st.markdown("<h1 style='text-align:center; color:white;'>ASTROCYCLE</h1>", unsafe_allow_html=True)
 
-# --- Contenido por página ---
 if pagina == "Inicio":
     st.subheader("🌌 Bienvenido a AstroCycle")
     st.markdown("Sistema integral de control y visualización del rover de exploración.")
@@ -95,7 +128,7 @@ elif pagina == "Especificaciones":
             <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
         """, unsafe_allow_html=True)
     else:
-        st.error("❌ No se encontró el archivo 'Rove_prototipo1.glb'. Súbelo a la carpeta del proyecto.")
+        st.error("❌ No se encontró el archivo 'Rove_prototipo1.glb'.")
 
 elif pagina == "Configuración":
     st.subheader("⚙️ Configuración del Sistema")
