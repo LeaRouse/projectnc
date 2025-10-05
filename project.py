@@ -21,10 +21,10 @@ def img_data_uri(path_str: str) -> str:
     b64 = base64.b64encode(p.read_bytes()).decode("utf-8")
     return f"data:{mime};base64,{b64}"
 
-VIDEO_FILE = Path("video.mp4")
 def bg_video_html():
-    if VIDEO_FILE.exists():
-        data = VIDEO_FILE.read_bytes()
+    video = Path("video.mp4")
+    if video.exists():
+        data = video.read_bytes()
         b64 = base64.b64encode(data).decode("utf-8")
         return f"""
         <video autoplay loop muted playsinline id="bgvid">
@@ -57,12 +57,11 @@ st.markdown(bg_video_html(), unsafe_allow_html=True)
 
 st.markdown("""
 <style>
-/* Fondo persistente (evita "pantallazo blanco") */
+/* Fondo persistente */
 html, body, [data-testid="stAppViewContainer"], .stApp {
   background: transparent !important;
   color: #d0d0d0 !important;
 }
-
 video#bgvid {
   position: fixed; top:50%; left:50%;
   min-width:100%; min-height:100%;
@@ -83,13 +82,13 @@ video#bgvid {
   z-index:1; backdrop-filter: blur(2px);
 }
 
-/* Capa VISUAL de los botones (solo imagen/estilo) */
+/* ====== BOTONES (TU CAPA VISUAL) ====== */
 .icon-button {
   position: fixed;
   background: rgba(35,35,35,0.75);
   border: 2px solid rgba(255,255,255,0.25);
   transition: transform .22s ease, border-color .22s ease, background .22s ease;
-  z-index: 5;
+  z-index: 5;  /* la capa click va con z-index: 8 */
   display: flex; justify-content: center; align-items: center;
   overflow: hidden;
 }
@@ -97,7 +96,7 @@ video#bgvid {
 .icon-button img { width:100%; height:100%; object-fit:cover; border-radius:inherit; filter: brightness(0.93) contrast(1.05); transition: all .22s; }
 .icon-button:hover img { filter: brightness(1.05) contrast(1.1); }
 
-/* Botones izquierdos (cuadrados grandes) */
+/* Tamaño y posición (izquierda: cuadrados) */
 #btn-home, #btn-craft, #btn-mat {
   left: 25px; width:180px; height:180px; border-radius:22px;
 }
@@ -105,17 +104,20 @@ video#bgvid {
 #btn-craft { top:41%; }
 #btn-mat   { top:70%; }
 
-/* Botones derechos (círculos) */
+/* Derecha: círculos */
 #btn-spec, #btn-config {
   border-radius:50%; width:80px; height:80px;
 }
 #btn-spec  { right:25px; top:80px; }
 #btn-config{ right:25px; bottom:30px; }
 
-/* Capa CLICK (widgets nativos) — ocupa exactamente la misma zona */
+/* ====== CAPA CLICK (WIDGET NATIVO) ======
+   Ponemos un botón nativo invisible exactamente encima del botón visual.
+   Así el click es nativo (sin JS/URL) y tu botón visual se ve tal cual. */
 .click-slot {
-  position: fixed; z-index: 7;  /* por encima de la capa visual */
+  position: fixed; z-index: 8;  /* por encima de la capa visual */
   width: 180px; height: 180px; border-radius: 22px;
+  pointer-events: auto;
 }
 #slot-home  { left:25px; top:12%;  }
 #slot-craft { left:25px; top:41%;  }
@@ -123,7 +125,7 @@ video#bgvid {
 #slot-spec  { right:25px; top:80px;  width:80px; height:80px;  border-radius:50%; }
 #slot-conf  { right:25px; bottom:30px; width:80px; height:80px; border-radius:50%; }
 
-/* Hacemos invisibles los botones nativos pero dejan el área clickeable */
+/* Hacemos invisibles los botones nativos, pero ocupan todo el área */
 .click-slot [data-testid="baseButton-secondary"] {
   background: transparent !important;
   border: none !important;
@@ -133,13 +135,13 @@ video#bgvid {
   height: 100% !important;
   padding: 0 !important;
 }
-.click-slot button { width: 100%; height: 100%; }
+.click-slot button { width: 100%; height: 100%; cursor: pointer; }
 
-/* Contenido con transición suave (solo esta zona se anima) */
+/* ====== CONTENIDO con transición suave ====== */
 #main-content {
   opacity: .0;
   transform: translateY(2px);
-  animation: fadeIn .25s ease-out forwards;
+  animation: fadeIn .20s ease-out forwards;
 }
 @keyframes fadeIn {
   from { opacity: .0; transform: translateY(2px); }
@@ -153,7 +155,7 @@ h1,h2,h3,p,span { color:#d0d0d0 !important; }
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# CAPA VISUAL DE LOS BOTONES (si no hay assets, ponemos placeholder)
+# CAPA VISUAL DE TUS BOTONES (imágenes)
 # -----------------------------------------------------------------------------
 def img_or_placeholder(data_uri: str):
     if data_uri:
@@ -161,7 +163,6 @@ def img_or_placeholder(data_uri: str):
     return '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#aaa;font:600 14px/1 sans-serif;">img</div>'
 
 st.markdown(f"""
-<!-- Capa VISUAL -->
 <div id="btn-home"   class="icon-button">{img_or_placeholder(icon_home)}</div>
 <div id="btn-craft"  class="icon-button">{img_or_placeholder(icon_craft)}</div>
 <div id="btn-mat"    class="icon-button">{img_or_placeholder(icon_mat)}</div>
@@ -170,29 +171,23 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# CAPA CLICKABLE (WIDGETS NATIVOS) — NO CAMBIAMOS URL
+# CAPA CLICKABLE (BOTONES NATIVOS INVISIBLES) — CAMBIA SOLO STATE (SPA-like)
 # -----------------------------------------------------------------------------
-# Creamos 5 "slots" flotantes y dentro un botón nativo cada uno.
-# Al hacer clic, cambiamos st.session_state.pagina y forzamos rerun.
-slots = {
-    "slot-home":  ("Home",  "🏠 Home"),
-    "slot-craft": ("Craft", "🛠️ Craft"),
-    "slot-mat":   ("Materiales", "📦 Materiales"),
-    "slot-spec":  ("Especificaciones", "⚙️ Especificaciones"),
-    "slot-conf":  ("Configuracion", "🧩 Configuración"),
-}
+def nav_button(slot_id: str, label: str, target_page: str):
+    st.markdown(f'<div id="{slot_id}" class="click-slot">', unsafe_allow_html=True)
+    if st.button(label, key=f"k_{slot_id}"):
+        st.session_state.pagina = target_page
+        st.experimental_rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
 
-cols = {}
-for slot_id, (page_value, label) in slots.items():
-    with st.container():
-        st.markdown(f'<div id="{slot_id}" class="click-slot">', unsafe_allow_html=True)
-        if st.button(label, key=f"btn_{slot_id}"):
-            st.session_state.pagina = page_value
-            st.experimental_rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+nav_button("slot-home",  "Home",            "Home")
+nav_button("slot-craft", "Craft",           "Craft")
+nav_button("slot-mat",   "Materiales",      "Materiales")
+nav_button("slot-spec",  "Especificaciones","Especificaciones")
+nav_button("slot-conf",  "Configuración",   "Configuracion")
 
 # -----------------------------------------------------------------------------
-# CONTENIDO (solo esta zona cambia y se anima)
+# CONTENIDO (solo esta zona cambia y se anima; lo demás permanece)
 # -----------------------------------------------------------------------------
 pagina = st.session_state.pagina
 
@@ -202,7 +197,8 @@ if pagina == "Home":
         st.markdown(f"""
         <div style="
             position: fixed; left: 260px; right: 0; top: 0; bottom: 0;
-            display:flex; align-items:center; justify-content:center; text-align:center; z-index:0;">
+            display:flex; align-items:center; justify-content:center;
+            text-align:center; z-index:0;">
             <img src="{logo_data}" alt="AstroCycle logo"
                  style="width:1000px; max-width:85vw; height:auto;
                         filter: drop-shadow(0 0 35px rgba(255,255,255,0.35));" />
@@ -229,7 +225,6 @@ elif pagina == "Especificaciones":
     st.header("⚙️ Especificaciones")
     st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
     viewer_url = "https://learouse.github.io/prototipo/"
-    # Nota: los iframes pueden tardar; para suavizar, mantenemos el resto estático detrás.
     import streamlit.components.v1 as components
     components.iframe(viewer_url, height=600, width="100%", scrolling=True)
     st.markdown('</div>', unsafe_allow_html=True)
