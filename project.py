@@ -63,27 +63,35 @@ video#bgvid {
 /* ===== BOTONES ===== */
 .icon-button {
     position: fixed;
-    background: rgba(30,30,30,0.6);
-    border: 2px solid rgba(255,255,255,0.3);
+    background: rgba(35,35,35,0.75);
+    border: 2px solid rgba(255,255,255,0.25);
     cursor: pointer;
     transition: all 0.25s ease;
     z-index: 5;
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-.icon-button img {
-    filter: brightness(0.9);
-    width: 58px;
-    height: 58px;
+    overflow: hidden; /* <-- hace que la imagen no se salga del borde redondeado */
 }
 
 /* --- EFECTO HOVER --- */
 .icon-button:hover {
-    background: rgba(255,255,255,0.1);
-    transform: scale(1.08);
-    border-color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.08);
+    transform: scale(1.05);
+    border-color: rgba(255,255,255,0.6);
+}
+
+/* --- IMÁGENES --- */
+.icon-button img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;     /* <-- llena todo el cuadrado */
+    border-radius: inherit; /* respeta el redondeo del contenedor */
+    filter: brightness(0.93) contrast(1.05);
+    transition: all 0.25s ease;
+}
+.icon-button:hover img {
+    filter: brightness(1.05) contrast(1.1);
 }
 
 /* --- BOTONES IZQUIERDA (CUADRADOS GRANDES Y ESPACIADOS) --- */
@@ -91,11 +99,8 @@ video#bgvid {
     left: 25px;
     width: 180px;
     height: 180px;
-    border-radius: 20px;   /* ← bordes suaves */
-    background: rgba(40,40,40,0.7);
+    border-radius: 22px;
 }
-
-/* separaciones verticales */
 #btn-home { top: 12%; }
 #btn-craft { top: 41%; }
 #btn-mat { top: 70%; }
@@ -103,8 +108,8 @@ video#bgvid {
 /* --- BOTONES DERECHA (CÍRCULOS) --- */
 #btn-spec, #btn-config {
     border-radius: 50%;
-    width: 75px;
-    height: 75px;
+    width: 80px;
+    height: 80px;
 }
 #btn-spec { right: 25px; top: 80px; }
 #btn-config { right: 25px; bottom: 30px; }
@@ -198,6 +203,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
