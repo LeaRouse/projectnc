@@ -1,14 +1,12 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from pathlib import Path
 import base64
 
-# --- CONFIGURACIÓN DE PÁGINA ---
-st.set_page_config(page_title="AstroCycle 🌌", page_icon="🪐", layout="wide")
+# --- Configuración ---
+st.set_page_config(page_title="AstroCycle 🌌", layout="wide")
 
-# --- VIDEO DE FONDO ---
+# --- Video de fondo ---
 VIDEO_FILE = Path("video.mp4")
-
 def get_video_html():
     if VIDEO_FILE.exists():
         data = VIDEO_FILE.read_bytes()
@@ -22,117 +20,61 @@ def get_video_html():
     else:
         return "<!-- No se encontró video.mp4 -->"
 
+st.markdown(get_video_html(), unsafe_allow_html=True)
+
 # --- CSS ---
 st.markdown("""
 <style>
-/* Fondo */
-.stApp {
-    background: transparent !important;
-    color: #d0d0d0 !important;
-}
-video#bgvid {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    min-width: 100%;
-    min-height: 100%;
-    transform: translate(-50%, -50%);
-    object-fit: cover;
-    z-index: -3;
-    filter: brightness(0.65) contrast(1.05);
-}
-.bg-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.45);
-    z-index: -2;
-}
+.stApp {background: transparent !important; color: #d0d0d0 !important;}
+video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%; transform: translate(-50%, -50%); object-fit: cover; z-index:-3; filter: brightness(0.65) contrast(1.05);}
+.bg-overlay {position: fixed; inset:0; background: rgba(0,0,0,0.45); z-index:-2;}
 
 /* Botones flotantes */
-.control-button {
-    position: fixed;
-    background-color: rgba(30,30,30,0.85);
-    color: #f1f1f1;
-    border: none;
-    border-radius: 14px;
-    padding: 12px 18px;
-    font-weight: bold;
-    cursor: pointer;
+.floating-btn {
+    position: fixed; z-index:999; width:120px; padding:12px 18px;
+    border-radius:14px; border:none; font-weight:bold; cursor:pointer;
+    color:#f1f1f1; background-color: rgba(30,30,30,0.85); text-align:left;
     transition: all 0.25s ease;
-    z-index: 5;
-    width: 120px;
-    text-align: left;
 }
-.control-button:hover {
-    background-color: rgba(70,70,70,0.95);
-    transform: scale(1.05);
-}
+.floating-btn:hover {background-color: rgba(70,70,70,0.95); transform: scale(1.05);}
 
-/* Botones izquierda (vertical) */
-#btn-left1 { left: 20px; top: 40%; }
-#btn-left2 { left: 20px; top: 50%; }
-#btn-left3 { left: 20px; top: 60%; }
+/* Izquierda */
+#btn-left1 {left:20px; top:40%;}
+#btn-left2 {left:20px; top:50%;}
+#btn-left3 {left:20px; top:60%;}
 
-/* Botones derecha */
-#btn-top-right { right: 20px; top: 80px; }  /* alejado del header de Streamlit */
-#btn-bottom-right { right: 20px; bottom: 30px; }
+/* Derecha */
+#btn-top-right {right:20px; top:80px;}
+#btn-bottom-right {right:20px; bottom:30px;}
 
+/* Contenido principal */
+.main-content {margin-left:160px; margin-right:160px; padding:20px;}
 </style>
 """, unsafe_allow_html=True)
 
-# --- Video de fondo ---
-st.markdown(get_video_html(), unsafe_allow_html=True)
-
-# --- Session state para página ---
+# --- Session state ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = "Home"
 
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
-# --- Botones izquierda ---
-st.markdown(f"""
-<button class="control-button" id="btn-left1" onclick="window.parent.postMessage({{type: 'Home'}}, '*')">🏠 Home</button>
-<button class="control-button" id="btn-left2" onclick="window.parent.postMessage({{type: 'Craft'}}, '*')">🛠️ Craft</button>
-<button class="control-button" id="btn-left3" onclick="window.parent.postMessage({{type: 'Materiales'}}, '*')">📦 Materiales</button>
-""", unsafe_allow_html=True)
+# --- Botones flotantes izquierda ---
+if st.button("🏠 Home", key="btn-left1"):
+    cambiar_pagina("Home")
+if st.button("🛠️ Craft", key="btn-left2"):
+    cambiar_pagina("Craft")
+if st.button("📦 Materiales", key="btn-left3"):
+    cambiar_pagina("Materiales")
 
-# --- Botones derecha ---
-st.markdown(f"""
-<button class="control-button" id="btn-top-right" onclick="window.parent.postMessage({{type: 'Especificaciones'}}, '*')">⚙️ Especificaciones</button>
-<button class="control-button" id="btn-bottom-right" onclick="window.parent.postMessage({{type: 'Configuracion'}}, '*')">🧩 Configuración</button>
-""", unsafe_allow_html=True)
+# --- Botones flotantes derecha ---
+if st.button("ℹ️ Especificaciones", key="btn-top-right"):
+    cambiar_pagina("Especificaciones")
+if st.button("⚙️ Configuración", key="btn-bottom-right"):
+    cambiar_pagina("Configuracion")
 
-# --- Capturar los mensajes de los botones ---
-components.html("""
-<script>
-window.addEventListener('message', (event) => {
-    const type = event.data.type;
-    if (type) {
-        document.dispatchEvent(new CustomEvent('updatePagina', {detail: type}));
-    }
-});
-</script>
-""", height=0, width=0)
-
-# Escuchar en Streamlit
-if 'last_event' not in st.session_state:
-    st.session_state.last_event = None
-
-# Detectar cambio usando button clicks tradicionales de Streamlit
-buttons = {
-    "Home": "🏠 Home",
-    "Craft": "🛠️ Craft",
-    "Materiales": "📦 Materiales",
-    "Especificaciones": "⚙️ Especificaciones",
-    "Configuracion": "🧩 Configuración"
-}
-
-for key in buttons:
-    if st.button(buttons[key]):
-        cambiar_pagina(key)
-
-# --- Contenido dinámico ---
+# --- Contenido principal ---
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
 pagina = st.session_state.pagina
 
 if pagina == "Home":
@@ -145,10 +87,12 @@ elif pagina == "Materiales":
     st.header("📦 Materiales")
     st.write("Aquí se muestran los materiales utilizados y sus detalles.")
 elif pagina == "Especificaciones":
-    st.header("⚙️ Especificaciones")
-    st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
+    st.header("ℹ️ Acerca de / Especificaciones")
+    st.write("Detalles técnicos del prototipo.")
     viewer_url = "https://learouse.github.io/prototipo/"
-    components.iframe(viewer_url, height=600, width="100%", scrolling=True)
+    st.components.v1.iframe(viewer_url, height=600, width="100%", scrolling=True)
 elif pagina == "Configuracion":
-    st.header("🧩 Configuración")
+    st.header("⚙️ Configuración")
     st.write("Opciones de configuración de la app.")
+
+st.markdown('</div>', unsafe_allow_html=True)
