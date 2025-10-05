@@ -112,10 +112,10 @@ with col_right:
         IMG_FILE = Path("logotipoastrocycle.png")
         st.markdown("""
         <div style="display:flex; flex-direction:column; justify-content:flex-start; align-items:center; height:90vh; margin-top:10px;">
-            <h1 style="color:#ffffff; font-size:120px; margin-bottom:30px; text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">AstroCycle</h1>
+            <h1 style="color:#ffffff; font-size:120px; text-shadow: 2px 2px 8px rgba(0,0,0,0.7); margin-bottom:0px;">AstroCycle</h1>
         """, unsafe_allow_html=True)
         if IMG_FILE.exists():
-            st.image(str(IMG_FILE), use_container_width=False, width=700)
+            st.image(str(IMG_FILE), use_container_width=False, width=700, output_format="PNG")
         else:
             st.warning("No se encontró logotipoastrocycle.png")
         st.markdown("</div>", unsafe_allow_html=True)
