@@ -31,11 +31,12 @@ st.markdown("""
     margin-bottom: 20px;
 }
 
-/* Menú lateral custom */
+/* Menú lateral: estilo uniforme para todos los botones */
 .menu-lateral button {
     width: 100%;
+    height: 50px;              /* altura uniforme */
     margin-bottom: 10px;
-    padding: 12px;
+    padding: 0 12px;           /* padding horizontal */
     border-radius: 10px;
     border: none;
     font-weight: bold;
@@ -43,6 +44,9 @@ st.markdown("""
     background-color: #2a2a2a;
     text-align: left;
     cursor: pointer;
+    display: flex;
+    align-items: center;       /* centrar texto vertical */
+    transition: 0.2s;
 }
 .menu-lateral button:hover {
     background-color: #3a3a3a;
@@ -87,40 +91,23 @@ with col1:
 with col2:
     if st.session_state.pagina == "Home":
         st.header("🏠 Home")
-        st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
-        st.image(
-            "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
-            use_container_width=True
-        )
+        st.write("")  # Vacío por ahora
 
     elif st.session_state.pagina == "Datos Generales":
         st.header("📊 Datos Generales")
-        colA, colB = st.columns(2)
-        with colA:
-            st.metric("Nombre", "Rover Prot1")
-            st.metric("Modelo", "X-2025")
-            st.metric("Código", "RC-001")
-        with colB:
-            st.metric("Peso", "45 kg")
-            st.metric("Altura", "1.2 m")
-            st.metric("Capacidad", "15 kg")
+        st.write("")  # Vacío por ahora
 
     elif st.session_state.pagina == "Status":
         st.header("🤖 Status del Robot")
-        st.metric("Estado General", "Funcionando")
-        st.metric("Batería", "78%")
-        st.progress(78)
-        st.metric("Sensores Activos", "5/5")
-        st.metric("Conectividad", "Online")
-        st.write("Última alerta: Ninguna")
+        st.write("")  # Vacío por ahora
 
     elif st.session_state.pagina == "Craft":
         st.header("🛠️ Craft")
-        st.write("Contenido relacionado a la construcción y fabricación.")
+        st.write("")  # Vacío por ahora
 
     elif st.session_state.pagina == "Materiales":
         st.header("📦 Materiales")
-        st.write("Inventario de materiales y buscador.")
+        st.write("")  # Vacío por ahora
 
     elif st.session_state.pagina == "Especificaciones":
         st.header("⚙️ Especificaciones")
@@ -130,4 +117,4 @@ with col2:
 
     elif st.session_state.pagina == "Configuracion":
         st.header("🧩 Configuración")
-        st.write("Opciones de configuración de la app.")
+        st.write("")  # Vacío por ahora
