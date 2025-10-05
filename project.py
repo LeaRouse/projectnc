@@ -8,16 +8,16 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- CSS ---
+# --- CSS para botones y layout ---
 st.markdown("""
 <style>
-/* Fondo y texto */
+/* Fondo general */
 .stApp {
     background-color: #0a0a0a !important;
     color: #d0d0d0 !important;
 }
 
-/* Encabezado global */
+/* Navbar global */
 .encabezado-global {
     width: 100%;
     background-color: #1a1a1a;
@@ -31,22 +31,21 @@ st.markdown("""
     margin-bottom: 20px;
 }
 
-/* Menú lateral: estilo uniforme para todos los botones */
+/* Menú lateral: todos los botones iguales */
 .menu-lateral button {
-    width: 100% !important;
-    height: 50px !important;          /* altura fija para todos */
-    margin-bottom: 10px !important;
-    padding: 0 12px !important;       /* padding horizontal */
+    width: 100% !important;       /* mismo ancho */
+    height: 50px !important;      /* misma altura */
+    margin-bottom: 10px !important; 
     border-radius: 10px !important;
     border: none !important;
-    font-weight: bold !important;
-    color: #d0d0d0 !important;
     background-color: #2a2a2a !important;
+    color: #d0d0d0 !important;
+    font-weight: bold !important;
     text-align: left !important;
-    cursor: pointer !important;
     display: flex !important;
-    align-items: center !important;   /* centrar vertical */
-    justify-content: flex-start !important; /* alinear texto izquierda */
+    align-items: center !important;
+    justify-content: flex-start !important;
+    cursor: pointer !important;
     transition: 0.2s !important;
 }
 .menu-lateral button:hover {
@@ -62,7 +61,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- Encabezado global ---
+# --- Navbar global ---
 st.markdown('<div class="encabezado-global">🌌 AstroCycle - Panel de Control del Robot</div>', unsafe_allow_html=True)
 
 # --- Estado de página ---
