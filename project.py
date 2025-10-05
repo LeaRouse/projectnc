@@ -1,137 +1,116 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# --- Configuración de página ---
-st.set_page_config(page_title="AstroCycle 🌌", page_icon="🪐", layout="wide")
+# --- CONFIGURACIÓN DE PÁGINA ---
+st.set_page_config(
+    page_title="AstroCycle 🌌",
+    page_icon="🪐",
+    layout="wide"
+)
 
-# --- Estado de página ---
-if 'pagina' not in st.session_state:
-    st.session_state.pagina = "Home"
-
-# --- Función para cambiar página ---
-def cambiar_pagina(pagina):
-    st.session_state.pagina = pagina
-
-# --- CSS para dashboard ---
+# --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
-.stApp {
-    background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
-                url("https://cdn.pixabay.com/photo/2020/04/10/11/32/galaxy-5020955_1280.jpg");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-    color: #d0d0d0;
+/* Fondo principal completo */
+.stApp, .main, .block-container, .css-1d391kg {
+    background-color: #0a0a1a !important; /* azul muy oscuro / negro espacial */
+    color: #a0c4ff;
 }
 
-/* Menú lateral */
-.menu-lateral {
-    display:flex; flex-direction:column; gap:12px; padding:15px; height:100%;
+/* Barra lateral */
+section[data-testid="stSidebar"] {
+    background-color: #1a1a2e; /* azul oscuro profesional */
+    border-radius: 20px;
+    padding: 20px;
+    position: relative;
+    height: 100vh;
+    overflow: visible !important;
 }
 
-/* Botones uniformes tipo dashboard */
-.menu-lateral button {
-    width: 100%; height: 55px; border-radius:12px; border:none;
-    font-weight:bold; display:flex; align-items:center;
-    padding-left:16px; font-size:16px; cursor:pointer;
-    background-color:#2a2a2a; color:#d0d0d0; transition:0.2s;
+/* Ocultar el botón de colapso/expandir */
+button[title="Collapse"] {
+    display: none;
 }
 
-.menu-lateral button:hover {
-    background-color:#3a3a3a; color:#ffffff; transform:scale(1.02);
+/* Título lateral */
+.sidebar-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #a0c4ff; /* azul claro para contraste suave */
+    text-align: center;
+    margin-bottom: 25px;
 }
 
-.menu-lateral .activo {
-    background-color:#555555; color:#ffffff;
+/* Botones del menú: todos iguales */
+.stButton > button {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-weight: bold;
+    color: #cfd9e0;
+    background-color: #2b2b44;
+    transition: 0.2s;
+    text-align: left;
+    cursor: pointer;
 }
 
-/* Separa los botones de abajo */
-.menu-lateral .bottom { margin-top:auto; }
-
-/* Iconos alineados */
-.menu-lateral span.icono {
-    margin-right: 10px; font-size:18px;
+/* Hover */
+.stButton > button:hover {
+    background-color: #3a3a5c;
+    color: #ffffff;
+    transform: scale(1.02);
 }
 
-/* Contenido */
-.contenido { padding-left:20px; }
+/* Textos principales */
+h1, h2, h3, h4, p, span {
+    color: #a0c4ff !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# --- Layout ---
-col1, col2 = st.columns([1,5])
+# --- TÍTULO DEL MENÚ ---
+st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
 
-# --- Definir páginas e iconos ---
-paginas_arriba = [
-    ("🏠", "Home"),
-    ("📊", "Datos Generales"),
-    ("🤖", "Status"),
-    ("🛠️", "Craft"),
-    ("📦", "Materiales")
-]
+# --- NAVEGACIÓN ---
+if 'pagina' not in st.session_state:
+    st.session_state.pagina = 'Home'
 
-paginas_abajo = [
-    ("⚙️", "Especificaciones"),
-    ("🧩", "Configuración")
-]
+def cambiar_pagina(nombre):
+    st.session_state.pagina = nombre
 
-# --- Menú lateral ---
-with col1:
-    st.markdown('<div class="menu-lateral">', unsafe_allow_html=True)
+# --- Botones ---
+st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
+st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
+st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
+st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
+st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
 
-    # Botones de arriba
-    for icono, nombre in paginas_arriba:
-        clase = "activo" if st.session_state.pagina == nombre else ""
-        if st.button(f"{nombre}", key=nombre):
-            cambiar_pagina(nombre)
-        st.markdown(f"""
-            <style>
-            div.stButton > button[key="{nombre}"] {{
-                background-color:{'#555555' if clase=='activo' else '#2a2a2a'} !important;
-            }}
-            div.stButton > button[key="{nombre}"]::before {{
-                content: '{icono}'; margin-right:10px;
-            }}
-            </style>
-        """, unsafe_allow_html=True)
+# --- CONTENIDO ---
+if st.session_state.pagina == "Home":
+    st.title("🏠 Home")
+    st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
+    st.image(
+        "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
+        use_container_width=True
+    )
 
-    # Separar los botones de abajo
-    st.markdown('<div class="bottom"></div>', unsafe_allow_html=True)
+elif st.session_state.pagina == "Craft":
+    st.header("🛠️ Craft")
+    st.write("Contenido relacionado a la construcción y fabricación.")
 
-    # Botones de abajo
-    for icono, nombre in paginas_abajo:
-        clase = "activo" if st.session_state.pagina == nombre else ""
-        if st.button(f"{nombre}", key=nombre):
-            cambiar_pagina(nombre)
-        st.markdown(f"""
-            <style>
-            div.stButton > button[key="{nombre}"] {{
-                background-color:{'#555555' if clase=='activo' else '#2a2a2a'} !important;
-            }}
-            div.stButton > button[key="{nombre}"]::before {{
-                content: '{icono}'; margin-right:10px;
-            }}
-            </style>
-        """, unsafe_allow_html=True)
+elif st.session_state.pagina == "Materiales":
+    st.header("📦 Materiales")
+    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
 
-    st.markdown('</div>', unsafe_allow_html=True)
+elif st.session_state.pagina == "Especificaciones":
+    st.header("⚙️ Especificaciones")
+    st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
+    viewer_url = "https://learouse.github.io/prototipo/"
+    components.iframe(viewer_url, height=600, width="100%", scrolling=True)
 
-# --- Contenido ---
-with col2:
-    if st.session_state.pagina == "Home":
-        st.header("🏠 Home")
-    elif st.session_state.pagina == "Datos Generales":
-        st.header("📊 Datos Generales")
-    elif st.session_state.pagina == "Status":
-        st.header("🤖 Status del Robot")
-    elif st.session_state.pagina == "Craft":
-        st.header("🛠️ Craft")
-    elif st.session_state.pagina == "Materiales":
-        st.header("📦 Materiales")
-    elif st.session_state.pagina == "Especificaciones":
-        st.header("⚙️ Especificaciones")
-        st.write("Modelo 3D del prototipo:")
-        viewer_url = "https://learouse.github.io/prototipo/"
-        components.iframe(viewer_url, height=600, width="100%", scrolling=True)
-    elif st.session_state.pagina == "Configuración":
-        st.header("🧩 Configuración")
+elif st.session_state.pagina == "Configuracion":
+    st.header("🧩 Configuración")
+    st.write("Opciones de configuración de la app.")
