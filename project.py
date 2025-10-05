@@ -33,25 +33,26 @@ st.markdown("""
 
 /* Menú lateral: estilo uniforme para todos los botones */
 .menu-lateral button {
-    width: 100%;
-    height: 50px;              /* altura uniforme */
-    margin-bottom: 10px;
-    padding: 0 12px;           /* padding horizontal */
-    border-radius: 10px;
-    border: none;
-    font-weight: bold;
-    color: #d0d0d0;
-    background-color: #2a2a2a;
-    text-align: left;
-    cursor: pointer;
-    display: flex;
-    align-items: center;       /* centrar texto vertical */
-    transition: 0.2s;
+    width: 100% !important;
+    height: 50px !important;          /* altura fija para todos */
+    margin-bottom: 10px !important;
+    padding: 0 12px !important;       /* padding horizontal */
+    border-radius: 10px !important;
+    border: none !important;
+    font-weight: bold !important;
+    color: #d0d0d0 !important;
+    background-color: #2a2a2a !important;
+    text-align: left !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;   /* centrar vertical */
+    justify-content: flex-start !important; /* alinear texto izquierda */
+    transition: 0.2s !important;
 }
 .menu-lateral button:hover {
-    background-color: #3a3a3a;
-    color: #ffffff;
-    transform: scale(1.02);
+    background-color: #3a3a3a !important;
+    color: #ffffff !important;
+    transform: scale(1.02) !important;
 }
 
 /* Contenido */
@@ -64,11 +65,10 @@ st.markdown("""
 # --- Encabezado global ---
 st.markdown('<div class="encabezado-global">🌌 AstroCycle - Panel de Control del Robot</div>', unsafe_allow_html=True)
 
-# --- Definir estado de página ---
+# --- Estado de página ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = "Home"
 
-# --- Función para cambiar página ---
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
@@ -87,27 +87,27 @@ with col1:
     if st.button("🧩 Configuración"): cambiar_pagina("Configuracion")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- Contenido de cada página ---
+# --- Contenido ---
 with col2:
     if st.session_state.pagina == "Home":
         st.header("🏠 Home")
-        st.write("")  # Vacío por ahora
+        st.write("")
 
     elif st.session_state.pagina == "Datos Generales":
         st.header("📊 Datos Generales")
-        st.write("")  # Vacío por ahora
+        st.write("")
 
     elif st.session_state.pagina == "Status":
         st.header("🤖 Status del Robot")
-        st.write("")  # Vacío por ahora
+        st.write("")
 
     elif st.session_state.pagina == "Craft":
         st.header("🛠️ Craft")
-        st.write("")  # Vacío por ahora
+        st.write("")
 
     elif st.session_state.pagina == "Materiales":
         st.header("📦 Materiales")
-        st.write("")  # Vacío por ahora
+        st.write("")
 
     elif st.session_state.pagina == "Especificaciones":
         st.header("⚙️ Especificaciones")
@@ -117,4 +117,4 @@ with col2:
 
     elif st.session_state.pagina == "Configuracion":
         st.header("🧩 Configuración")
-        st.write("")  # Vacío por ahora
+        st.write("")
