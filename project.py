@@ -1,12 +1,12 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# Configuración general
+# --- CONFIGURACIÓN GENERAL ---
 st.set_page_config(page_title="AstroCycle", layout="wide")
 
 # --- VIDEO DE FONDO ---
-background_video = """
-    <video autoplay loop muted playsinline 
+st.markdown("""
+    <video autoplay loop muted playsinline id="bgvideo"
         style="
             position: fixed;
             right: 0;
@@ -18,75 +18,72 @@ background_video = """
         ">
         <source src="video.mp4" type="video/mp4">
     </video>
-"""
-st.markdown(background_video, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
-# --- ESTILOS PERSONALIZADOS ---
+# --- ESTILOS ---
 st.markdown("""
     <style>
-        /* Oculta la barra superior de Streamlit */
-        #MainMenu {visibility: hidden;}
-        header {visibility: hidden;}
-        footer {visibility: hidden;}
+        /* Quitar elementos de Streamlit */
+        #MainMenu, header, footer {visibility: hidden;}
+        .stApp { background: transparent !important; }
 
-        /* Fondo de las secciones y transparencia */
-        .stApp {
-            background: transparent !important;
-        }
-
-        /* Sidebar (barra lateral) */
-        section[data-testid="stSidebar"] {
-            background-color: rgba(0, 0, 0, 0.65) !important;
+        /* Sidebar siempre visible */
+        [data-testid="stSidebar"] {
+            background-color: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255,255,255,0.2);
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* Botones */
-        button {
-            width: 100%;
-            margin-bottom: 0.6rem;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-radius: 8px;
-            border: none;
-            transition: all 0.3s ease;
+        /* Títulos y texto blancos */
+        h1, h2, h3, h4, h5, h6, p, label, span {
+            color: white !important;
         }
-        button:hover {
-            background: rgba(255,255,255,0.25);
-            transform: scale(1.02);
+
+        /* Botones del menú */
+        .stRadio > div { gap: 0.5rem; }
+        .stRadio label {
+            background-color: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 8px 12px;
+            transition: 0.3s;
+        }
+        .stRadio label:hover {
+            background-color: rgba(255,255,255,0.3);
+            transform: scale(1.03);
+        }
+        div[role="radiogroup"] > label > div[data-testid="stMarkdownContainer"] > p {
+            color: white !important;
+            font-weight: bold;
+            text-align: center;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# --- CONTENIDO DE LA BARRA LATERAL ---
+# --- SIDEBAR MENU ---
 st.sidebar.title("🪐 AstroCycle")
-st.sidebar.markdown("### Navegación")
+st.sidebar.markdown("### Menú principal")
 
-# Lista de páginas
-pages = {
-    "Inicio": "inicio",
-    "Simulación": "simulacion",
-    "Control": "control",
-    "Datos": "datos",
-    "Acerca de": "acerca"
-}
+page = st.sidebar.radio(
+    "Navegación",
+    ["Inicio", "Simulación", "Control", "Datos", "Acerca de"],
+    label_visibility="collapsed"
+)
 
-page = st.sidebar.radio("Ir a:", list(pages.keys()))
-
-# --- PÁGINAS ---
+# --- CONTENIDO DE CADA PÁGINA ---
 if page == "Inicio":
     st.title("🌌 Bienvenido a AstroCycle")
     st.markdown("Explora el modelo 3D del prototipo.")
     components.html(
-        f"""
-        <model-viewer 
-            src="Rove_prototipo1.glb" 
-            alt="Rove Prototype" 
-            camera-controls 
+        """
+        <model-viewer src="Rove_prototipo1.glb" 
+            alt="Rove Prototype"
             auto-rotate 
-            style="width: 100%; height: 600px;">
+            camera-controls 
+            style="width:100%; height:600px;">
         </model-viewer>
-        <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+        <script type="module" 
+            src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+        </script>
         """,
         height=650,
     )
@@ -97,13 +94,13 @@ elif page == "Simulación":
 
 elif page == "Control":
     st.header("🎮 Panel de Control")
-    st.write("Interfaz para controlar el prototipo.")
+    st.write("Interfaz para controlar el prototipo en tiempo real.")
 
 elif page == "Datos":
     st.header("📊 Datos en tiempo real")
-    st.write("Visualización de métricas y sensores.")
+    st.write("Visualización de métricas y sensores del rover.")
 
 elif page == "Acerca de":
-    st.header("ℹ️ Acerca de AstroCycle")
-    st.write("Proyecto de exploración robótica — prototipo Rove.")
+    st.header("ℹ️ Sobre AstroCycle")
+    st.write("Proyecto de exploración robótica desarrollado por el equipo AstroCycle.")
 
