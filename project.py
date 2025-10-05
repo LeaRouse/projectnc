@@ -43,8 +43,19 @@ video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%
 #btn-left2 {top:50%;}
 #btn-left3 {top:60%;}
 
+/* Botones derecha */
+.right-btn {
+    position: fixed; right:20px; width:140px; padding:12px 18px;
+    border-radius:14px; border:none; font-weight:bold; cursor:pointer;
+    color:#f1f1f1; background-color: rgba(30,30,30,0.85); text-align:left;
+    transition: all 0.25s ease; z-index:5;
+}
+.right-btn:hover {background-color: rgba(70,70,70,0.95); transform: scale(1.05);}
+#btn-top-right {top:80px;}
+#btn-bottom-right {bottom:30px;}
+
 /* Contenido principal */
-.main-content {margin-left:180px; padding:20px;}
+.main-content {margin-left:180px; margin-right:180px; padding:20px;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -55,14 +66,20 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
-# --- Botones flotantes izquierda ---
+# --- Botones izquierda ---
 st.markdown(f"""
 <button class="left-btn" id="btn-left1" onclick="window.parent.postMessage({{type: 'Home'}}, '*')">🏠 Home</button>
 <button class="left-btn" id="btn-left2" onclick="window.parent.postMessage({{type: 'Craft'}}, '*')">🛠️ Craft</button>
 <button class="left-btn" id="btn-left3" onclick="window.parent.postMessage({{type: 'Materiales'}}, '*')">📦 Materiales</button>
 """, unsafe_allow_html=True)
 
-# --- Capturar los clicks en JS (flotantes) ---
+# --- Botones derecha (MANTENIDOS) ---
+st.markdown(f"""
+<button class="right-btn" id="btn-top-right" onclick="window.parent.postMessage({{type: 'Especificaciones'}}, '*')">⚙️ Especificaciones</button>
+<button class="right-btn" id="btn-bottom-right" onclick="window.parent.postMessage({{type: 'Configuracion'}}, '*')">🧩 Configuración</button>
+""", unsafe_allow_html=True)
+
+# --- Capturar mensajes JS ---
 components.html("""
 <script>
 window.addEventListener('message', (event) => {
@@ -74,14 +91,16 @@ window.addEventListener('message', (event) => {
 </script>
 """, height=0, width=0)
 
-# --- Fallback de Streamlit para cambiar página con clicks ---
+# --- Fallback para Streamlit buttons ---
 buttons = {
     "Home": "🏠 Home",
     "Craft": "🛠️ Craft",
-    "Materiales": "📦 Materiales"
+    "Materiales": "📦 Materiales",
+    "Especificaciones": "⚙️ Especificaciones",
+    "Configuracion": "🧩 Configuración"
 }
 for key in buttons:
-    if st.button(buttons[key], key=f"left_{key}"):
+    if st.button(buttons[key], key=f"btn_{key}"):
         cambiar_pagina(key)
 
 # --- Contenido dinámico ---
@@ -97,5 +116,13 @@ elif pagina == "Craft":
 elif pagina == "Materiales":
     st.header("📦 Materiales")
     st.write("Aquí se muestran los materiales utilizados y sus detalles.")
+elif pagina == "Especificaciones":
+    st.header("⚙️ Especificaciones")
+    st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
+    viewer_url = "https://learouse.github.io/prototipo/"
+    components.iframe(viewer_url, height=600, width="100%", scrolling=True)
+elif pagina == "Configuracion":
+    st.header("🧩 Configuración")
+    st.write("Opciones de configuración de la app.")
 
 st.markdown('</div>', unsafe_allow_html=True)
