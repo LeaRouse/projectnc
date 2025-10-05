@@ -47,6 +47,25 @@ video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%
 .floating-button:hover { background-color: rgba(70,70,70,0.95); transform: scale(1.05); }
 #btn-top-right { right: 20px; top: 80px; }
 #btn-bottom-right { right: 20px; bottom: 30px; }
+
+/* Columna izquierda botones */
+.left-buttons button {
+    display: block;
+    width: 120px;
+    margin-bottom: 20px;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-weight: bold;
+    color: #f1f1f1;
+    background-color: rgba(30,30,30,0.85);
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+.left-buttons button:hover {
+    background-color: rgba(70,70,70,0.95);
+    transform: scale(1.05);
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -62,9 +81,11 @@ col_left, col_right = st.columns([1, 4])
 
 # --- Botones izquierda ---
 with col_left:
+    st.markdown('<div class="left-buttons">', unsafe_allow_html=True)
     st.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
     st.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
     st.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # --- Botones derecha flotantes ---
 st.markdown(f"""
@@ -89,11 +110,12 @@ with col_right:
     pagina = st.session_state.pagina
 
     if pagina == "Home":
-        st.title("🏠 Home")
-        st.write("Bienvenido a **AstroCycle**. Explora todo desde aquí.")
+        # Mostrar logotipo centrado y grande
         IMG_FILE = Path("logotipoastrocycle.png")
         if IMG_FILE.exists():
-            st.image(str(IMG_FILE), use_container_width=True, caption="Logotipo AstroCycle")
+            st.markdown('<div style="display:flex; justify-content:center; align-items:center; height:80vh;">', unsafe_allow_html=True)
+            st.image(str(IMG_FILE), use_container_width=False, width=400)  # ajustar tamaño
+            st.markdown('</div>', unsafe_allow_html=True)
         else:
             st.warning("No se encontró logotipoastrocycle.png")
 
