@@ -198,7 +198,7 @@ document.addEventListener('updatePagina', e => {
 pagina = st.session_state.pagina
 IMG_FILE = Path("logotipoastrocycle.png")
 
-elif pagina == "Home":
+if pagina == "Home":
     logo_tag = (
         f'<img src="{logo_data}" alt="AstroCycle logo" '
         f'style="width:700px; max-width:70vw; height:auto; margin-top:16px;" />'
@@ -242,6 +242,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
