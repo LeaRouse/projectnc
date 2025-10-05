@@ -1,17 +1,17 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# --- CONFIGURACIÓN DE PÁGINA ---
+# --- Configuración de página ---
 st.set_page_config(
     page_title="AstroCycle 🌌",
     page_icon="🪐",
     layout="wide"
 )
 
-# --- CSS PERSONALIZADO ---
+# --- CSS ---
 st.markdown("""
 <style>
-/* Fondo general de la app */
+/* Fondo y texto */
 .stApp {
     background-color: #0a0a0a !important;
     color: #d0d0d0 !important;
@@ -22,59 +22,37 @@ st.markdown("""
     width: 100%;
     background-color: #1a1a1a;
     color: #d0d0d0;
-    padding: 15px 20px;
+    padding: 12px 20px;
     font-size: 20px;
     font-weight: bold;
     border-bottom: 2px solid #2a2a2a;
     border-radius: 8px 8px 0 0;
     text-align: center;
+    margin-bottom: 20px;
 }
 
-/* Contenedor principal que abarca menu + contenido */
-.contenedor-principal {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    margin-top: 10px;
-}
-
-/* Menu lateral custom */
-.menu-lateral {
-    background-color: #1c1c1c;
-    border-radius: 10px;
-    width: 220px;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* Botones del menú */
+/* Menú lateral custom */
 .menu-lateral button {
+    width: 100%;
+    margin-bottom: 10px;
     padding: 12px;
     border-radius: 10px;
     border: none;
-    background-color: #2a2a2a;
-    color: #d0d0d0;
     font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
+    color: #d0d0d0;
+    background-color: #2a2a2a;
     text-align: left;
+    cursor: pointer;
 }
-
 .menu-lateral button:hover {
     background-color: #3a3a3a;
     color: #ffffff;
     transform: scale(1.02);
 }
 
-/* Contenedor de contenido */
+/* Contenido */
 .contenido {
-    flex-grow: 1;
-    background-color: #0f0f0f;
-    border-radius: 10px;
-    padding: 20px;
-    margin-left: 15px;
+    padding-left: 20px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -82,84 +60,74 @@ st.markdown("""
 # --- Encabezado global ---
 st.markdown('<div class="encabezado-global">🌌 AstroCycle - Panel de Control del Robot</div>', unsafe_allow_html=True)
 
-# --- Contenedor principal: menú lateral + contenido ---
-menu_container = st.container()
-with menu_container:
-    st.markdown('<div class="contenedor-principal">', unsafe_allow_html=True)
+# --- Definir estado de página ---
+if 'pagina' not in st.session_state:
+    st.session_state.pagina = "Home"
 
-    # --- Menu lateral ---
-    menu_html = """
-    <div class="menu-lateral">
-        <button onclick="window.location.href='#home'">🏠 Home</button>
-        <button onclick="window.location.href='#datos'">📊 Datos Generales</button>
-        <button onclick="window.location.href='#status'">🤖 Status</button>
-        <button onclick="window.location.href='#craft'">🛠️ Craft</button>
-        <button onclick="window.location.href='#materiales'">📦 Materiales</button>
-        <button onclick="window.location.href='#especificaciones'">⚙️ Especificaciones</button>
-        <button onclick="window.location.href='#configuracion'">🧩 Configuración</button>
-    </div>
-    """
-    st.markdown(menu_html, unsafe_allow_html=True)
+# --- Función para cambiar página ---
+def cambiar_pagina(pagina):
+    st.session_state.pagina = pagina
 
-    # --- Contenido ---
-    st.markdown('<div class="contenido">', unsafe_allow_html=True)
+# --- Layout: columnas (menú | contenido) ---
+col1, col2 = st.columns([1,5])
 
-    # Navegación con Streamlit
-    if 'pagina' not in st.session_state:
-        st.session_state.pagina = 'Home'
+# --- Menú lateral con botones funcionales ---
+with col1:
+    st.markdown('<div class="menu-lateral">', unsafe_allow_html=True)
+    if st.button("🏠 Home"): cambiar_pagina("Home")
+    if st.button("📊 Datos Generales"): cambiar_pagina("Datos Generales")
+    if st.button("🤖 Status"): cambiar_pagina("Status")
+    if st.button("🛠️ Craft"): cambiar_pagina("Craft")
+    if st.button("📦 Materiales"): cambiar_pagina("Materiales")
+    if st.button("⚙️ Especificaciones"): cambiar_pagina("Especificaciones")
+    if st.button("🧩 Configuración"): cambiar_pagina("Configuracion")
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    def cambiar_pagina(p):
-        st.session_state.pagina = p
+# --- Contenido de cada página ---
+with col2:
+    if st.session_state.pagina == "Home":
+        st.header("🏠 Home")
+        st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
+        st.image(
+            "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
+            use_container_width=True
+        )
 
-    col_menu, col_content = st.columns([1,5])
+    elif st.session_state.pagina == "Datos Generales":
+        st.header("📊 Datos Generales")
+        colA, colB = st.columns(2)
+        with colA:
+            st.metric("Nombre", "Rover Prot1")
+            st.metric("Modelo", "X-2025")
+            st.metric("Código", "RC-001")
+        with colB:
+            st.metric("Peso", "45 kg")
+            st.metric("Altura", "1.2 m")
+            st.metric("Capacidad", "15 kg")
 
-    with col_content:
-        # Página Home
-        if st.session_state.pagina == "Home":
-            st.header("🏠 Home")
-            st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
-            st.image(
-                "https://www.nasa.gov/wp-content/uploads/2023/03/hs-2009-25-a-xlarge_web.jpg",
-                use_container_width=True
-            )
+    elif st.session_state.pagina == "Status":
+        st.header("🤖 Status del Robot")
+        st.metric("Estado General", "Funcionando")
+        st.metric("Batería", "78%")
+        st.progress(78)
+        st.metric("Sensores Activos", "5/5")
+        st.metric("Conectividad", "Online")
+        st.write("Última alerta: Ninguna")
 
-        elif st.session_state.pagina == "Datos Generales":
-            st.header("📊 Datos Generales")
-            col1, col2 = st.columns(2)
-            with col1:
-                st.metric("Nombre", "Rover Prot1")
-                st.metric("Modelo", "X-2025")
-                st.metric("Código", "RC-001")
-            with col2:
-                st.metric("Peso", "45 kg")
-                st.metric("Altura", "1.2 m")
-                st.metric("Capacidad", "15 kg")
+    elif st.session_state.pagina == "Craft":
+        st.header("🛠️ Craft")
+        st.write("Contenido relacionado a la construcción y fabricación.")
 
-        elif st.session_state.pagina == "Status":
-            st.header("🤖 Status del Robot")
-            st.metric("Estado General", "Funcionando")
-            st.metric("Batería", "78%")
-            st.progress(78)
-            st.metric("Sensores Activos", "5/5")
-            st.metric("Conectividad", "Online")
-            st.write("Última alerta: Ninguna")
+    elif st.session_state.pagina == "Materiales":
+        st.header("📦 Materiales")
+        st.write("Inventario de materiales y buscador.")
 
-        elif st.session_state.pagina == "Craft":
-            st.header("🛠️ Craft")
-            st.write("Contenido relacionado a la construcción y fabricación.")
+    elif st.session_state.pagina == "Especificaciones":
+        st.header("⚙️ Especificaciones")
+        st.write("Modelo 3D del prototipo:")
+        viewer_url = "https://learouse.github.io/prototipo/"
+        components.iframe(viewer_url, height=600, width="100%", scrolling=True)
 
-        elif st.session_state.pagina == "Materiales":
-            st.header("📦 Materiales")
-            st.write("Inventario de materiales y buscador.")
-
-        elif st.session_state.pagina == "Especificaciones":
-            st.header("⚙️ Especificaciones")
-            st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
-            viewer_url = "https://learouse.github.io/prototipo/"
-            components.iframe(viewer_url, height=600, width="100%", scrolling=True)
-
-        elif st.session_state.pagina == "Configuracion":
-            st.header("🧩 Configuración")
-            st.write("Opciones de configuración de la app.")
-
-    st.markdown('</div></div>', unsafe_allow_html=True)  # cerrar contenedor
+    elif st.session_state.pagina == "Configuracion":
+        st.header("🧩 Configuración")
+        st.write("Opciones de configuración de la app.")
