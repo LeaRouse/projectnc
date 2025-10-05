@@ -45,7 +45,6 @@ icon_mat   = img_data_uri("materiales.png")
 icon_spec  = img_data_uri("especificaciones.png")
 icon_conf  = img_data_uri("config.png")
 logo_data = img_data_uri("logotipoastrocycle2.png")
-st.write("Logo cargado:", bool(logo_data))
 
 # --- CSS GENERAL ---
 st.markdown("""
@@ -255,36 +254,3 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
