@@ -67,7 +67,6 @@ if 'pagina' not in st.session_state:
 # --- Función para cambiar página ---
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
-    st.experimental_rerun()
 
 # --- Barra lateral ---
 st.sidebar.title("🌠 AstroCycle")
@@ -75,33 +74,30 @@ st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 
-# --- Botones flotantes derecha (HTML + JS) ---
+# --- Botones flotantes derecha usando HTML + Streamlit ---
 components.html(f"""
-<script>
-const aboutBtn = document.createElement('button');
-aboutBtn.innerHTML = 'ℹ️';
-aboutBtn.className = 'floating-btn';
-aboutBtn.id = 'btn-about';
-aboutBtn.onclick = () => {{ window.parent.postMessage('About', '*'); }};
-document.body.appendChild(aboutBtn);
-
-const configBtn = document.createElement('button');
-configBtn.innerHTML = '⚙️';
-configBtn.className = 'floating-btn';
-configBtn.id = 'btn-config';
-configBtn.onclick = () => {{ window.parent.postMessage('Configuracion', '*'); }};
-document.body.appendChild(configBtn);
-</script>
+<div style="position: fixed; top:20px; right:20px; z-index:999;">
+    <form method="post">
+        <input type="submit" name="about_btn" value="ℹ️" class="floating-btn">
+    </form>
+</div>
+<div style="position: fixed; bottom:20px; right:20px; z-index:999;">
+    <form method="post">
+        <input type="submit" name="config_btn" value="⚙️" class="floating-btn">
+    </form>
+</div>
 """, height=0, width=0)
 
-# --- Listener de mensajes ---
-from streamlit_javascript import st_javascript
-msg = st_javascript("window.addEventListener('message', e => e.data, false)")
-if msg:
-    if msg == 'About':
-        cambiar_pagina('About')
-    elif msg == 'Configuracion':
-        cambiar_pagina('Configuracion')
+# --- Detectar clicks de botones flotantes ---
+if "about_btn" in st.session_state:
+    st.session_state.pagina = "About"
+if "config_btn" in st.session_state:
+    st.session_state.pagina = "Configuracion"
+
+if st.experimental_get_query_params().get("about_btn"):
+    cambiar_pagina("About")
+if st.experimental_get_query_params().get("config_btn"):
+    cambiar_pagina("Configuracion")
 
 # --- Contenido principal ---
 st.markdown('<div class="main-content">', unsafe_allow_html=True)
