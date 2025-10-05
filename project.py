@@ -69,19 +69,13 @@ button[title="Collapse"] {
     width: 100%;
     background-color: #1a1a1a; /* gris muy oscuro */
     color: #d0d0d0;
-    padding: 10px 20px;
+    padding: 12px 20px;
     font-size: 18px;
     font-weight: bold;
     border-bottom: 2px solid #2a2a2a;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 100;
-}
-
-/* Ajustar contenido para no tapar el navbar */
-.main > div:first-child {
-    margin-top: 50px; /* espacio igual a la altura del navbar */
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 10px;
 }
 
 /* Textos principales */
@@ -91,8 +85,8 @@ h1, h2, h3, h4, p, span {
 </style>
 """, unsafe_allow_html=True)
 
-# --- Encabezado fijo tipo navbar ---
-st.markdown('<div class="encabezado-navbar">🌌 AstroCycle - Explora el universo profesionalmente</div>', unsafe_allow_html=True)
+# --- Encabezado tipo navbar ---
+st.markdown('<div class="encabezado-navbar">🌌 AstroCycle - Panel de Control del Robot</div>', unsafe_allow_html=True)
 
 # --- Menú lateral ---
 st.sidebar.markdown('<div class="sidebar-title">🌠 AstroCycle</div>', unsafe_allow_html=True)
@@ -104,8 +98,10 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# Botones
+# Botones de menú
 st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
+st.sidebar.button("📊 Datos Generales", on_click=cambiar_pagina, args=("Datos Generales",))
+st.sidebar.button("🤖 Status", on_click=cambiar_pagina, args=("Status",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
@@ -120,13 +116,35 @@ if st.session_state.pagina == "Home":
         use_container_width=True
     )
 
+elif st.session_state.pagina == "Datos Generales":
+    st.header("📊 Datos Generales")
+    st.write("Información resumida del robot o rover.")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Nombre", "Rover Prot1")
+        st.metric("Modelo", "X-2025")
+        st.metric("Código", "RC-001")
+    with col2:
+        st.metric("Peso", "45 kg")
+        st.metric("Altura", "1.2 m")
+        st.metric("Capacidad", "15 kg")
+
+elif st.session_state.pagina == "Status":
+    st.header("🤖 Status del Robot")
+    st.metric("Estado General", "Funcionando")
+    st.metric("Batería", "78%")
+    st.progress(78)
+    st.metric("Sensores Activos", "5/5")
+    st.metric("Conectividad", "Online")
+    st.write("Última alerta: Ninguna")
+    
 elif st.session_state.pagina == "Craft":
     st.header("🛠️ Craft")
     st.write("Contenido relacionado a la construcción y fabricación.")
 
 elif st.session_state.pagina == "Materiales":
     st.header("📦 Materiales")
-    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
+    st.write("Inventario de materiales y buscador.")
 
 elif st.session_state.pagina == "Especificaciones":
     st.header("⚙️ Especificaciones")
