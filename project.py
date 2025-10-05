@@ -1,7 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# --- Configuración de página ---
+# --- Configuración de la página ---
 st.set_page_config(
     page_title="AstroCycle 🌌",
     page_icon="🪐",
@@ -15,8 +15,9 @@ if 'pagina' not in st.session_state:
 # --- Función para cambiar página ---
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
+    st.experimental_rerun()  # recarga la app para reflejar el cambio inmediatamente
 
-# --- CSS para menú lateral uniforme y layout ---
+# --- CSS para menú lateral y layout ---
 st.markdown("""
 <style>
 /* Fondo general */
@@ -39,31 +40,36 @@ st.markdown("""
     margin-bottom: 20px;
 }
 
-/* Menú lateral: botones iguales */
+/* Menú lateral: botones HTML */
+.menu-lateral {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* espacio entre botones */
+}
+
 .menu-lateral button {
-    width: 100% !important;
-    height: 50px !important;          /* altura fija */
-    margin-bottom: 10px !important;
+    width: 100% !important;       /* mismo ancho */
+    height: 50px !important;      /* misma altura */
     border-radius: 10px !important;
     border: none !important;
     background-color: #2a2a2a !important;
     color: #d0d0d0 !important;
     font-weight: bold !important;
     text-align: left !important;
+    cursor: pointer !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    cursor: pointer !important;
+    padding-left: 12px !important;
     transition: 0.2s !important;
     font-size: 16px !important;
 }
 .menu-lateral button:hover {
     background-color: #3a3a3a !important;
     color: #ffffff !important;
-    transform: scale(1.02) !important;
+    transform: scale(1.02);
 }
 
-/* Contenedor del contenido */
+/* Contenido */
 .contenido {
     padding-left: 20px;
 }
@@ -76,11 +82,10 @@ st.markdown('<div class="encabezado-global">🌌 AstroCycle - Panel de Control d
 # --- Layout: columnas (menú | contenido) ---
 col1, col2 = st.columns([1,5])
 
-# --- Menú lateral con HTML botones ---
+# --- Menú lateral usando HTML buttons ---
 with col1:
     st.markdown('<div class="menu-lateral">', unsafe_allow_html=True)
     
-    # Botones HTML que cambian la página
     paginas = [
         ("🏠 Home", "Home"),
         ("📊 Datos Generales", "Datos Generales"),
@@ -92,12 +97,12 @@ with col1:
     ]
     
     for nombre, valor in paginas:
-        if st.button(nombre, key=valor):
+        if st.markdown(f'<button onclick="window.location.href=\'#\'" id="{valor}">{nombre}</button>', unsafe_allow_html=True):
             cambiar_pagina(valor)
     
     st.markdown('</div>', unsafe_allow_html=True)
 
-# --- Contenido ---
+# --- Contenido de cada página ---
 with col2:
     if st.session_state.pagina == "Home":
         st.header("🏠 Home")
