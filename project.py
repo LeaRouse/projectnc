@@ -149,50 +149,55 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
+# --- Sincronizar con query params (?page=Home, etc.) ---
+try:
+    # Streamlit >= 1.30
+    page_param = st.query_params.get("page", None)
+except AttributeError:
+    # Streamlit < 1.30
+    qp = st.experimental_get_query_params()
+    page_param = qp.get("page", [None])[0] if qp.get("page") else None
+
+if page_param:
+    st.session_state.pagina = page_param
+
+# Mantener la URL actualizada al estado
+try:
+    st.query_params["page"] = st.session_state.pagina
+except AttributeError:
+    st.experimental_set_query_params(page=st.session_state.pagina)
+
 # --- BOTONES FLOTANTES CON IMÁGENES ---
 # Asegúrate de tener tus íconos en la misma carpeta: home.png, craft.png, materiales.png, especificaciones.png, config.png
+# --- BOTONES FLOTANTES CON NAVEGACIÓN (vía query params) ---
 st.markdown(f"""
 <div>
-  <div class="icon-button" id="btn-home"><img src="{icon_home}" alt="Home"></div>
-  <div class="icon-button" id="btn-craft"><img src="{icon_craft}" alt="Craft"></div>
-  <div class="icon-button" id="btn-mat"><img src="{icon_mat}" alt="Materiales"></div>
-  <div class="icon-button" id="btn-spec"><img src="{icon_spec}" alt="Especificaciones"></div>
-  <div class="icon-button" id="btn-config"><img src="{icon_conf}" alt="Configuración"></div>
+  <div class="icon-button" id="btn-home"
+       onclick="window.parent.location.search='?page=Home'">
+    <img src="{icon_home}" alt="Home">
+  </div>
+
+  <div class="icon-button" id="btn-craft"
+       onclick="window.parent.location.search='?page=Craft'">
+    <img src="{icon_craft}" alt="Craft">
+  </div>
+
+  <div class="icon-button" id="btn-mat"
+       onclick="window.parent.location.search='?page=Materiales'">
+    <img src="{icon_mat}" alt="Materiales">
+  </div>
+
+  <div class="icon-button" id="btn-spec"
+       onclick="window.parent.location.search='?page=Especificaciones'">
+    <img src="{icon_spec}" alt="Especificaciones">
+  </div>
+
+  <div class="icon-button" id="btn-config"
+       onclick="window.parent.location.search='?page=Configuracion'">
+    <img src="{icon_conf}" alt="Configuración">
+  </div>
 </div>
 """, unsafe_allow_html=True)
-
-# --- JS para cambiar de página ---
-components.html("""
-<script>
-const mapping = {
-    "btn-home": "Home",
-    "btn-craft": "Craft",
-    "btn-mat": "Materiales",
-    "btn-spec": "Especificaciones",
-    "btn-config": "Configuracion"
-};
-for(const id in mapping){
-    const el = document.getElementById(id);
-    if(el){
-        el.onclick = () => { window.parent.postMessage({type:mapping[id]}, "*"); };
-    }
-}
-window.addEventListener('message', event => {
-    const type = event.data.type;
-    if(type){
-        document.dispatchEvent(new CustomEvent('updatePagina',{detail:type}));
-    }
-});
-</script>
-""", height=0, width=0)
-
-components.html("""
-<script>
-document.addEventListener('updatePagina', e => {
-    fetch('/_stcore', {method:'POST', body:e.detail});
-});
-</script>
-""", height=0, width=0)
 
 # --- CONTENIDO ---
 pagina = st.session_state.pagina
@@ -251,4 +256,5 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
