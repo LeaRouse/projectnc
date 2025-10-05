@@ -26,12 +26,11 @@ st.markdown(get_video_html(), unsafe_allow_html=True)
 # --- CSS ---
 st.markdown("""
 <style>
-/* Fondo y overlay */
 .stApp {background: transparent !important; color: #d0d0d0 !important;}
 video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%; transform: translate(-50%, -50%); object-fit: cover; z-index:-3; filter: brightness(0.65) contrast(1.05);}
 .bg-overlay {position: fixed; inset:0; background: rgba(0,0,0,0.45); z-index:-2;}
 
-/* Botones flotantes izquierda */
+/* Botones izquierda */
 .left-btn {
     position: fixed; left:20px; width:140px; padding:12px 18px;
     border-radius:14px; border:none; font-weight:bold; cursor:pointer;
@@ -54,54 +53,51 @@ video#bgvid {position: fixed; top:50%; left:50%; min-width:100%; min-height:100%
 #btn-top-right {top:80px;}
 #btn-bottom-right {bottom:30px;}
 
-/* Contenido principal */
 .main-content {margin-left:180px; margin-right:180px; padding:20px;}
 </style>
 """, unsafe_allow_html=True)
 
-# --- Session state para la página ---
+# --- Session state para página ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = "Home"
 
-def cambiar_pagina(pagina):
-    st.session_state.pagina = pagina
-
-# --- Botones izquierda ---
-st.markdown(f"""
-<button class="left-btn" id="btn-left1" onclick="window.parent.postMessage({{type: 'Home'}}, '*')">🏠 Home</button>
-<button class="left-btn" id="btn-left2" onclick="window.parent.postMessage({{type: 'Craft'}}, '*')">🛠️ Craft</button>
-<button class="left-btn" id="btn-left3" onclick="window.parent.postMessage({{type: 'Materiales'}}, '*')">📦 Materiales</button>
-""", unsafe_allow_html=True)
-
-# --- Botones derecha (MANTENIDOS) ---
-st.markdown(f"""
-<button class="right-btn" id="btn-top-right" onclick="window.parent.postMessage({{type: 'Especificaciones'}}, '*')">⚙️ Especificaciones</button>
-<button class="right-btn" id="btn-bottom-right" onclick="window.parent.postMessage({{type: 'Configuracion'}}, '*')">🧩 Configuración</button>
-""", unsafe_allow_html=True)
-
-# --- Capturar mensajes JS ---
+# --- Capturar mensajes JS de botones flotantes ---
 components.html("""
 <script>
+function enviarPagina(pagina){
+    window.parent.postMessage({type: pagina}, '*')
+}
 window.addEventListener('message', (event) => {
-    const type = event.data.type;
-    if(type) {
-        document.dispatchEvent(new CustomEvent('updatePagina', {detail: type}));
+    const pagina = event.data.type;
+    if(pagina){
+        document.dispatchEvent(new CustomEvent('updatePagina', {detail: pagina}));
     }
 });
 </script>
 """, height=0, width=0)
 
-# --- Fallback para Streamlit buttons ---
-buttons = {
-    "Home": "🏠 Home",
-    "Craft": "🛠️ Craft",
-    "Materiales": "📦 Materiales",
-    "Especificaciones": "⚙️ Especificaciones",
-    "Configuracion": "🧩 Configuración"
-}
-for key in buttons:
-    if st.button(buttons[key], key=f"btn_{key}"):
-        cambiar_pagina(key)
+# --- Botones flotantes izquierda ---
+st.markdown(f"""
+<button class="left-btn" id="btn-left1" onclick="enviarPagina('Home')">🏠 Home</button>
+<button class="left-btn" id="btn-left2" onclick="enviarPagina('Craft')">🛠️ Craft</button>
+<button class="left-btn" id="btn-left3" onclick="enviarPagina('Materiales')">📦 Materiales</button>
+""", unsafe_allow_html=True)
+
+# --- Botones derecha ---
+st.markdown(f"""
+<button class="right-btn" id="btn-top-right" onclick="enviarPagina('Especificaciones')">⚙️ Especificaciones</button>
+<button class="right-btn" id="btn-bottom-right" onclick="enviarPagina('Configuracion')">🧩 Configuración</button>
+""", unsafe_allow_html=True)
+
+# --- Capturar eventos de botones flotantes en Streamlit ---
+components.html("""
+<script>
+document.addEventListener('updatePagina', function(e){
+    const pagina = e.detail;
+    window.parent.postMessage({type: 'st_update', pagina: pagina}, '*');
+});
+</script>
+""", height=0, width=0)
 
 # --- Contenido dinámico ---
 st.markdown('<div class="main-content">', unsafe_allow_html=True)
