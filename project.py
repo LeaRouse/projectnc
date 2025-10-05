@@ -101,4 +101,37 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
-# --- Barra lateral con solo 3 botones
+# --- Barra lateral con solo 3 botones (HTML puro) ---
+st.markdown(f"""
+<div class="sidebar">
+    <button onclick="window.parent.postMessage({{type:'Home'}}, '*')">🏠 Home</button>
+    <button onclick="window.parent.postMessage({{type:'Craft'}}, '*')">🛠️ Craft</button>
+    <button onclick="window.parent.postMessage({{type:'Materiales'}}, '*')">📦 Materiales</button>
+</div>
+""", unsafe_allow_html=True)
+
+# --- Botones funcionales con Streamlit --- 
+# Capturamos los clicks en Streamlit de forma invisible usando botones ocultos
+if st.button("🏠 Home", key="home_hidden"):
+    cambiar_pagina("Home")
+if st.button("🛠️ Craft", key="craft_hidden"):
+    cambiar_pagina("Craft")
+if st.button("📦 Materiales", key="materiales_hidden"):
+    cambiar_pagina("Materiales")
+
+# --- Contenido principal al costado de la barra ---
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
+
+pagina = st.session_state.pagina
+
+if pagina == "Home":
+    st.title("🏠 Home")
+    st.write("Bienvenido a **AstroCycle**. Explora todo desde aquí.")
+elif pagina == "Craft":
+    st.header("🛠️ Craft")
+    st.write("Sección de construcción y desarrollo del prototipo.")
+elif pagina == "Materiales":
+    st.header("📦 Materiales")
+    st.write("Aquí se muestran los materiales utilizados y sus detalles.")
+
+st.markdown('</div>', unsafe_allow_html=True)
