@@ -94,9 +94,10 @@ if "about_btn" in st.session_state:
 if "config_btn" in st.session_state:
     st.session_state.pagina = "Configuracion"
 
-if st.experimental_get_query_params().get("about_btn"):
+# --- Detectar botones usando query_params (reemplazo de experimental) ---
+if st.query_params.get("about_btn"):
     cambiar_pagina("About")
-if st.experimental_get_query_params().get("config_btn"):
+if st.query_params.get("config_btn"):
     cambiar_pagina("Configuracion")
 
 # --- Contenido principal ---
