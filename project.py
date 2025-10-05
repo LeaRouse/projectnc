@@ -48,7 +48,7 @@ icon_conf  = img_data_uri("config.png")
 # --- CSS GENERAL ---
 st.markdown("""
 <style>
-/* Fondo */
+/* ===== FONDO ===== */
 .stApp { background: transparent !important; color: #d0d0d0 !important; }
 video#bgvid {
     position: fixed; top:50%; left:50%;
@@ -60,41 +60,54 @@ video#bgvid {
 }
 .bg-overlay { position: fixed; inset:0; background: rgba(0,0,0,0.45); z-index:-2; }
 
-/* ===== BOTONES DE IMAGEN ===== */
+/* ===== BOTONES ===== */
 .icon-button {
     position: fixed;
     background: rgba(30,30,30,0.6);
-    border-radius: 50%;
     border: 2px solid rgba(255,255,255,0.3);
-    padding: 10px;
     cursor: pointer;
     transition: all 0.25s ease;
     z-index: 5;
-    width: 70px;
-    height: 70px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.icon-button:hover {
-    background: rgba(255,255,255,0.1);
-    transform: scale(1.1);
-    border-color: rgba(255,255,255,0.7);
-}
+
 .icon-button img {
+    filter: brightness(0.9);
     width: 42px;
     height: 42px;
-    filter: brightness(0.9);
 }
 
-/* Posiciones */
-#btn-home { left: 20px; top: 35%; }
-#btn-craft { left: 20px; top: 45%; }
-#btn-mat { left: 20px; top: 55%; }
+/* --- EFECTO HOVER --- */
+.icon-button:hover {
+    background: rgba(255,255,255,0.1);
+    transform: scale(1.08);
+    border-color: rgba(255,255,255,0.7);
+}
+
+/* --- BOTONES IZQUIERDA (CUADRADOS) --- */
+#btn-home, #btn-craft, #btn-mat {
+    left: 20px;
+    width: 80px;
+    height: 80px;
+    border-radius: 18px;   /* ← bordes suaves */
+    background: rgba(35,35,35,0.65);
+}
+#btn-home { top: 35%; }
+#btn-craft { top: 46%; }
+#btn-mat { top: 57%; }
+
+/* --- BOTONES DERECHA (CÍRCULOS) --- */
+#btn-spec, #btn-config {
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+}
 #btn-spec { right: 20px; top: 80px; }
 #btn-config { right: 20px; bottom: 30px; }
 
-/* Textos */
+/* --- TEXTOS --- */
 h1,h2,h3,p,span { color:#d0d0d0 !important; }
 </style>
 """, unsafe_allow_html=True)
@@ -183,4 +196,5 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
