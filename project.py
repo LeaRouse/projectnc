@@ -46,15 +46,32 @@ st.markdown("""
         z-index: -1;
     }
 
+    .container-main {
+        display: flex;
+        flex-direction: row;
+        height: 100vh;
+        gap: 0;
+    }
+
     .menu-container {
         background: rgba(10,10,10,0.35);
         backdrop-filter: blur(6px);
-        border-radius: 12px;
+        border-right: 1px solid rgba(255,255,255,0.1);
         padding: 18px;
-        height: 100vh;
+        width: 250px;
         display: flex;
         flex-direction: column;
+        justify-content: flex-start;
         gap: 12px;
+        height: 100vh;
+        box-sizing: border-box;
+    }
+
+    .menu-title {
+        font-size: 22px;
+        font-weight: bold;
+        color: #fff;
+        margin-bottom: 14px;
     }
 
     .menu-button {
@@ -67,6 +84,7 @@ st.markdown("""
         font-weight: 600;
         transition: all 0.2s ease;
         cursor: pointer;
+        width: 100%;
     }
 
     .menu-button:hover {
@@ -75,8 +93,16 @@ st.markdown("""
     }
 
     .menu-button.active {
-        background: rgba(255,255,255,0.15);
+        background: rgba(255,255,255,0.18);
         border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .content {
+        flex: 1;
+        padding: 30px;
+        color: white;
+        overflow-y: auto;
+        height: 100vh;
     }
 
     .main-title {
@@ -85,7 +111,9 @@ st.markdown("""
         margin-bottom: 8px;
     }
 
-    .muted {color: rgba(230,230,230,0.8);}
+    .muted {
+        color: rgba(230,230,230,0.8);
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -93,12 +121,13 @@ st.markdown("""
 st.markdown(get_video_html(), unsafe_allow_html=True)
 st.markdown('<div class="bg-overlay"></div>', unsafe_allow_html=True)
 
-# ---------- Layout principal ----------
-col_menu, col_content = st.columns([1, 4])
+# ---------- Contenedor principal ----------
+st.markdown("<div class='container-main'>", unsafe_allow_html=True)
 
-with col_menu:
+# ---------- Columna izquierda (barra de menú) ----------
+with st.container():
     st.markdown("<div class='menu-container'>", unsafe_allow_html=True)
-    st.markdown("### 🚀 AstroCycle")
+    st.markdown("<div class='menu-title'>🚀 AstroCycle</div>", unsafe_allow_html=True)
 
     pages = {
         "🏠 Home": "Home",
@@ -118,59 +147,63 @@ with col_menu:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-with col_content:
-    page = st.session_state.page
+# ---------- Columna derecha (contenido dinámico) ----------
+st.markdown("<div class='content'>", unsafe_allow_html=True)
+page = st.session_state.page
 
-    if page == "🏠 Home":
-        st.markdown("<h1 class='main-title'>AstroCycle</h1>", unsafe_allow_html=True)
-        st.markdown("<p class='muted'>Panel principal del rover interplanetario.</p>", unsafe_allow_html=True)
+if page == "🏠 Home":
+    st.markdown("<h1 class='main-title'>AstroCycle</h1>", unsafe_allow_html=True)
+    st.markdown("<p class='muted'>Panel principal del rover interplanetario.</p>", unsafe_allow_html=True)
 
-    elif page == "📊 Datos Generales":
-        st.markdown("<h2 class='main-title'>Datos Generales</h2>", unsafe_allow_html=True)
-        c1, c2, c3 = st.columns(3)
-        with c1:
-            st.metric("Nombre", "Rover X-Proto")
-            st.metric("Modelo", "Rove 2025")
-        with c2:
-            st.metric("Código", "RC-002")
-            st.metric("Ubicación", "Hangar C")
-        with c3:
-            st.metric("Estado", "Operativo")
-            st.metric("Última revisión", "2025-10-04")
+elif page == "📊 Datos Generales":
+    st.markdown("<h2 class='main-title'>Datos Generales</h2>", unsafe_allow_html=True)
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        st.metric("Nombre", "Rover X-Proto")
+        st.metric("Modelo", "Rove 2025")
+    with c2:
+        st.metric("Código", "RC-002")
+        st.metric("Ubicación", "Hangar C")
+    with c3:
+        st.metric("Estado", "Operativo")
+        st.metric("Última revisión", "2025-10-04")
 
-    elif page == "🤖 Status":
-        st.markdown("<h2 class='main-title'>Estado del Sistema</h2>", unsafe_allow_html=True)
-        battery = st.slider("Nivel de batería (%)", 0, 100, 85)
-        st.progress(battery)
-        st.metric("Sensores activos", "6/6")
-        st.metric("Conectividad", "Online")
-        st.radio("Modo de energía", ["Normal", "Ahorro", "Reinicio"])
+elif page == "🤖 Status":
+    st.markdown("<h2 class='main-title'>Estado del Sistema</h2>", unsafe_allow_html=True)
+    battery = st.slider("Nivel de batería (%)", 0, 100, 85)
+    st.progress(battery)
+    st.metric("Sensores activos", "6/6")
+    st.metric("Conectividad", "Online")
+    st.radio("Modo de energía", ["Normal", "Ahorro", "Reinicio"])
 
-    elif page == "🛠️ Craft":
-        st.markdown("<h2 class='main-title'>Sección de Fabricación</h2>", unsafe_allow_html=True)
-        st.write("Visualiza el proceso de creación, ensamblaje y mantenimiento del rover.")
+elif page == "🛠️ Craft":
+    st.markdown("<h2 class='main-title'>Sección de Fabricación</h2>", unsafe_allow_html=True)
+    st.write("Visualiza el proceso de creación, ensamblaje y mantenimiento del rover.")
 
-    elif page == "⚙️ Especificaciones":
-        st.markdown("<h2 class='main-title'>Especificaciones Técnicas</h2>", unsafe_allow_html=True)
-        st.write("Incluye la vista 3D del modelo del rover:")
-        if MODEL_FILE.exists():
-            st.markdown(f"""
-                <model-viewer src="Rove_prototipo1.glb" alt="Modelo 3D del Rover"
-                    camera-controls auto-rotate exposure="1"
-                    style="width:100%; height:600px; background: transparent;">
-                </model-viewer>
-                <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-            """, unsafe_allow_html=True)
-        else:
-            st.error("❌ No se encontró el archivo 'Rove_prototipo1.glb'.")
+elif page == "⚙️ Especificaciones":
+    st.markdown("<h2 class='main-title'>Especificaciones Técnicas</h2>", unsafe_allow_html=True)
+    st.write("Incluye la vista 3D del modelo del rover:")
+    if MODEL_FILE.exists():
+        st.markdown(f"""
+            <model-viewer src="Rove_prototipo1.glb" alt="Modelo 3D del Rover"
+                camera-controls auto-rotate exposure="1"
+                style="width:100%; height:600px; background: transparent;">
+            </model-viewer>
+            <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+        """, unsafe_allow_html=True)
+    else:
+        st.error("❌ No se encontró el archivo 'Rove_prototipo1.glb'.")
 
-    elif page == "🧩 Configuración":
-        st.markdown("<h2 class='main-title'>Configuración</h2>", unsafe_allow_html=True)
-        st.write("Ajustes y parámetros del sistema.")
-        st.toggle("Modo oscuro", value=True)
-        st.selectbox("Idioma", ["Español", "Inglés"])
-        st.slider("Volumen general", 0, 100, 70)
-        st.button("Guardar cambios", type="primary")
+elif page == "🧩 Configuración":
+    st.markdown("<h2 class='main-title'>Configuración</h2>", unsafe_allow_html=True)
+    st.write("Ajustes y parámetros del sistema.")
+    st.toggle("Modo oscuro", value=True)
+    st.selectbox("Idioma", ["Español", "Inglés"])
+    st.slider("Volumen general", 0, 100, 70)
+    st.button("Guardar cambios", type="primary")
+
+st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- Nota inferior ----------
 st.markdown("""
