@@ -198,15 +198,23 @@ pagina = st.session_state.pagina
 IMG_FILE = Path("logotipoastrocycle.png")
 
 if pagina == "Home":
-    st.markdown("""
-    <div style="display:flex; flex-direction:column; justify-content:flex-start; align-items:center; height:90vh; padding-top:20px;">
-        <h1 style="color:#ffffff; font-size:120px; margin-bottom:0px;">AstroCycle</h1>
+    st.markdown(f"""
+    <div style="
+        position: fixed;
+        top: 50%;
+        left: calc(230px + 50% - 115px);  /* 230px = ancho menú + margen */
+        transform: translate(-50%, -50%);
+        width: calc(100% - 260px);        /* resta el ancho del panel lateral */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        z-index: 0;
+    ">
+        <h1 style="color:#ffffff; font-size:120px; margin:0;">AstroCycle</h1>
+    </div>
     """, unsafe_allow_html=True)
-    if IMG_FILE.exists():
-        st.image(str(IMG_FILE), width=700)
-    else:
-        st.warning("No se encontró logotipoastrocycle.png")
-    st.markdown("</div>", unsafe_allow_html=True)
 
 elif pagina == "Craft":
     st.header("🛠️ Craft")
@@ -225,6 +233,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
