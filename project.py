@@ -168,7 +168,7 @@ except AttributeError:
     st.experimental_set_query_params(page=st.session_state.pagina)
 
 # --- BOTONES FLOTANTES CON NAVEGACIÓN INTERNA (mismo tab, sin JS) ---
-current = st.session_state.pagina  # opcional, para marcar activo
+current = st.session_state.pagina  # para marcar activo (opcional)
 
 st.markdown(f"""
 <style>
@@ -178,56 +178,43 @@ st.markdown(f"""
   box-shadow: 0 0 20px rgba(255,255,255,0.25);
 }}
 
-/* estilos del botón html para que no se vea como botón nativo */
+/* formulario invisible que capta el click */
 .icon-as-form {{
   position: fixed;
-  z-index: 6;
-  margin: 0;
-  padding: 0;
-  background: none;
-  border: none;
-  width: 180px;
-  height: 180px;
-  border-radius: 22px;
-  cursor: pointer;
-  overflow: hidden;
+  z-index: 6;            /* por encima de la capa visual (z-index:5) */
+  margin: 0; padding: 0; background: none; border: none;
+  width: 180px; height: 180px; border-radius: 22px;
 }}
-/* ubicaciones (coinciden con tus #btn-*) */
+/* ¡hace que el botón llene el área del formulario! */
+.icon-as-form button {{
+  width: 100%; height: 100%;
+  border: 0; background: transparent;
+  cursor: pointer;
+}}
+
+/* ubicaciones de los formularios (zona clickeable) */
 #home-form {{ left:25px; top:12%;  }}
 #craft-form {{ left:25px; top:41%;  }}
 #mat-form   {{ left:25px; top:70%;  }}
-#spec-form  {{ right:25px; top:80px; width:80px; height:80px; border-radius:50%; }}
+#spec-form  {{ right:25px; top:80px;    width:80px; height:80px; border-radius:50%; }}
 #conf-form  {{ right:25px; bottom:30px; width:80px; height:80px; border-radius:50%; }}
 
-/* capa visual del botón (tu estilo original) */
+/* capa visual (lo que ves) */
 .icon-visual {{
   position: fixed;
   background: rgba(35,35,35,0.75);
   border: 2px solid rgba(255,255,255,0.25);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  z-index: 5;
+  display: flex; justify-content: center; align-items: center;
+  overflow: hidden; z-index: 5;
 }}
-#btn-home, #btn-craft, #btn-mat {{
-  left: 25px; width: 180px; height: 180px; border-radius: 22px;
-}}
-#btn-home {{ top:12%;  }}
-#btn-craft {{ top:41%; }}
-#btn-mat {{ top:70%;  }}
-#btn-spec, #btn-config {{
-  border-radius:50%; width:80px; height:80px;
-}}
-#btn-spec {{ right:25px; top:80px;    }}
-#btn-config {{ right:25px; bottom:30px; }}
+#btn-home, #btn-craft, #btn-mat {{ left:25px; width:180px; height:180px; border-radius:22px; }}
+#btn-home {{ top:12%; }}  #btn-craft {{ top:41%; }}  #btn-mat {{ top:70%; }}
+#btn-spec, #btn-config {{ border-radius:50%; width:80px; height:80px; }}
+#btn-spec {{ right:25px; top:80px; }}  #btn-config {{ right:25px; bottom:30px; }}
 
 .icon-visual:hover {{ background: rgba(255,255,255,0.08); transform: scale(1.05); border-color: rgba(255,255,255,0.6); }}
 .icon-visual img {{ width:100%; height:100%; object-fit:cover; border-radius:inherit; filter: brightness(0.93) contrast(1.05); transition: all .25s; }}
 .icon-visual:hover img {{ filter: brightness(1.05) contrast(1.1); }}
-
-/* quitar estilos por defecto al <button> dentro del form */
-.icon-as-form:focus {{ outline: none; }}
 </style>
 
 <!-- Capa visual (se ve) -->
@@ -238,29 +225,20 @@ st.markdown(f"""
 <div id="btn-config" class="icon-visual {'active' if current=='Configuracion' else ''}"><img src="{icon_conf}" alt="Configuración"></div>
 
 <!-- Capas clickables (formularios GET que cambian ?page=... en el mismo tab) -->
-<form id="home-form"  class="icon-as-form"  method="get">
-  <input type="hidden" name="page" value="Home">
-  <button type="submit" aria-label="Home"></button>
+<form id="home-form"  class="icon-as-form" method="get">
+  <input type="hidden" name="page" value="Home"><button type="submit" aria-label="Home"></button>
 </form>
-
-<form id="craft-form" class="icon-as-form"  method="get">
-  <input type="hidden" name="page" value="Craft">
-  <button type="submit" aria-label="Craft"></button>
+<form id="craft-form" class="icon-as-form" method="get">
+  <input type="hidden" name="page" value="Craft"><button type="submit" aria-label="Craft"></button>
 </form>
-
-<form id="mat-form"   class="icon-as-form"  method="get">
-  <input type="hidden" name="page" value="Materiales">
-  <button type="submit" aria-label="Materiales"></button>
+<form id="mat-form"   class="icon-as-form" method="get">
+  <input type="hidden" name="page" value="Materiales"><button type="submit" aria-label="Materiales"></button>
 </form>
-
-<form id="spec-form"  class="icon-as-form"  method="get">
-  <input type="hidden" name="page" value="Especificaciones">
-  <button type="submit" aria-label="Especificaciones"></button>
+<form id="spec-form"  class="icon-as-form" method="get">
+  <input type="hidden" name="page" value="Especificaciones"><button type="submit" aria-label="Especificaciones"></button>
 </form>
-
-<form id="conf-form"  class="icon-as-form"  method="get">
-  <input type="hidden" name="page" value="Configuracion">
-  <button type="submit" aria-label="Configuración"></button>
+<form id="conf-form"  class="icon-as-form" method="get">
+  <input type="hidden" name="page" value="Configuracion"><button type="submit" aria-label="Configuración"></button>
 </form>
 """, unsafe_allow_html=True)
 
@@ -322,6 +300,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
