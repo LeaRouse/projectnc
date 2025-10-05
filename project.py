@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from pathlib import Path
 import base64
 
@@ -48,91 +47,79 @@ video#bgvid {
     z-index: -2;
 }
 
-/* Botones flotantes */
-.control-button {
+/* Barra lateral fija */
+.sidebar {
     position: fixed;
-    background-color: rgba(30,30,30,0.85);
-    color: #f1f1f1;
-    border: none;
-    border-radius: 14px;
-    padding: 12px 18px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.25s ease;
+    left: 0;
+    top: 0;
+    width: 200px;
+    height: 100%;
+    background-color: rgba(28,28,28,0.85);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     z-index: 5;
-    width: 120px;
+}
+
+/* Botones barra lateral */
+.sidebar button {
+    display: block;
+    margin-bottom: 15px;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background-color: #2a2a2a;
+    color: #d0d0d0;
+    font-weight: bold;
     text-align: left;
+    cursor: pointer;
+    transition: 0.2s;
 }
-.control-button:hover {
-    background-color: rgba(70,70,70,0.95);
-    transform: scale(1.05);
+.sidebar button:hover {
+    background-color: #3a3a3a;
+    color: #fff;
 }
 
-/* Botones izquierda (vertical) */
-#btn-left1 { left: 20px; top: 40%; }
-#btn-left2 { left: 20px; top: 50%; }
-#btn-left3 { left: 20px; top: 60%; }
-
-/* Botones derecha */
-#btn-top-right { right: 20px; top: 80px; }  /* alejado del header de Streamlit */
-#btn-bottom-right { right: 20px; bottom: 30px; }
-
+/* Contenido principal al costado de la barra */
+.main-content {
+    margin-left: 220px; /* ancho de la barra + margen */
+    padding: 20px;
+}
 </style>
 """, unsafe_allow_html=True)
 
-# --- Video de fondo ---
+# --- Insertar video de fondo ---
 st.markdown(get_video_html(), unsafe_allow_html=True)
 
-# --- Session state para página ---
+# --- Session state para la página ---
 if 'pagina' not in st.session_state:
     st.session_state.pagina = "Home"
 
+# --- Cambiar página ---
 def cambiar_pagina(pagina):
     st.session_state.pagina = pagina
 
-# --- Botones izquierda ---
-st.markdown(f"""
-<button class="control-button" id="btn-left1" onclick="window.parent.postMessage({{type: 'Home'}}, '*')">🏠 Home</button>
-<button class="control-button" id="btn-left2" onclick="window.parent.postMessage({{type: 'Craft'}}, '*')">🛠️ Craft</button>
-<button class="control-button" id="btn-left3" onclick="window.parent.postMessage({{type: 'Materiales'}}, '*')">📦 Materiales</button>
+# --- Barra lateral con solo 3 botones ---
+st.markdown("""
+<div class="sidebar">
+    <button onclick="window.parent.postMessage({type:'Home'}, '*')">🏠 Home</button>
+    <button onclick="window.parent.postMessage({type:'Craft'}, '*')">🛠️ Craft</button>
+    <button onclick="window.parent.postMessage({type:'Materiales'}, '*')">📦 Materiales</button>
+</div>
 """, unsafe_allow_html=True)
 
-# --- Botones derecha ---
-st.markdown(f"""
-<button class="control-button" id="btn-top-right" onclick="window.parent.postMessage({{type: 'Especificaciones'}}, '*')">⚙️ Especificaciones</button>
-<button class="control-button" id="btn-bottom-right" onclick="window.parent.postMessage({{type: 'Configuracion'}}, '*')">🧩 Configuración</button>
-""", unsafe_allow_html=True)
+# --- Botones funcionales con Streamlit ---
+if st.button("🏠 Home", key="home"):
+    cambiar_pagina("Home")
+if st.button("🛠️ Craft", key="craft"):
+    cambiar_pagina("Craft")
+if st.button("📦 Materiales", key="materiales"):
+    cambiar_pagina("Materiales")
 
-# --- Capturar los mensajes de los botones ---
-components.html("""
-<script>
-window.addEventListener('message', (event) => {
-    const type = event.data.type;
-    if (type) {
-        document.dispatchEvent(new CustomEvent('updatePagina', {detail: type}));
-    }
-});
-</script>
-""", height=0, width=0)
+# --- Contenido principal al costado de la barra ---
+st.markdown('<div class="main-content">', unsafe_allow_html=True)
 
-# Escuchar en Streamlit
-if 'last_event' not in st.session_state:
-    st.session_state.last_event = None
-
-# Detectar cambio usando button clicks tradicionales de Streamlit
-buttons = {
-    "Home": "🏠 Home",
-    "Craft": "🛠️ Craft",
-    "Materiales": "📦 Materiales",
-    "Especificaciones": "⚙️ Especificaciones",
-    "Configuracion": "🧩 Configuración"
-}
-
-for key in buttons:
-    if st.button(buttons[key]):
-        cambiar_pagina(key)
-
-# --- Contenido dinámico ---
 pagina = st.session_state.pagina
 
 if pagina == "Home":
@@ -144,11 +131,5 @@ elif pagina == "Craft":
 elif pagina == "Materiales":
     st.header("📦 Materiales")
     st.write("Aquí se muestran los materiales utilizados y sus detalles.")
-elif pagina == "Especificaciones":
-    st.header("⚙️ Especificaciones")
-    st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
-    viewer_url = "https://learouse.github.io/prototipo/"
-    components.iframe(viewer_url, height=600, width="100%", scrolling=True)
-elif pagina == "Configuracion":
-    st.header("🧩 Configuración")
-    st.write("Opciones de configuración de la app.")
+
+st.markdown('</div>', unsafe_allow_html=True)
