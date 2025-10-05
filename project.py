@@ -8,7 +8,15 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- CSS para botones y layout ---
+# --- Estado de página ---
+if 'pagina' not in st.session_state:
+    st.session_state.pagina = "Home"
+
+# --- Función para cambiar página ---
+def cambiar_pagina(pagina):
+    st.session_state.pagina = pagina
+
+# --- CSS para menú lateral uniforme y layout ---
 st.markdown("""
 <style>
 /* Fondo general */
@@ -31,11 +39,11 @@ st.markdown("""
     margin-bottom: 20px;
 }
 
-/* Menú lateral: todos los botones iguales */
+/* Menú lateral: botones iguales */
 .menu-lateral button {
-    width: 100% !important;       /* mismo ancho */
-    height: 50px !important;      /* misma altura */
-    margin-bottom: 10px !important; 
+    width: 100% !important;
+    height: 50px !important;          /* altura fija */
+    margin-bottom: 10px !important;
     border-radius: 10px !important;
     border: none !important;
     background-color: #2a2a2a !important;
@@ -47,6 +55,7 @@ st.markdown("""
     justify-content: flex-start !important;
     cursor: pointer !important;
     transition: 0.2s !important;
+    font-size: 16px !important;
 }
 .menu-lateral button:hover {
     background-color: #3a3a3a !important;
@@ -54,7 +63,7 @@ st.markdown("""
     transform: scale(1.02) !important;
 }
 
-/* Contenido */
+/* Contenedor del contenido */
 .contenido {
     padding-left: 20px;
 }
@@ -64,26 +73,28 @@ st.markdown("""
 # --- Navbar global ---
 st.markdown('<div class="encabezado-global">🌌 AstroCycle - Panel de Control del Robot</div>', unsafe_allow_html=True)
 
-# --- Estado de página ---
-if 'pagina' not in st.session_state:
-    st.session_state.pagina = "Home"
-
-def cambiar_pagina(pagina):
-    st.session_state.pagina = pagina
-
 # --- Layout: columnas (menú | contenido) ---
 col1, col2 = st.columns([1,5])
 
-# --- Menú lateral con botones funcionales ---
+# --- Menú lateral con HTML botones ---
 with col1:
     st.markdown('<div class="menu-lateral">', unsafe_allow_html=True)
-    if st.button("🏠 Home"): cambiar_pagina("Home")
-    if st.button("📊 Datos Generales"): cambiar_pagina("Datos Generales")
-    if st.button("🤖 Status"): cambiar_pagina("Status")
-    if st.button("🛠️ Craft"): cambiar_pagina("Craft")
-    if st.button("📦 Materiales"): cambiar_pagina("Materiales")
-    if st.button("⚙️ Especificaciones"): cambiar_pagina("Especificaciones")
-    if st.button("🧩 Configuración"): cambiar_pagina("Configuracion")
+    
+    # Botones HTML que cambian la página
+    paginas = [
+        ("🏠 Home", "Home"),
+        ("📊 Datos Generales", "Datos Generales"),
+        ("🤖 Status", "Status"),
+        ("🛠️ Craft", "Craft"),
+        ("📦 Materiales", "Materiales"),
+        ("⚙️ Especificaciones", "Especificaciones"),
+        ("🧩 Configuración", "Configuracion")
+    ]
+    
+    for nombre, valor in paginas:
+        if st.button(nombre, key=valor):
+            cambiar_pagina(valor)
+    
     st.markdown('</div>', unsafe_allow_html=True)
 
 # --- Contenido ---
