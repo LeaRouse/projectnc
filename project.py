@@ -11,20 +11,18 @@ st.set_page_config(
 # --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
-/* Fondo principal completo */
-.stApp, .css-18e3th9, .css-1d391kg, .block-container {
-    background-color: #0a0a0a !important; /* negro profundo */
-    color: #d0d0d0 !important; /* gris claro */
+/* Fondo principal */
+.stApp, .block-container {
+    background-color: #0a0a0a !important;
+    color: #d0d0d0 !important;
 }
 
 /* Barra lateral */
 section[data-testid="stSidebar"] {
-    background-color: #1c1c1c !important; /* gris oscuro */
+    background-color: #1c1c1c !important;
     border-radius: 20px;
     padding: 20px;
-    position: relative;
     height: 100vh;
-    overflow: visible !important;
 }
 
 /* Ocultar botón de colapso */
@@ -41,7 +39,7 @@ button[title="Collapse"] {
     margin-bottom: 25px;
 }
 
-/* Botones del menú: todos iguales */
+/* Botones del menú */
 .stButton>button {
     display: block;
     width: 100%;
@@ -67,15 +65,20 @@ button[title="Collapse"] {
 /* Encabezado tipo navbar */
 .encabezado-navbar {
     width: 100%;
-    background-color: #1a1a1a; /* gris muy oscuro */
+    background-color: #1a1a1a;
     color: #d0d0d0;
     padding: 12px 20px;
     font-size: 18px;
     font-weight: bold;
     border-bottom: 2px solid #2a2a2a;
     text-align: center;
-    margin-bottom: 20px;
     border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Ajuste de contenido para que navbar no tape nada */
+.main > div:first-child {
+    margin-top: 20px;
 }
 
 /* Textos principales */
@@ -85,7 +88,7 @@ h1, h2, h3, h4, p, span {
 </style>
 """, unsafe_allow_html=True)
 
-# --- Encabezado tipo navbar ---
+# --- Encabezado navbar visible en todas las páginas ---
 st.markdown('<div class="encabezado-navbar">🌌 AstroCycle - Panel de Control del Robot</div>', unsafe_allow_html=True)
 
 # --- Menú lateral ---
@@ -107,7 +110,7 @@ st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales"
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
 st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
 
-# --- Contenido según página ---
+# --- Contenido de cada página ---
 if st.session_state.pagina == "Home":
     st.title("🏠 Home")
     st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
@@ -137,7 +140,7 @@ elif st.session_state.pagina == "Status":
     st.metric("Sensores Activos", "5/5")
     st.metric("Conectividad", "Online")
     st.write("Última alerta: Ninguna")
-    
+
 elif st.session_state.pagina == "Craft":
     st.header("🛠️ Craft")
     st.write("Contenido relacionado a la construcción y fabricación.")
