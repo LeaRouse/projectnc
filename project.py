@@ -198,21 +198,32 @@ pagina = st.session_state.pagina
 IMG_FILE = Path("logotipoastrocycle.png")
 
 if pagina == "Home":
+    # Construye la etiqueta <img> del logo o un fallback si no existe
+    logo_tag = (
+        f'<img src="{logo_data}" alt="AstroCycle logo" '
+        f'style="width:700px; max-width:70vw; height:auto; margin-top:16px;" />'
+        if logo_data else
+        '<div style="color:#ccc; margin-top:16px;">No se encontró logotipoastrocycle.png</div>'
+    )
+
+    # Contenedor que ocupa solo el área principal (a la derecha del menú)
     st.markdown(f"""
     <div style="
         position: fixed;
-        top: 50%;
-        left: calc(230px + 50% - 115px);  /* 230px = ancho menú + margen */
-        transform: translate(-50%, -50%);
-        width: calc(100% - 260px);        /* resta el ancho del panel lateral */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
+        /* deja espacio para el panel izquierdo: 25px margen + 180px botón + ~55px aire = 260px */
+        left: 260px; 
+        right: 0;
+        top: 0;
+        bottom: 0;
+        display: grid;
+        place-items: center;   /* centra vertical y horizontalmente en el área principal */
         z-index: 0;
+        text-align: center;
     ">
-        <h1 style="color:#ffffff; font-size:120px; margin:0;">AstroCycle</h1>
+        <div>
+            <h1 style="color:#ffffff; font-size:120px; margin:0;">AstroCycle</h1>
+            {logo_tag}
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -233,6 +244,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
