@@ -24,6 +24,27 @@ def get_video_html():
 
 st.markdown(get_video_html(), unsafe_allow_html=True)
 
+from mimetypes import guess_type
+
+# --- Función para convertir PNG a Base64 ---
+@st.cache_data(show_spinner=False)
+def img_data_uri(path_str: str) -> str:
+    p = Path(path_str)
+    if not p.exists():
+        st.warning(f"No se encontró {path_str}")
+        return ""
+    mime, _ = guess_type(p.name)
+    mime = mime or "image/png"
+    b64 = base64.b64encode(p.read_bytes()).decode("utf-8")
+    return f"data:{mime};base64,{b64}"
+
+# --- Cargar las imágenes ---
+icon_home  = img_data_uri("home.png")
+icon_craft = img_data_uri("craft.png")
+icon_mat   = img_data_uri("materiales.png")
+icon_spec  = img_data_uri("especificaciones.png")
+icon_conf  = img_data_uri("config.png")
+
 # --- CSS GENERAL ---
 st.markdown("""
 <style>
@@ -87,13 +108,13 @@ def cambiar_pagina(pagina):
 
 # --- BOTONES FLOTANTES CON IMÁGENES ---
 # Asegúrate de tener tus íconos en la misma carpeta: home.png, craft.png, materiales.png, especificaciones.png, config.png
-st.markdown("""
+st.markdown(f"""
 <div>
-  <div class="icon-button" id="btn-home"><img src="home.png"></div>
-  <div class="icon-button" id="btn-craft"><img src="craft.png"></div>
-  <div class="icon-button" id="btn-mat"><img src="materiales.png"></div>
-  <div class="icon-button" id="btn-spec"><img src="especificaciones.png"></div>
-  <div class="icon-button" id="btn-config"><img src="config.png"></div>
+  <div class="icon-button" id="btn-home"><img src="{icon_home}" alt="Home"></div>
+  <div class="icon-button" id="btn-craft"><img src="{icon_craft}" alt="Craft"></div>
+  <div class="icon-button" id="btn-mat"><img src="{icon_mat}" alt="Materiales"></div>
+  <div class="icon-button" id="btn-spec"><img src="{icon_spec}" alt="Especificaciones"></div>
+  <div class="icon-button" id="btn-config"><img src="{icon_conf}" alt="Configuración"></div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -162,3 +183,4 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
