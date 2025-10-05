@@ -45,7 +45,7 @@ icon_spec  = img_data_uri("especificaciones.png")
 icon_conf  = img_data_uri("config.png")
 logo_data  = img_data_uri("logotipoastrocycle2.png")
 
-# --- CSS + línea divisoria + Transiciones + goto() ---
+# --- CSS + línea divisoria + Transiciones (fade) ---
 st.markdown("""
 <style>
 /* ===== FONDO ===== */
@@ -78,7 +78,7 @@ video#bgvid {
     backdrop-filter: blur(2px);
 }
 
-/* ===== BOTONES ===== */
+/* ===== BOTONES FLOTANTES ===== */
 .icon-button {
     position: fixed;
     background: rgba(35,35,35,0.75);
@@ -154,15 +154,6 @@ h1,h2,h3,p,span { color:#d0d0d0 !important; }
 </style>
 
 <div class="sidebar-line"></div>
-
-<script>
-function goto(page) {
-  // activa fade-out
-  document.documentElement.classList.add('leaving');
-  // cambia ?page=... en la misma pestaña tras breve pausa
-  setTimeout(() => { window.location.search = '?page=' + encodeURIComponent(page); }, 180);
-}
-</script>
 """, unsafe_allow_html=True)
 
 # --- Session state para página ---
@@ -190,28 +181,70 @@ try:
 except AttributeError:
     st.experimental_set_query_params(page=st.session_state.pagina)
 
-# --- BOTONES FLOTANTES (onclick -> goto('...')) ---
+# --- BOTONES FLOTANTES (solo HTML; los clicks los maneja components.html más abajo) ---
 current = st.session_state.pagina
 
 st.markdown(f"""
 <div>
-  <div class="icon-button" id="btn-home"  onclick="goto('Home')">
+  <div class="icon-button" id="btn-home">
     <img src="{icon_home}"  alt="Home">
   </div>
-  <div class="icon-button" id="btn-craft" onclick="goto('Craft')">
+  <div class="icon-button" id="btn-craft">
     <img src="{icon_craft}" alt="Craft">
   </div>
-  <div class="icon-button" id="btn-mat"   onclick="goto('Materiales')">
+  <div class="icon-button" id="btn-mat">
     <img src="{icon_mat}"   alt="Materiales">
   </div>
-  <div class="icon-button" id="btn-spec"  onclick="goto('Especificaciones')">
+  <div class="icon-button" id="btn-spec">
     <img src="{icon_spec}" alt="Especificaciones">
   </div>
-  <div class="icon-button" id="btn-config" onclick="goto('Configuracion')">
+  <div class="icon-button" id="btn-config">
     <img src="{icon_conf}" alt="Configuración">
   </div>
 </div>
 """, unsafe_allow_html=True)
+
+# --- JS ROBUSTO: adjunta listeners a los botones (DOM principal) y navega con fade ---
+components.html("""
+<script>
+(function(){
+  function smoothGoto(page){
+    const root = window.parent.document.documentElement;
+    if (root) root.classList.add('leaving'); // activa fade-out
+    setTimeout(function(){
+      window.parent.location.search = '?page=' + encodeURIComponent(page); // misma pestaña
+    }, 180);
+  }
+
+  function attach(){
+    const map = {
+      'btn-home':  'Home',
+      'btn-craft': 'Craft',
+      'btn-mat':   'Materiales',
+      'btn-spec':  'Especificaciones',
+      'btn-config':'Configuracion'
+    };
+    const doc = window.parent.document || document;
+
+    Object.keys(map).forEach(function(id){
+      const el = doc.getElementById(id);
+      if (el && !el._astroBound){
+        el._astroBound = true;
+        el.addEventListener('click', function(ev){
+          ev.preventDefault();
+          ev.stopPropagation();
+          smoothGoto(map[id]);
+        }, true);
+      }
+    });
+  }
+
+  // intentar ahora y reintentar periódicamente (Streamlit re-renderiza el DOM)
+  attach();
+  const timer = setInterval(attach, 500);
+})();
+</script>
+""", height=0, width=0)
 
 # --- CONTENIDO ---
 pagina = st.session_state.pagina
