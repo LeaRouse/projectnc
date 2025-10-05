@@ -1,5 +1,5 @@
 import streamlit as st
-import streamlit.components.v1 as components  # Para iframe del modelo 3D
+import streamlit.components.v1 as components
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
@@ -11,48 +11,61 @@ st.set_page_config(
 # --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
+/* Fondo principal */
+.stApp {
+    background-color: #0a0a1a; /* azul muy oscuro / negro espacial */
+}
+
 /* Barra lateral */
 section[data-testid="stSidebar"] {
-    background-color: #11112b;
+    background-color: #1a1a2e; /* azul oscuro profesional */
     border-radius: 20px;
     padding: 20px;
+    position: relative;
+    height: 100vh;
+    overflow: visible !important;
+}
+
+/* Ocultar el botón de colapso/expandir */
+button[title="Collapse"] {
+    display: none;
 }
 
 /* Título lateral */
 .sidebar-title {
     font-size: 24px;
     font-weight: bold;
-    color: #99ccff;
+    color: #a0c4ff; /* azul claro para contraste suave */
     text-align: center;
     margin-bottom: 25px;
 }
 
-/* Botones del menú */
+/* Botones del menú: todos iguales */
 .stButton > button {
     display: block;
     width: 100%;
-    margin-bottom: 12px;
-    padding: 10px;
+    margin-bottom: 15px;      /* distancia uniforme entre todos */
+    padding: 12px;             /* altura uniforme */
     border-radius: 12px;
     border: none;
     font-weight: bold;
-    color: #d0e7ff;
-    background-color: #1a1a3f;
+    color: #cfd9e0;            /* gris claro para texto */
+    background-color: #2b2b44; /* azul grisáceo oscuro */
     transition: 0.2s;
     text-align: left;
     cursor: pointer;
 }
 
-/* Hover */
+/* Hover: cambio suave */
 .stButton > button:hover {
-    background-color: #2a2a55;
+    background-color: #3a3a5c; /* ligeramente más claro */
     color: #ffffff;
     transform: scale(1.02);
 }
 
 /* Títulos y textos principales */
 h1, h2, h3, h4, p, span {
-    color: #d0e7ff;
+    color: #a0c4ff; /* azul claro profesional */
 }
 </style>
 """, unsafe_allow_html=True)
@@ -67,14 +80,14 @@ if 'pagina' not in st.session_state:
 def cambiar_pagina(nombre):
     st.session_state.pagina = nombre
 
-# Botones del menú
+# --- Todos los botones alineados y con la misma distancia ---
 st.sidebar.button("🏠 Home", on_click=cambiar_pagina, args=("Home",))
 st.sidebar.button("🛠️ Craft", on_click=cambiar_pagina, args=("Craft",))
 st.sidebar.button("📦 Materiales", on_click=cambiar_pagina, args=("Materiales",))
 st.sidebar.button("⚙️ Especificaciones", on_click=cambiar_pagina, args=("Especificaciones",))
 st.sidebar.button("🧩 Configuración", on_click=cambiar_pagina, args=("Configuracion",))
 
-# --- CONTENIDO SEGÚN LA PÁGINA ---
+# --- CONTENIDO ---
 if st.session_state.pagina == "Home":
     st.title("🏠 Home")
     st.write("Bienvenido a AstroCycle. Explora todo desde aquí.")
@@ -94,7 +107,6 @@ elif st.session_state.pagina == "Materiales":
 elif st.session_state.pagina == "Especificaciones":
     st.header("⚙️ Especificaciones")
     st.write("Detalles técnicos y modelo 3D interactivo del prototipo.")
-    # Modelo 3D iframe
     viewer_url = "https://learouse.github.io/prototipo/"
     components.iframe(viewer_url, height=600, width="100%", scrolling=True)
 
