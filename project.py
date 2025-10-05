@@ -96,9 +96,9 @@ video#bgvid {
 }
 
 /* separaciones verticales */
-#btn-home { top: 15%; }
-#btn-craft { top: 45%; }
-#btn-mat { top: 75%; }
+#btn-home { top: 10%; }
+#btn-craft { top: 40%; }
+#btn-mat { top: 70%; }
 
 /* --- BOTONES DERECHA (CÍRCULOS) --- */
 #btn-spec, #btn-config {
@@ -198,6 +198,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
