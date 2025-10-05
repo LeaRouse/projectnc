@@ -1,10 +1,10 @@
 import streamlit as st
 import streamlit.components.v1 as components
 
-# --- CONFIGURACIÓN GENERAL ---
+# ---- CONFIGURACIÓN GENERAL ----
 st.set_page_config(page_title="AstroCycle", layout="wide")
 
-# --- VIDEO DE FONDO ---
+# ---- VIDEO DE FONDO ----
 st.markdown("""
     <video autoplay loop muted playsinline id="bgvideo"
         style="
@@ -13,25 +13,25 @@ st.markdown("""
             bottom: 0;
             min-width: 100%;
             min-height: 100%;
-            z-index: -1;
             object-fit: cover;
+            z-index: -1;
         ">
         <source src="video.mp4" type="video/mp4">
     </video>
 """, unsafe_allow_html=True)
 
-# --- ESTILOS ---
+# ---- ESTILOS ----
 st.markdown("""
     <style>
-        /* Quitar elementos de Streamlit */
+        /* Ocultar header y footer */
         #MainMenu, header, footer {visibility: hidden;}
         .stApp { background: transparent !important; }
 
-        /* Sidebar siempre visible */
-        [data-testid="stSidebar"] {
-            background-color: rgba(0, 0, 0, 0.7);
+        /* Barra lateral SIEMPRE visible */
+        section[data-testid="stSidebar"] {
+            background-color: rgba(0, 0, 0, 0.75);
             backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(255,255,255,0.2);
         }
 
         /* Títulos y texto blancos */
@@ -39,40 +39,42 @@ st.markdown("""
             color: white !important;
         }
 
-        /* Botones del menú */
-        .stRadio > div { gap: 0.5rem; }
-        .stRadio label {
+        /* Botones iguales */
+        div[data-testid="stSidebar"] button {
+            width: 100% !important;
+            height: 45px !important;
             background-color: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            padding: 8px 12px;
-            transition: 0.3s;
+            border-radius: 8px;
+            border: none;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 600;
         }
-        .stRadio label:hover {
+        div[data-testid="stSidebar"] button:hover {
             background-color: rgba(255,255,255,0.3);
-            transform: scale(1.03);
-        }
-        div[role="radiogroup"] > label > div[data-testid="stMarkdownContainer"] > p {
-            color: white !important;
-            font-weight: bold;
-            text-align: center;
+            transform: scale(1.02);
         }
     </style>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR MENU ---
-st.sidebar.title("🪐 AstroCycle")
-st.sidebar.markdown("### Menú principal")
+# ---- SIDEBAR MENÚ ----
+st.sidebar.title("🪐 ASTROCYCLE")
+st.sidebar.markdown("---")
 
-page = st.sidebar.radio(
-    "Navegación",
+# Botones con el mismo tamaño y comportamiento
+page = st.sidebar.selectbox(
+    "Menú principal",
     ["Inicio", "Simulación", "Control", "Datos", "Acerca de"],
-    label_visibility="collapsed"
+    index=0
 )
 
-# --- CONTENIDO DE CADA PÁGINA ---
+# ---- CONTENIDO PRINCIPAL ----
 if page == "Inicio":
     st.title("🌌 Bienvenido a AstroCycle")
-    st.markdown("Explora el modelo 3D del prototipo.")
+    st.markdown("Explora el prototipo 3D del rover.")
+
+    # Modelo 3D
     components.html(
         """
         <model-viewer src="Rove_prototipo1.glb" 
@@ -89,18 +91,21 @@ if page == "Inicio":
     )
 
 elif page == "Simulación":
-    st.header("🚀 Módulo de Simulación")
-    st.write("Aquí irá el entorno de simulación del rover.")
+    st.header("🚀 Simulación del Rover")
+    st.write("Aquí podrás ejecutar la simulación virtual del rover.")
 
 elif page == "Control":
-    st.header("🎮 Panel de Control")
-    st.write("Interfaz para controlar el prototipo en tiempo real.")
+    st.header("🎮 Control del Rover")
+    st.write("Panel para interactuar con el prototipo en tiempo real.")
 
 elif page == "Datos":
-    st.header("📊 Datos en tiempo real")
-    st.write("Visualización de métricas y sensores del rover.")
+    st.header("📊 Datos del Sistema")
+    st.write("Visualización de sensores, temperatura, energía y otros datos del rover.")
 
 elif page == "Acerca de":
-    st.header("ℹ️ Sobre AstroCycle")
-    st.write("Proyecto de exploración robótica desarrollado por el equipo AstroCycle.")
+    st.header("ℹ️ Proyecto AstroCycle")
+    st.write("""
+    AstroCycle es un sistema experimental para exploración planetaria y reciclaje automatizado.
+    Desarrollado con fines educativos y de investigación.
+    """)
 
