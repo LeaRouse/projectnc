@@ -208,11 +208,20 @@ if pagina == "Home":
     if logo_data:
         logo_tag = (
             f'<img src="{logo_data}" alt="AstroCycle logo" '
-            f'style="width: 800px; max-width: 70vw; height: auto; '
-            f'filter: drop-shadow(0 0 25px rgba(255,255,255,0.25));" />'
+            f'style="
+                width: 1000px;           /* ← aumenta el tamaño base */
+                max-width: 85vw;         /* ← permite que crezca más en pantallas grandes */
+                height: auto;
+                filter: drop-shadow(0 0 35px rgba(255,255,255,0.35));
+                transition: transform 0.6s ease-in-out;
+            "
+            onmouseover="this.style.transform=\'scale(1.04)\'"
+            onmouseout="this.style.transform=\'scale(1.0)\'"
+            />'
         )
     else:
         logo_tag = '<div style="color:#ccc;">No se encontró logotipoastrocycle2.png</div>'
+
 
     # 2) Contenedor centrado solo en el área principal (a la derecha del menú)
     html_home = f"""
@@ -251,6 +260,7 @@ elif pagina == "Especificaciones":
 elif pagina == "Configuracion":
     st.header("🧩 Configuración")
     st.write("Opciones de configuración de la app.")
+
 
 
 
